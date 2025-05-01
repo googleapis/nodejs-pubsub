@@ -4,6 +4,58 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.0.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.11.0...v5.0.0) (2025-04-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to Node 18 ([#2024](https://github.com/googleapis/nodejs-pubsub/issues/2024))
+* remove (broken) legacy OTel support
+* remove legacy ack deadline options
+* move maxExtension into subscriber options
+
+### Miscellaneous Chores
+
+* Migrate to Node 18 ([#2024](https://github.com/googleapis/nodejs-pubsub/issues/2024)) ([9ad808a](https://github.com/googleapis/nodejs-pubsub/commit/9ad808adb99b6e64c2c4431991721deae14b6400))
+
+## [4.11.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.10.0...v4.11.0) (2025-03-27)
+
+
+### Features
+
+* Add required messaging.operation span attrs for OTel sem convs 1.24 ([#2019](https://github.com/googleapis/nodejs-pubsub/issues/2019)) ([70ed2d7](https://github.com/googleapis/nodejs-pubsub/commit/70ed2d73588290834dd25bfffb201272433e5614))
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.29.0 ([#2012](https://github.com/googleapis/nodejs-pubsub/issues/2012)) ([bfe8243](https://github.com/googleapis/nodejs-pubsub/commit/bfe82434492a95fc24ee54ff947d0e52d5e93195))
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.30.0 ([#2014](https://github.com/googleapis/nodejs-pubsub/issues/2014)) ([7f8366a](https://github.com/googleapis/nodejs-pubsub/commit/7f8366a636398d758aec5b2f933607f5021043a7))
+* Type widening to match gapic, and two typing fixes ([#2020](https://github.com/googleapis/nodejs-pubsub/issues/2020)) ([9cd73b3](https://github.com/googleapis/nodejs-pubsub/commit/9cd73b33980b7f02fe507a3a52042112690ab62c))
+
+## [4.10.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.9.0...v4.10.0) (2025-01-13)
+
+
+### Features
+
+* Add Kafka-based sources to IngestionDataSourceSettings proto and IngestionFailureEvent proto ([#2007](https://github.com/googleapis/nodejs-pubsub/issues/2007)) ([08d00a1](https://github.com/googleapis/nodejs-pubsub/commit/08d00a1e7d30e2ab47f7582ff61b1eb73ad9d25e))
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.28.0 ([#2001](https://github.com/googleapis/nodejs-pubsub/issues/2001)) ([c8e5811](https://github.com/googleapis/nodejs-pubsub/commit/c8e581124523edcac13d6d6c48d67342482959f3))
+
+## [4.9.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.8.0...v4.9.0) (2024-11-12)
+
+
+### Features
+
+* Add IngestionFailureEvent to the external proto ([#1984](https://github.com/googleapis/nodejs-pubsub/issues/1984)) ([7075430](https://github.com/googleapis/nodejs-pubsub/commit/70754309fb600c54d0a573f2d49ad4c419577550))
+
+
+### Bug Fixes
+
+* KiB, not MiB for ack size limits ([#1999](https://github.com/googleapis/nodejs-pubsub/issues/1999)) ([798270d](https://github.com/googleapis/nodejs-pubsub/commit/798270db9c5ef71f75c3e24e70d9592bbd068212))
+
 ## [4.8.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.7.2...v4.8.0) (2024-10-15)
 
 

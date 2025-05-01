@@ -38,9 +38,6 @@ export interface PublishOptions {
   flowControlOptions?: FlowControlOptions;
   gaxOpts?: CallOptions;
   messageOrdering?: boolean;
-
-  /** @deprecated Unset and use context propagation. */
-  enableOpenTelemetryTracing?: boolean;
 }
 
 /**
@@ -87,7 +84,7 @@ export class Publisher {
 
   constructor(topic: Topic, options?: PublishOptions) {
     this.flowControl = new FlowControl(
-      options?.flowControlOptions || flowControlDefaults
+      options?.flowControlOptions || flowControlDefaults,
     );
     this.setOptions(options);
     this.topic = topic;
@@ -124,8 +121,8 @@ export class Publisher {
               q.removeListener('drain', flushResolver);
             };
             q.on('drain', flushResolver);
-          })
-      )
+          }),
+      ),
     );
 
     const allPublishes = Promise.all(toDrain.map(q => q.publishDrain()));
@@ -157,12 +154,12 @@ export class Publisher {
   publish(
     data: Buffer,
     attributes: Attributes,
-    callback: PublishCallback
+    callback: PublishCallback,
   ): void;
   publish(
     data: Buffer,
     attrsOrCb?: Attributes | PublishCallback,
-    callback?: PublishCallback
+    callback?: PublishCallback,
   ): Promise<string> | void {
     const attributes = typeof attrsOrCb === 'object' ? attrsOrCb : {};
     callback = typeof attrsOrCb === 'function' ? attrsOrCb : callback;
@@ -184,21 +181,23 @@ export class Publisher {
   publishMessage(message: PubsubMessage, callback: PublishCallback): void;
   publishMessage(
     message: PubsubMessage,
-    callback?: PublishCallback
+    callback?: PublishCallback,
   ): Promise<string> | void {
     const {data, attributes = {}} = message;
 
     // We must have at least one of:
     //   - `data` as a Buffer
     //   - `attributes` that are not empty
-    if (data && !(data instanceof Buffer)) {
-      throw new TypeError('Data must be in the form of a Buffer.');
+    if (data && !(data instanceof Uint8Array)) {
+      throw new TypeError(
+        'Data must be in the form of a Buffer or Uint8Array.',
+      );
     }
 
     const keys = Object.keys(attributes!);
     if (!data && keys.length === 0) {
       throw new TypeError(
-        'If data is undefined, at least one attribute must be present.'
+        'If data is undefined, at least one attribute must be present.',
       );
     }
 
@@ -268,10 +267,9 @@ export class Publisher {
       gaxOpts: {
         isBundling: false,
       },
-      enableOpenTelemetryTracing: false,
       flowControlOptions: Object.assign(
         {},
-        flowControlDefaults
+        flowControlDefaults,
       ) as FlowControlOptions,
     };
 
@@ -288,26 +286,23 @@ export class Publisher {
   setOptions(options = {} as PublishOptions): void {
     const defaults = this.getOptionDefaults();
 
-    const {
-      batching,
-      gaxOpts,
-      messageOrdering,
-      enableOpenTelemetryTracing,
-      flowControlOptions,
-    } = extend(true, defaults, options);
+    const {batching, gaxOpts, messageOrdering, flowControlOptions} = extend(
+      true,
+      defaults,
+      options,
+    );
 
     this.settings = {
       batching: {
         maxBytes: Math.min(batching!.maxBytes!, BATCH_LIMITS.maxBytes!),
         maxMessages: Math.min(
           batching!.maxMessages!,
-          BATCH_LIMITS.maxMessages!
+          BATCH_LIMITS.maxMessages!,
         ),
         maxMilliseconds: batching!.maxMilliseconds,
       },
       gaxOpts,
       messageOrdering,
-      enableOpenTelemetryTracing,
       flowControlOptions,
     };
 
@@ -334,7 +329,7 @@ export class Publisher {
    * @param {PubsubMessage} message The message to create a span for
    */
   getParentSpan(message: PubsubMessage, caller: string): Span | undefined {
-    const enabled = tracing.isEnabled(this.settings);
+    const enabled = tracing.isEnabled();
     if (!enabled) {
       return undefined;
     }
@@ -346,12 +341,12 @@ export class Publisher {
     const span = tracing.PubsubSpans.createPublisherSpan(
       message,
       this.topic.name,
-      caller
+      caller,
     );
 
     // If the span's context is valid we should inject the propagation trace context.
     if (span && isSpanContextValid(span.spanContext())) {
-      tracing.injectSpan(span, message, enabled);
+      tracing.injectSpan(span, message);
     }
 
     return span;

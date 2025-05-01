@@ -1,4 +1,4 @@
-// Copyright 2024 Google LLC
+// Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -487,12 +487,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    MessageStoragePolicy.decode = function decode(reader, length) {
+                    MessageStoragePolicy.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.MessageStoragePolicy();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.allowedPersistenceRegions && message.allowedPersistenceRegions.length))
@@ -750,12 +752,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    SchemaSettings.decode = function decode(reader, length) {
+                    SchemaSettings.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.SchemaSettings();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.schema = reader.string();
@@ -937,6 +941,9 @@
                      * @interface IIngestionDataSourceSettings
                      * @property {google.pubsub.v1.IngestionDataSourceSettings.IAwsKinesis|null} [awsKinesis] IngestionDataSourceSettings awsKinesis
                      * @property {google.pubsub.v1.IngestionDataSourceSettings.ICloudStorage|null} [cloudStorage] IngestionDataSourceSettings cloudStorage
+                     * @property {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs|null} [azureEventHubs] IngestionDataSourceSettings azureEventHubs
+                     * @property {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk|null} [awsMsk] IngestionDataSourceSettings awsMsk
+                     * @property {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud|null} [confluentCloud] IngestionDataSourceSettings confluentCloud
                      * @property {google.pubsub.v1.IPlatformLogsSettings|null} [platformLogsSettings] IngestionDataSourceSettings platformLogsSettings
                      */
     
@@ -972,6 +979,30 @@
                     IngestionDataSourceSettings.prototype.cloudStorage = null;
     
                     /**
+                     * IngestionDataSourceSettings azureEventHubs.
+                     * @member {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs|null|undefined} azureEventHubs
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    IngestionDataSourceSettings.prototype.azureEventHubs = null;
+    
+                    /**
+                     * IngestionDataSourceSettings awsMsk.
+                     * @member {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk|null|undefined} awsMsk
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    IngestionDataSourceSettings.prototype.awsMsk = null;
+    
+                    /**
+                     * IngestionDataSourceSettings confluentCloud.
+                     * @member {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud|null|undefined} confluentCloud
+                     * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                     * @instance
+                     */
+                    IngestionDataSourceSettings.prototype.confluentCloud = null;
+    
+                    /**
                      * IngestionDataSourceSettings platformLogsSettings.
                      * @member {google.pubsub.v1.IPlatformLogsSettings|null|undefined} platformLogsSettings
                      * @memberof google.pubsub.v1.IngestionDataSourceSettings
@@ -984,12 +1015,12 @@
     
                     /**
                      * IngestionDataSourceSettings source.
-                     * @member {"awsKinesis"|"cloudStorage"|undefined} source
+                     * @member {"awsKinesis"|"cloudStorage"|"azureEventHubs"|"awsMsk"|"confluentCloud"|undefined} source
                      * @memberof google.pubsub.v1.IngestionDataSourceSettings
                      * @instance
                      */
                     Object.defineProperty(IngestionDataSourceSettings.prototype, "source", {
-                        get: $util.oneOfGetter($oneOfFields = ["awsKinesis", "cloudStorage"]),
+                        get: $util.oneOfGetter($oneOfFields = ["awsKinesis", "cloudStorage", "azureEventHubs", "awsMsk", "confluentCloud"]),
                         set: $util.oneOfSetter($oneOfFields)
                     });
     
@@ -1021,8 +1052,14 @@
                             $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.encode(message.awsKinesis, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
                         if (message.cloudStorage != null && Object.hasOwnProperty.call(message, "cloudStorage"))
                             $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.encode(message.cloudStorage, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        if (message.azureEventHubs != null && Object.hasOwnProperty.call(message, "azureEventHubs"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.encode(message.azureEventHubs, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                         if (message.platformLogsSettings != null && Object.hasOwnProperty.call(message, "platformLogsSettings"))
                             $root.google.pubsub.v1.PlatformLogsSettings.encode(message.platformLogsSettings, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.awsMsk != null && Object.hasOwnProperty.call(message, "awsMsk"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.encode(message.awsMsk, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                        if (message.confluentCloud != null && Object.hasOwnProperty.call(message, "confluentCloud"))
+                            $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.encode(message.confluentCloud, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                         return writer;
                     };
     
@@ -1050,12 +1087,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    IngestionDataSourceSettings.decode = function decode(reader, length) {
+                    IngestionDataSourceSettings.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.awsKinesis = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis.decode(reader, reader.uint32());
@@ -1063,6 +1102,18 @@
                                 }
                             case 2: {
                                     message.cloudStorage = $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 3: {
+                                    message.azureEventHubs = $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 5: {
+                                    message.awsMsk = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 6: {
+                                    message.confluentCloud = $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.decode(reader, reader.uint32());
                                     break;
                                 }
                             case 4: {
@@ -1123,6 +1174,36 @@
                                     return "cloudStorage." + error;
                             }
                         }
+                        if (message.azureEventHubs != null && message.hasOwnProperty("azureEventHubs")) {
+                            if (properties.source === 1)
+                                return "source: multiple values";
+                            properties.source = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.verify(message.azureEventHubs);
+                                if (error)
+                                    return "azureEventHubs." + error;
+                            }
+                        }
+                        if (message.awsMsk != null && message.hasOwnProperty("awsMsk")) {
+                            if (properties.source === 1)
+                                return "source: multiple values";
+                            properties.source = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.verify(message.awsMsk);
+                                if (error)
+                                    return "awsMsk." + error;
+                            }
+                        }
+                        if (message.confluentCloud != null && message.hasOwnProperty("confluentCloud")) {
+                            if (properties.source === 1)
+                                return "source: multiple values";
+                            properties.source = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.verify(message.confluentCloud);
+                                if (error)
+                                    return "confluentCloud." + error;
+                            }
+                        }
                         if (message.platformLogsSettings != null && message.hasOwnProperty("platformLogsSettings")) {
                             var error = $root.google.pubsub.v1.PlatformLogsSettings.verify(message.platformLogsSettings);
                             if (error)
@@ -1152,6 +1233,21 @@
                             if (typeof object.cloudStorage !== "object")
                                 throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.cloudStorage: object expected");
                             message.cloudStorage = $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.fromObject(object.cloudStorage);
+                        }
+                        if (object.azureEventHubs != null) {
+                            if (typeof object.azureEventHubs !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.azureEventHubs: object expected");
+                            message.azureEventHubs = $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.fromObject(object.azureEventHubs);
+                        }
+                        if (object.awsMsk != null) {
+                            if (typeof object.awsMsk !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.awsMsk: object expected");
+                            message.awsMsk = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.fromObject(object.awsMsk);
+                        }
+                        if (object.confluentCloud != null) {
+                            if (typeof object.confluentCloud !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionDataSourceSettings.confluentCloud: object expected");
+                            message.confluentCloud = $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.fromObject(object.confluentCloud);
                         }
                         if (object.platformLogsSettings != null) {
                             if (typeof object.platformLogsSettings !== "object")
@@ -1186,8 +1282,23 @@
                             if (options.oneofs)
                                 object.source = "cloudStorage";
                         }
+                        if (message.azureEventHubs != null && message.hasOwnProperty("azureEventHubs")) {
+                            object.azureEventHubs = $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.toObject(message.azureEventHubs, options);
+                            if (options.oneofs)
+                                object.source = "azureEventHubs";
+                        }
                         if (message.platformLogsSettings != null && message.hasOwnProperty("platformLogsSettings"))
                             object.platformLogsSettings = $root.google.pubsub.v1.PlatformLogsSettings.toObject(message.platformLogsSettings, options);
+                        if (message.awsMsk != null && message.hasOwnProperty("awsMsk")) {
+                            object.awsMsk = $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.toObject(message.awsMsk, options);
+                            if (options.oneofs)
+                                object.source = "awsMsk";
+                        }
+                        if (message.confluentCloud != null && message.hasOwnProperty("confluentCloud")) {
+                            object.confluentCloud = $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.toObject(message.confluentCloud, options);
+                            if (options.oneofs)
+                                object.source = "confluentCloud";
+                        }
                         return object;
                     };
     
@@ -1346,12 +1457,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        AwsKinesis.decode = function decode(reader, length) {
+                        AwsKinesis.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsKinesis();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         message.state = reader.int32();
@@ -1739,12 +1852,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        CloudStorage.decode = function decode(reader, length) {
+                        CloudStorage.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         message.state = reader.int32();
@@ -2122,12 +2237,14 @@
                              * @throws {Error} If the payload is not a reader or valid buffer
                              * @throws {$protobuf.util.ProtocolError} If required fields are missing
                              */
-                            TextFormat.decode = function decode(reader, length) {
+                            TextFormat.decode = function decode(reader, length, error) {
                                 if (!(reader instanceof $Reader))
                                     reader = $Reader.create(reader);
                                 var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.TextFormat();
                                 while (reader.pos < end) {
                                     var tag = reader.uint32();
+                                    if (tag === error)
+                                        break;
                                     switch (tag >>> 3) {
                                     case 1: {
                                             message.delimiter = reader.string();
@@ -2318,12 +2435,14 @@
                              * @throws {Error} If the payload is not a reader or valid buffer
                              * @throws {$protobuf.util.ProtocolError} If required fields are missing
                              */
-                            AvroFormat.decode = function decode(reader, length) {
+                            AvroFormat.decode = function decode(reader, length, error) {
                                 if (!(reader instanceof $Reader))
                                     reader = $Reader.create(reader);
                                 var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.AvroFormat();
                                 while (reader.pos < end) {
                                     var tag = reader.uint32();
+                                    if (tag === error)
+                                        break;
                                     switch (tag >>> 3) {
                                     default:
                                         reader.skipType(tag & 7);
@@ -2493,12 +2612,14 @@
                              * @throws {Error} If the payload is not a reader or valid buffer
                              * @throws {$protobuf.util.ProtocolError} If required fields are missing
                              */
-                            PubSubAvroFormat.decode = function decode(reader, length) {
+                            PubSubAvroFormat.decode = function decode(reader, length, error) {
                                 if (!(reader instanceof $Reader))
                                     reader = $Reader.create(reader);
                                 var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.CloudStorage.PubSubAvroFormat();
                                 while (reader.pos < end) {
                                     var tag = reader.uint32();
+                                    if (tag === error)
+                                        break;
                                     switch (tag >>> 3) {
                                     default:
                                         reader.skipType(tag & 7);
@@ -2597,6 +2718,1196 @@
                         return CloudStorage;
                     })();
     
+                    IngestionDataSourceSettings.AzureEventHubs = (function() {
+    
+                        /**
+                         * Properties of an AzureEventHubs.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @interface IAzureEventHubs
+                         * @property {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State|null} [state] AzureEventHubs state
+                         * @property {string|null} [resourceGroup] AzureEventHubs resourceGroup
+                         * @property {string|null} [namespace] AzureEventHubs namespace
+                         * @property {string|null} [eventHub] AzureEventHubs eventHub
+                         * @property {string|null} [clientId] AzureEventHubs clientId
+                         * @property {string|null} [tenantId] AzureEventHubs tenantId
+                         * @property {string|null} [subscriptionId] AzureEventHubs subscriptionId
+                         * @property {string|null} [gcpServiceAccount] AzureEventHubs gcpServiceAccount
+                         */
+    
+                        /**
+                         * Constructs a new AzureEventHubs.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @classdesc Represents an AzureEventHubs.
+                         * @implements IAzureEventHubs
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs=} [properties] Properties to set
+                         */
+                        function AzureEventHubs(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AzureEventHubs state.
+                         * @member {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State} state
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.state = 0;
+    
+                        /**
+                         * AzureEventHubs resourceGroup.
+                         * @member {string} resourceGroup
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.resourceGroup = "";
+    
+                        /**
+                         * AzureEventHubs namespace.
+                         * @member {string} namespace
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.namespace = "";
+    
+                        /**
+                         * AzureEventHubs eventHub.
+                         * @member {string} eventHub
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.eventHub = "";
+    
+                        /**
+                         * AzureEventHubs clientId.
+                         * @member {string} clientId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.clientId = "";
+    
+                        /**
+                         * AzureEventHubs tenantId.
+                         * @member {string} tenantId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.tenantId = "";
+    
+                        /**
+                         * AzureEventHubs subscriptionId.
+                         * @member {string} subscriptionId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.subscriptionId = "";
+    
+                        /**
+                         * AzureEventHubs gcpServiceAccount.
+                         * @member {string} gcpServiceAccount
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         */
+                        AzureEventHubs.prototype.gcpServiceAccount = "";
+    
+                        /**
+                         * Creates a new AzureEventHubs instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} AzureEventHubs instance
+                         */
+                        AzureEventHubs.create = function create(properties) {
+                            return new AzureEventHubs(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AzureEventHubs message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs} message AzureEventHubs message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AzureEventHubs.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.state);
+                            if (message.resourceGroup != null && Object.hasOwnProperty.call(message, "resourceGroup"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.resourceGroup);
+                            if (message.namespace != null && Object.hasOwnProperty.call(message, "namespace"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.namespace);
+                            if (message.eventHub != null && Object.hasOwnProperty.call(message, "eventHub"))
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.eventHub);
+                            if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+                                writer.uint32(/* id 5, wireType 2 =*/42).string(message.clientId);
+                            if (message.tenantId != null && Object.hasOwnProperty.call(message, "tenantId"))
+                                writer.uint32(/* id 6, wireType 2 =*/50).string(message.tenantId);
+                            if (message.subscriptionId != null && Object.hasOwnProperty.call(message, "subscriptionId"))
+                                writer.uint32(/* id 7, wireType 2 =*/58).string(message.subscriptionId);
+                            if (message.gcpServiceAccount != null && Object.hasOwnProperty.call(message, "gcpServiceAccount"))
+                                writer.uint32(/* id 8, wireType 2 =*/66).string(message.gcpServiceAccount);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AzureEventHubs message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAzureEventHubs} message AzureEventHubs message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AzureEventHubs.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AzureEventHubs message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} AzureEventHubs
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AzureEventHubs.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.state = reader.int32();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.resourceGroup = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.namespace = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.eventHub = reader.string();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.clientId = reader.string();
+                                        break;
+                                    }
+                                case 6: {
+                                        message.tenantId = reader.string();
+                                        break;
+                                    }
+                                case 7: {
+                                        message.subscriptionId = reader.string();
+                                        break;
+                                    }
+                                case 8: {
+                                        message.gcpServiceAccount = reader.string();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AzureEventHubs message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} AzureEventHubs
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AzureEventHubs.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AzureEventHubs message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AzureEventHubs.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                switch (message.state) {
+                                default:
+                                    return "state: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                case 6:
+                                case 7:
+                                    break;
+                                }
+                            if (message.resourceGroup != null && message.hasOwnProperty("resourceGroup"))
+                                if (!$util.isString(message.resourceGroup))
+                                    return "resourceGroup: string expected";
+                            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                                if (!$util.isString(message.namespace))
+                                    return "namespace: string expected";
+                            if (message.eventHub != null && message.hasOwnProperty("eventHub"))
+                                if (!$util.isString(message.eventHub))
+                                    return "eventHub: string expected";
+                            if (message.clientId != null && message.hasOwnProperty("clientId"))
+                                if (!$util.isString(message.clientId))
+                                    return "clientId: string expected";
+                            if (message.tenantId != null && message.hasOwnProperty("tenantId"))
+                                if (!$util.isString(message.tenantId))
+                                    return "tenantId: string expected";
+                            if (message.subscriptionId != null && message.hasOwnProperty("subscriptionId"))
+                                if (!$util.isString(message.subscriptionId))
+                                    return "subscriptionId: string expected";
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                if (!$util.isString(message.gcpServiceAccount))
+                                    return "gcpServiceAccount: string expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AzureEventHubs message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} AzureEventHubs
+                         */
+                        AzureEventHubs.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs();
+                            switch (object.state) {
+                            default:
+                                if (typeof object.state === "number") {
+                                    message.state = object.state;
+                                    break;
+                                }
+                                break;
+                            case "STATE_UNSPECIFIED":
+                            case 0:
+                                message.state = 0;
+                                break;
+                            case "ACTIVE":
+                            case 1:
+                                message.state = 1;
+                                break;
+                            case "EVENT_HUBS_PERMISSION_DENIED":
+                            case 2:
+                                message.state = 2;
+                                break;
+                            case "PUBLISH_PERMISSION_DENIED":
+                            case 3:
+                                message.state = 3;
+                                break;
+                            case "NAMESPACE_NOT_FOUND":
+                            case 4:
+                                message.state = 4;
+                                break;
+                            case "EVENT_HUB_NOT_FOUND":
+                            case 5:
+                                message.state = 5;
+                                break;
+                            case "SUBSCRIPTION_NOT_FOUND":
+                            case 6:
+                                message.state = 6;
+                                break;
+                            case "RESOURCE_GROUP_NOT_FOUND":
+                            case 7:
+                                message.state = 7;
+                                break;
+                            }
+                            if (object.resourceGroup != null)
+                                message.resourceGroup = String(object.resourceGroup);
+                            if (object.namespace != null)
+                                message.namespace = String(object.namespace);
+                            if (object.eventHub != null)
+                                message.eventHub = String(object.eventHub);
+                            if (object.clientId != null)
+                                message.clientId = String(object.clientId);
+                            if (object.tenantId != null)
+                                message.tenantId = String(object.tenantId);
+                            if (object.subscriptionId != null)
+                                message.subscriptionId = String(object.subscriptionId);
+                            if (object.gcpServiceAccount != null)
+                                message.gcpServiceAccount = String(object.gcpServiceAccount);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AzureEventHubs message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs} message AzureEventHubs
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AzureEventHubs.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                                object.resourceGroup = "";
+                                object.namespace = "";
+                                object.eventHub = "";
+                                object.clientId = "";
+                                object.tenantId = "";
+                                object.subscriptionId = "";
+                                object.gcpServiceAccount = "";
+                            }
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                object.state = options.enums === String ? $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State[message.state] : message.state;
+                            if (message.resourceGroup != null && message.hasOwnProperty("resourceGroup"))
+                                object.resourceGroup = message.resourceGroup;
+                            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                                object.namespace = message.namespace;
+                            if (message.eventHub != null && message.hasOwnProperty("eventHub"))
+                                object.eventHub = message.eventHub;
+                            if (message.clientId != null && message.hasOwnProperty("clientId"))
+                                object.clientId = message.clientId;
+                            if (message.tenantId != null && message.hasOwnProperty("tenantId"))
+                                object.tenantId = message.tenantId;
+                            if (message.subscriptionId != null && message.hasOwnProperty("subscriptionId"))
+                                object.subscriptionId = message.subscriptionId;
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                object.gcpServiceAccount = message.gcpServiceAccount;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AzureEventHubs to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AzureEventHubs.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AzureEventHubs
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AzureEventHubs.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs";
+                        };
+    
+                        /**
+                         * State enum.
+                         * @name google.pubsub.v1.IngestionDataSourceSettings.AzureEventHubs.State
+                         * @enum {number}
+                         * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                         * @property {number} ACTIVE=1 ACTIVE value
+                         * @property {number} EVENT_HUBS_PERMISSION_DENIED=2 EVENT_HUBS_PERMISSION_DENIED value
+                         * @property {number} PUBLISH_PERMISSION_DENIED=3 PUBLISH_PERMISSION_DENIED value
+                         * @property {number} NAMESPACE_NOT_FOUND=4 NAMESPACE_NOT_FOUND value
+                         * @property {number} EVENT_HUB_NOT_FOUND=5 EVENT_HUB_NOT_FOUND value
+                         * @property {number} SUBSCRIPTION_NOT_FOUND=6 SUBSCRIPTION_NOT_FOUND value
+                         * @property {number} RESOURCE_GROUP_NOT_FOUND=7 RESOURCE_GROUP_NOT_FOUND value
+                         */
+                        AzureEventHubs.State = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                            values[valuesById[1] = "ACTIVE"] = 1;
+                            values[valuesById[2] = "EVENT_HUBS_PERMISSION_DENIED"] = 2;
+                            values[valuesById[3] = "PUBLISH_PERMISSION_DENIED"] = 3;
+                            values[valuesById[4] = "NAMESPACE_NOT_FOUND"] = 4;
+                            values[valuesById[5] = "EVENT_HUB_NOT_FOUND"] = 5;
+                            values[valuesById[6] = "SUBSCRIPTION_NOT_FOUND"] = 6;
+                            values[valuesById[7] = "RESOURCE_GROUP_NOT_FOUND"] = 7;
+                            return values;
+                        })();
+    
+                        return AzureEventHubs;
+                    })();
+    
+                    IngestionDataSourceSettings.AwsMsk = (function() {
+    
+                        /**
+                         * Properties of an AwsMsk.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @interface IAwsMsk
+                         * @property {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State|null} [state] AwsMsk state
+                         * @property {string|null} [clusterArn] AwsMsk clusterArn
+                         * @property {string|null} [topic] AwsMsk topic
+                         * @property {string|null} [awsRoleArn] AwsMsk awsRoleArn
+                         * @property {string|null} [gcpServiceAccount] AwsMsk gcpServiceAccount
+                         */
+    
+                        /**
+                         * Constructs a new AwsMsk.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @classdesc Represents an AwsMsk.
+                         * @implements IAwsMsk
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk=} [properties] Properties to set
+                         */
+                        function AwsMsk(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AwsMsk state.
+                         * @member {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State} state
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.state = 0;
+    
+                        /**
+                         * AwsMsk clusterArn.
+                         * @member {string} clusterArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.clusterArn = "";
+    
+                        /**
+                         * AwsMsk topic.
+                         * @member {string} topic
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.topic = "";
+    
+                        /**
+                         * AwsMsk awsRoleArn.
+                         * @member {string} awsRoleArn
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.awsRoleArn = "";
+    
+                        /**
+                         * AwsMsk gcpServiceAccount.
+                         * @member {string} gcpServiceAccount
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         */
+                        AwsMsk.prototype.gcpServiceAccount = "";
+    
+                        /**
+                         * Creates a new AwsMsk instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} AwsMsk instance
+                         */
+                        AwsMsk.create = function create(properties) {
+                            return new AwsMsk(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AwsMsk message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk} message AwsMsk message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsMsk.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.state);
+                            if (message.clusterArn != null && Object.hasOwnProperty.call(message, "clusterArn"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.clusterArn);
+                            if (message.topic != null && Object.hasOwnProperty.call(message, "topic"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.topic);
+                            if (message.awsRoleArn != null && Object.hasOwnProperty.call(message, "awsRoleArn"))
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.awsRoleArn);
+                            if (message.gcpServiceAccount != null && Object.hasOwnProperty.call(message, "gcpServiceAccount"))
+                                writer.uint32(/* id 5, wireType 2 =*/42).string(message.gcpServiceAccount);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AwsMsk message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IAwsMsk} message AwsMsk message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsMsk.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AwsMsk message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} AwsMsk
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsMsk.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.state = reader.int32();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.clusterArn = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.topic = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.awsRoleArn = reader.string();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.gcpServiceAccount = reader.string();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AwsMsk message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} AwsMsk
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsMsk.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AwsMsk message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AwsMsk.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                switch (message.state) {
+                                default:
+                                    return "state: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                    break;
+                                }
+                            if (message.clusterArn != null && message.hasOwnProperty("clusterArn"))
+                                if (!$util.isString(message.clusterArn))
+                                    return "clusterArn: string expected";
+                            if (message.topic != null && message.hasOwnProperty("topic"))
+                                if (!$util.isString(message.topic))
+                                    return "topic: string expected";
+                            if (message.awsRoleArn != null && message.hasOwnProperty("awsRoleArn"))
+                                if (!$util.isString(message.awsRoleArn))
+                                    return "awsRoleArn: string expected";
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                if (!$util.isString(message.gcpServiceAccount))
+                                    return "gcpServiceAccount: string expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AwsMsk message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} AwsMsk
+                         */
+                        AwsMsk.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk();
+                            switch (object.state) {
+                            default:
+                                if (typeof object.state === "number") {
+                                    message.state = object.state;
+                                    break;
+                                }
+                                break;
+                            case "STATE_UNSPECIFIED":
+                            case 0:
+                                message.state = 0;
+                                break;
+                            case "ACTIVE":
+                            case 1:
+                                message.state = 1;
+                                break;
+                            case "MSK_PERMISSION_DENIED":
+                            case 2:
+                                message.state = 2;
+                                break;
+                            case "PUBLISH_PERMISSION_DENIED":
+                            case 3:
+                                message.state = 3;
+                                break;
+                            case "CLUSTER_NOT_FOUND":
+                            case 4:
+                                message.state = 4;
+                                break;
+                            case "TOPIC_NOT_FOUND":
+                            case 5:
+                                message.state = 5;
+                                break;
+                            }
+                            if (object.clusterArn != null)
+                                message.clusterArn = String(object.clusterArn);
+                            if (object.topic != null)
+                                message.topic = String(object.topic);
+                            if (object.awsRoleArn != null)
+                                message.awsRoleArn = String(object.awsRoleArn);
+                            if (object.gcpServiceAccount != null)
+                                message.gcpServiceAccount = String(object.gcpServiceAccount);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AwsMsk message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.AwsMsk} message AwsMsk
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AwsMsk.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                                object.clusterArn = "";
+                                object.topic = "";
+                                object.awsRoleArn = "";
+                                object.gcpServiceAccount = "";
+                            }
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                object.state = options.enums === String ? $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State[message.state] : message.state;
+                            if (message.clusterArn != null && message.hasOwnProperty("clusterArn"))
+                                object.clusterArn = message.clusterArn;
+                            if (message.topic != null && message.hasOwnProperty("topic"))
+                                object.topic = message.topic;
+                            if (message.awsRoleArn != null && message.hasOwnProperty("awsRoleArn"))
+                                object.awsRoleArn = message.awsRoleArn;
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                object.gcpServiceAccount = message.gcpServiceAccount;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AwsMsk to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AwsMsk.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AwsMsk
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.AwsMsk
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AwsMsk.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings.AwsMsk";
+                        };
+    
+                        /**
+                         * State enum.
+                         * @name google.pubsub.v1.IngestionDataSourceSettings.AwsMsk.State
+                         * @enum {number}
+                         * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                         * @property {number} ACTIVE=1 ACTIVE value
+                         * @property {number} MSK_PERMISSION_DENIED=2 MSK_PERMISSION_DENIED value
+                         * @property {number} PUBLISH_PERMISSION_DENIED=3 PUBLISH_PERMISSION_DENIED value
+                         * @property {number} CLUSTER_NOT_FOUND=4 CLUSTER_NOT_FOUND value
+                         * @property {number} TOPIC_NOT_FOUND=5 TOPIC_NOT_FOUND value
+                         */
+                        AwsMsk.State = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                            values[valuesById[1] = "ACTIVE"] = 1;
+                            values[valuesById[2] = "MSK_PERMISSION_DENIED"] = 2;
+                            values[valuesById[3] = "PUBLISH_PERMISSION_DENIED"] = 3;
+                            values[valuesById[4] = "CLUSTER_NOT_FOUND"] = 4;
+                            values[valuesById[5] = "TOPIC_NOT_FOUND"] = 5;
+                            return values;
+                        })();
+    
+                        return AwsMsk;
+                    })();
+    
+                    IngestionDataSourceSettings.ConfluentCloud = (function() {
+    
+                        /**
+                         * Properties of a ConfluentCloud.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @interface IConfluentCloud
+                         * @property {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State|null} [state] ConfluentCloud state
+                         * @property {string|null} [bootstrapServer] ConfluentCloud bootstrapServer
+                         * @property {string|null} [clusterId] ConfluentCloud clusterId
+                         * @property {string|null} [topic] ConfluentCloud topic
+                         * @property {string|null} [identityPoolId] ConfluentCloud identityPoolId
+                         * @property {string|null} [gcpServiceAccount] ConfluentCloud gcpServiceAccount
+                         */
+    
+                        /**
+                         * Constructs a new ConfluentCloud.
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings
+                         * @classdesc Represents a ConfluentCloud.
+                         * @implements IConfluentCloud
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud=} [properties] Properties to set
+                         */
+                        function ConfluentCloud(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * ConfluentCloud state.
+                         * @member {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State} state
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.state = 0;
+    
+                        /**
+                         * ConfluentCloud bootstrapServer.
+                         * @member {string} bootstrapServer
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.bootstrapServer = "";
+    
+                        /**
+                         * ConfluentCloud clusterId.
+                         * @member {string} clusterId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.clusterId = "";
+    
+                        /**
+                         * ConfluentCloud topic.
+                         * @member {string} topic
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.topic = "";
+    
+                        /**
+                         * ConfluentCloud identityPoolId.
+                         * @member {string} identityPoolId
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.identityPoolId = "";
+    
+                        /**
+                         * ConfluentCloud gcpServiceAccount.
+                         * @member {string} gcpServiceAccount
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         */
+                        ConfluentCloud.prototype.gcpServiceAccount = "";
+    
+                        /**
+                         * Creates a new ConfluentCloud instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} ConfluentCloud instance
+                         */
+                        ConfluentCloud.create = function create(properties) {
+                            return new ConfluentCloud(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified ConfluentCloud message. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud} message ConfluentCloud message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ConfluentCloud.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.state);
+                            if (message.bootstrapServer != null && Object.hasOwnProperty.call(message, "bootstrapServer"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.bootstrapServer);
+                            if (message.clusterId != null && Object.hasOwnProperty.call(message, "clusterId"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.clusterId);
+                            if (message.topic != null && Object.hasOwnProperty.call(message, "topic"))
+                                writer.uint32(/* id 4, wireType 2 =*/34).string(message.topic);
+                            if (message.identityPoolId != null && Object.hasOwnProperty.call(message, "identityPoolId"))
+                                writer.uint32(/* id 5, wireType 2 =*/42).string(message.identityPoolId);
+                            if (message.gcpServiceAccount != null && Object.hasOwnProperty.call(message, "gcpServiceAccount"))
+                                writer.uint32(/* id 6, wireType 2 =*/50).string(message.gcpServiceAccount);
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified ConfluentCloud message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.IConfluentCloud} message ConfluentCloud message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ConfluentCloud.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a ConfluentCloud message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} ConfluentCloud
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ConfluentCloud.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.state = reader.int32();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.bootstrapServer = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.clusterId = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.topic = reader.string();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.identityPoolId = reader.string();
+                                        break;
+                                    }
+                                case 6: {
+                                        message.gcpServiceAccount = reader.string();
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a ConfluentCloud message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} ConfluentCloud
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ConfluentCloud.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a ConfluentCloud message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        ConfluentCloud.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                switch (message.state) {
+                                default:
+                                    return "state: enum value expected";
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                case 6:
+                                    break;
+                                }
+                            if (message.bootstrapServer != null && message.hasOwnProperty("bootstrapServer"))
+                                if (!$util.isString(message.bootstrapServer))
+                                    return "bootstrapServer: string expected";
+                            if (message.clusterId != null && message.hasOwnProperty("clusterId"))
+                                if (!$util.isString(message.clusterId))
+                                    return "clusterId: string expected";
+                            if (message.topic != null && message.hasOwnProperty("topic"))
+                                if (!$util.isString(message.topic))
+                                    return "topic: string expected";
+                            if (message.identityPoolId != null && message.hasOwnProperty("identityPoolId"))
+                                if (!$util.isString(message.identityPoolId))
+                                    return "identityPoolId: string expected";
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                if (!$util.isString(message.gcpServiceAccount))
+                                    return "gcpServiceAccount: string expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a ConfluentCloud message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} ConfluentCloud
+                         */
+                        ConfluentCloud.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud();
+                            switch (object.state) {
+                            default:
+                                if (typeof object.state === "number") {
+                                    message.state = object.state;
+                                    break;
+                                }
+                                break;
+                            case "STATE_UNSPECIFIED":
+                            case 0:
+                                message.state = 0;
+                                break;
+                            case "ACTIVE":
+                            case 1:
+                                message.state = 1;
+                                break;
+                            case "CONFLUENT_CLOUD_PERMISSION_DENIED":
+                            case 2:
+                                message.state = 2;
+                                break;
+                            case "PUBLISH_PERMISSION_DENIED":
+                            case 3:
+                                message.state = 3;
+                                break;
+                            case "UNREACHABLE_BOOTSTRAP_SERVER":
+                            case 4:
+                                message.state = 4;
+                                break;
+                            case "CLUSTER_NOT_FOUND":
+                            case 5:
+                                message.state = 5;
+                                break;
+                            case "TOPIC_NOT_FOUND":
+                            case 6:
+                                message.state = 6;
+                                break;
+                            }
+                            if (object.bootstrapServer != null)
+                                message.bootstrapServer = String(object.bootstrapServer);
+                            if (object.clusterId != null)
+                                message.clusterId = String(object.clusterId);
+                            if (object.topic != null)
+                                message.topic = String(object.topic);
+                            if (object.identityPoolId != null)
+                                message.identityPoolId = String(object.identityPoolId);
+                            if (object.gcpServiceAccount != null)
+                                message.gcpServiceAccount = String(object.gcpServiceAccount);
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a ConfluentCloud message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud} message ConfluentCloud
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        ConfluentCloud.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.state = options.enums === String ? "STATE_UNSPECIFIED" : 0;
+                                object.bootstrapServer = "";
+                                object.clusterId = "";
+                                object.topic = "";
+                                object.identityPoolId = "";
+                                object.gcpServiceAccount = "";
+                            }
+                            if (message.state != null && message.hasOwnProperty("state"))
+                                object.state = options.enums === String ? $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State[message.state] : message.state;
+                            if (message.bootstrapServer != null && message.hasOwnProperty("bootstrapServer"))
+                                object.bootstrapServer = message.bootstrapServer;
+                            if (message.clusterId != null && message.hasOwnProperty("clusterId"))
+                                object.clusterId = message.clusterId;
+                            if (message.topic != null && message.hasOwnProperty("topic"))
+                                object.topic = message.topic;
+                            if (message.identityPoolId != null && message.hasOwnProperty("identityPoolId"))
+                                object.identityPoolId = message.identityPoolId;
+                            if (message.gcpServiceAccount != null && message.hasOwnProperty("gcpServiceAccount"))
+                                object.gcpServiceAccount = message.gcpServiceAccount;
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this ConfluentCloud to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        ConfluentCloud.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for ConfluentCloud
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        ConfluentCloud.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud";
+                        };
+    
+                        /**
+                         * State enum.
+                         * @name google.pubsub.v1.IngestionDataSourceSettings.ConfluentCloud.State
+                         * @enum {number}
+                         * @property {number} STATE_UNSPECIFIED=0 STATE_UNSPECIFIED value
+                         * @property {number} ACTIVE=1 ACTIVE value
+                         * @property {number} CONFLUENT_CLOUD_PERMISSION_DENIED=2 CONFLUENT_CLOUD_PERMISSION_DENIED value
+                         * @property {number} PUBLISH_PERMISSION_DENIED=3 PUBLISH_PERMISSION_DENIED value
+                         * @property {number} UNREACHABLE_BOOTSTRAP_SERVER=4 UNREACHABLE_BOOTSTRAP_SERVER value
+                         * @property {number} CLUSTER_NOT_FOUND=5 CLUSTER_NOT_FOUND value
+                         * @property {number} TOPIC_NOT_FOUND=6 TOPIC_NOT_FOUND value
+                         */
+                        ConfluentCloud.State = (function() {
+                            var valuesById = {}, values = Object.create(valuesById);
+                            values[valuesById[0] = "STATE_UNSPECIFIED"] = 0;
+                            values[valuesById[1] = "ACTIVE"] = 1;
+                            values[valuesById[2] = "CONFLUENT_CLOUD_PERMISSION_DENIED"] = 2;
+                            values[valuesById[3] = "PUBLISH_PERMISSION_DENIED"] = 3;
+                            values[valuesById[4] = "UNREACHABLE_BOOTSTRAP_SERVER"] = 4;
+                            values[valuesById[5] = "CLUSTER_NOT_FOUND"] = 5;
+                            values[valuesById[6] = "TOPIC_NOT_FOUND"] = 6;
+                            return values;
+                        })();
+    
+                        return ConfluentCloud;
+                    })();
+    
                     return IngestionDataSourceSettings;
                 })();
     
@@ -2685,12 +3996,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    PlatformLogsSettings.decode = function decode(reader, length) {
+                    PlatformLogsSettings.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PlatformLogsSettings();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.severity = reader.int32();
@@ -2862,6 +4175,2144 @@
                     })();
     
                     return PlatformLogsSettings;
+                })();
+    
+                v1.IngestionFailureEvent = (function() {
+    
+                    /**
+                     * Properties of an IngestionFailureEvent.
+                     * @memberof google.pubsub.v1
+                     * @interface IIngestionFailureEvent
+                     * @property {string|null} [topic] IngestionFailureEvent topic
+                     * @property {string|null} [errorMessage] IngestionFailureEvent errorMessage
+                     * @property {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure|null} [cloudStorageFailure] IngestionFailureEvent cloudStorageFailure
+                     * @property {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason|null} [awsMskFailure] IngestionFailureEvent awsMskFailure
+                     * @property {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason|null} [azureEventHubsFailure] IngestionFailureEvent azureEventHubsFailure
+                     * @property {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason|null} [confluentCloudFailure] IngestionFailureEvent confluentCloudFailure
+                     */
+    
+                    /**
+                     * Constructs a new IngestionFailureEvent.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents an IngestionFailureEvent.
+                     * @implements IIngestionFailureEvent
+                     * @constructor
+                     * @param {google.pubsub.v1.IIngestionFailureEvent=} [properties] Properties to set
+                     */
+                    function IngestionFailureEvent(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * IngestionFailureEvent topic.
+                     * @member {string} topic
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.topic = "";
+    
+                    /**
+                     * IngestionFailureEvent errorMessage.
+                     * @member {string} errorMessage
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.errorMessage = "";
+    
+                    /**
+                     * IngestionFailureEvent cloudStorageFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure|null|undefined} cloudStorageFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.cloudStorageFailure = null;
+    
+                    /**
+                     * IngestionFailureEvent awsMskFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason|null|undefined} awsMskFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.awsMskFailure = null;
+    
+                    /**
+                     * IngestionFailureEvent azureEventHubsFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason|null|undefined} azureEventHubsFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.azureEventHubsFailure = null;
+    
+                    /**
+                     * IngestionFailureEvent confluentCloudFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason|null|undefined} confluentCloudFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.confluentCloudFailure = null;
+    
+                    // OneOf field names bound to virtual getters and setters
+                    var $oneOfFields;
+    
+                    /**
+                     * IngestionFailureEvent failure.
+                     * @member {"cloudStorageFailure"|"awsMskFailure"|"azureEventHubsFailure"|"confluentCloudFailure"|undefined} failure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    Object.defineProperty(IngestionFailureEvent.prototype, "failure", {
+                        get: $util.oneOfGetter($oneOfFields = ["cloudStorageFailure", "awsMskFailure", "azureEventHubsFailure", "confluentCloudFailure"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * Creates a new IngestionFailureEvent instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionFailureEvent=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.IngestionFailureEvent} IngestionFailureEvent instance
+                     */
+                    IngestionFailureEvent.create = function create(properties) {
+                        return new IngestionFailureEvent(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified IngestionFailureEvent message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionFailureEvent} message IngestionFailureEvent message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    IngestionFailureEvent.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.topic != null && Object.hasOwnProperty.call(message, "topic"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.topic);
+                        if (message.errorMessage != null && Object.hasOwnProperty.call(message, "errorMessage"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.errorMessage);
+                        if (message.cloudStorageFailure != null && Object.hasOwnProperty.call(message, "cloudStorageFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.encode(message.cloudStorageFailure, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                        if (message.awsMskFailure != null && Object.hasOwnProperty.call(message, "awsMskFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.encode(message.awsMskFailure, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                        if (message.azureEventHubsFailure != null && Object.hasOwnProperty.call(message, "azureEventHubsFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.encode(message.azureEventHubsFailure, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                        if (message.confluentCloudFailure != null && Object.hasOwnProperty.call(message, "confluentCloudFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.encode(message.confluentCloudFailure, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified IngestionFailureEvent message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {google.pubsub.v1.IIngestionFailureEvent} message IngestionFailureEvent message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    IngestionFailureEvent.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes an IngestionFailureEvent message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.IngestionFailureEvent} IngestionFailureEvent
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    IngestionFailureEvent.decode = function decode(reader, length, error) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            if (tag === error)
+                                break;
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.topic = reader.string();
+                                    break;
+                                }
+                            case 2: {
+                                    message.errorMessage = reader.string();
+                                    break;
+                                }
+                            case 3: {
+                                    message.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 4: {
+                                    message.awsMskFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 5: {
+                                    message.azureEventHubsFailure = $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 6: {
+                                    message.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes an IngestionFailureEvent message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.IngestionFailureEvent} IngestionFailureEvent
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    IngestionFailureEvent.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies an IngestionFailureEvent message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    IngestionFailureEvent.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        var properties = {};
+                        if (message.topic != null && message.hasOwnProperty("topic"))
+                            if (!$util.isString(message.topic))
+                                return "topic: string expected";
+                        if (message.errorMessage != null && message.hasOwnProperty("errorMessage"))
+                            if (!$util.isString(message.errorMessage))
+                                return "errorMessage: string expected";
+                        if (message.cloudStorageFailure != null && message.hasOwnProperty("cloudStorageFailure")) {
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.verify(message.cloudStorageFailure);
+                                if (error)
+                                    return "cloudStorageFailure." + error;
+                            }
+                        }
+                        if (message.awsMskFailure != null && message.hasOwnProperty("awsMskFailure")) {
+                            if (properties.failure === 1)
+                                return "failure: multiple values";
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.verify(message.awsMskFailure);
+                                if (error)
+                                    return "awsMskFailure." + error;
+                            }
+                        }
+                        if (message.azureEventHubsFailure != null && message.hasOwnProperty("azureEventHubsFailure")) {
+                            if (properties.failure === 1)
+                                return "failure: multiple values";
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.verify(message.azureEventHubsFailure);
+                                if (error)
+                                    return "azureEventHubsFailure." + error;
+                            }
+                        }
+                        if (message.confluentCloudFailure != null && message.hasOwnProperty("confluentCloudFailure")) {
+                            if (properties.failure === 1)
+                                return "failure: multiple values";
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.verify(message.confluentCloudFailure);
+                                if (error)
+                                    return "confluentCloudFailure." + error;
+                            }
+                        }
+                        return null;
+                    };
+    
+                    /**
+                     * Creates an IngestionFailureEvent message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.IngestionFailureEvent} IngestionFailureEvent
+                     */
+                    IngestionFailureEvent.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent)
+                            return object;
+                        var message = new $root.google.pubsub.v1.IngestionFailureEvent();
+                        if (object.topic != null)
+                            message.topic = String(object.topic);
+                        if (object.errorMessage != null)
+                            message.errorMessage = String(object.errorMessage);
+                        if (object.cloudStorageFailure != null) {
+                            if (typeof object.cloudStorageFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.cloudStorageFailure: object expected");
+                            message.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.fromObject(object.cloudStorageFailure);
+                        }
+                        if (object.awsMskFailure != null) {
+                            if (typeof object.awsMskFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.awsMskFailure: object expected");
+                            message.awsMskFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.fromObject(object.awsMskFailure);
+                        }
+                        if (object.azureEventHubsFailure != null) {
+                            if (typeof object.azureEventHubsFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.azureEventHubsFailure: object expected");
+                            message.azureEventHubsFailure = $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.fromObject(object.azureEventHubsFailure);
+                        }
+                        if (object.confluentCloudFailure != null) {
+                            if (typeof object.confluentCloudFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.confluentCloudFailure: object expected");
+                            message.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.fromObject(object.confluentCloudFailure);
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from an IngestionFailureEvent message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {google.pubsub.v1.IngestionFailureEvent} message IngestionFailureEvent
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    IngestionFailureEvent.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.topic = "";
+                            object.errorMessage = "";
+                        }
+                        if (message.topic != null && message.hasOwnProperty("topic"))
+                            object.topic = message.topic;
+                        if (message.errorMessage != null && message.hasOwnProperty("errorMessage"))
+                            object.errorMessage = message.errorMessage;
+                        if (message.cloudStorageFailure != null && message.hasOwnProperty("cloudStorageFailure")) {
+                            object.cloudStorageFailure = $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.toObject(message.cloudStorageFailure, options);
+                            if (options.oneofs)
+                                object.failure = "cloudStorageFailure";
+                        }
+                        if (message.awsMskFailure != null && message.hasOwnProperty("awsMskFailure")) {
+                            object.awsMskFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.toObject(message.awsMskFailure, options);
+                            if (options.oneofs)
+                                object.failure = "awsMskFailure";
+                        }
+                        if (message.azureEventHubsFailure != null && message.hasOwnProperty("azureEventHubsFailure")) {
+                            object.azureEventHubsFailure = $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.toObject(message.azureEventHubsFailure, options);
+                            if (options.oneofs)
+                                object.failure = "azureEventHubsFailure";
+                        }
+                        if (message.confluentCloudFailure != null && message.hasOwnProperty("confluentCloudFailure")) {
+                            object.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.toObject(message.confluentCloudFailure, options);
+                            if (options.oneofs)
+                                object.failure = "confluentCloudFailure";
+                        }
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this IngestionFailureEvent to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    IngestionFailureEvent.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for IngestionFailureEvent
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    IngestionFailureEvent.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent";
+                    };
+    
+                    IngestionFailureEvent.ApiViolationReason = (function() {
+    
+                        /**
+                         * Properties of an ApiViolationReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IApiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new ApiViolationReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an ApiViolationReason.
+                         * @implements IApiViolationReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason=} [properties] Properties to set
+                         */
+                        function ApiViolationReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * Creates a new ApiViolationReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} ApiViolationReason instance
+                         */
+                        ApiViolationReason.create = function create(properties) {
+                            return new ApiViolationReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified ApiViolationReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason} message ApiViolationReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ApiViolationReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified ApiViolationReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason} message ApiViolationReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ApiViolationReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an ApiViolationReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} ApiViolationReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ApiViolationReason.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an ApiViolationReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} ApiViolationReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ApiViolationReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an ApiViolationReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        ApiViolationReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an ApiViolationReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} ApiViolationReason
+                         */
+                        ApiViolationReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason)
+                                return object;
+                            return new $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason();
+                        };
+    
+                        /**
+                         * Creates a plain object from an ApiViolationReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ApiViolationReason} message ApiViolationReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        ApiViolationReason.toObject = function toObject() {
+                            return {};
+                        };
+    
+                        /**
+                         * Converts this ApiViolationReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        ApiViolationReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for ApiViolationReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ApiViolationReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        ApiViolationReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.ApiViolationReason";
+                        };
+    
+                        return ApiViolationReason;
+                    })();
+    
+                    IngestionFailureEvent.AvroFailureReason = (function() {
+    
+                        /**
+                         * Properties of an AvroFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IAvroFailureReason
+                         */
+    
+                        /**
+                         * Constructs a new AvroFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an AvroFailureReason.
+                         * @implements IAvroFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason=} [properties] Properties to set
+                         */
+                        function AvroFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * Creates a new AvroFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} AvroFailureReason instance
+                         */
+                        AvroFailureReason.create = function create(properties) {
+                            return new AvroFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AvroFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason} message AvroFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AvroFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AvroFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason} message AvroFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AvroFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AvroFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} AvroFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AvroFailureReason.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AvroFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} AvroFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AvroFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AvroFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AvroFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AvroFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} AvroFailureReason
+                         */
+                        AvroFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason)
+                                return object;
+                            return new $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason();
+                        };
+    
+                        /**
+                         * Creates a plain object from an AvroFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.AvroFailureReason} message AvroFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AvroFailureReason.toObject = function toObject() {
+                            return {};
+                        };
+    
+                        /**
+                         * Converts this AvroFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AvroFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AvroFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AvroFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AvroFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.AvroFailureReason";
+                        };
+    
+                        return AvroFailureReason;
+                    })();
+    
+                    IngestionFailureEvent.CloudStorageFailure = (function() {
+    
+                        /**
+                         * Properties of a CloudStorageFailure.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface ICloudStorageFailure
+                         * @property {string|null} [bucket] CloudStorageFailure bucket
+                         * @property {string|null} [objectName] CloudStorageFailure objectName
+                         * @property {number|Long|null} [objectGeneration] CloudStorageFailure objectGeneration
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason|null} [avroFailureReason] CloudStorageFailure avroFailureReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] CloudStorageFailure apiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new CloudStorageFailure.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents a CloudStorageFailure.
+                         * @implements ICloudStorageFailure
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure=} [properties] Properties to set
+                         */
+                        function CloudStorageFailure(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * CloudStorageFailure bucket.
+                         * @member {string} bucket
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.bucket = "";
+    
+                        /**
+                         * CloudStorageFailure objectName.
+                         * @member {string} objectName
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.objectName = "";
+    
+                        /**
+                         * CloudStorageFailure objectGeneration.
+                         * @member {number|Long} objectGeneration
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.objectGeneration = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * CloudStorageFailure avroFailureReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason|null|undefined} avroFailureReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.avroFailureReason = null;
+    
+                        /**
+                         * CloudStorageFailure apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.apiViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * CloudStorageFailure reason.
+                         * @member {"avroFailureReason"|"apiViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        Object.defineProperty(CloudStorageFailure.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["avroFailureReason", "apiViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new CloudStorageFailure instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} CloudStorageFailure instance
+                         */
+                        CloudStorageFailure.create = function create(properties) {
+                            return new CloudStorageFailure(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified CloudStorageFailure message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure} message CloudStorageFailure message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        CloudStorageFailure.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.bucket != null && Object.hasOwnProperty.call(message, "bucket"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.bucket);
+                            if (message.objectName != null && Object.hasOwnProperty.call(message, "objectName"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.objectName);
+                            if (message.objectGeneration != null && Object.hasOwnProperty.call(message, "objectGeneration"))
+                                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.objectGeneration);
+                            if (message.avroFailureReason != null && Object.hasOwnProperty.call(message, "avroFailureReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.encode(message.avroFailureReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified CloudStorageFailure message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ICloudStorageFailure} message CloudStorageFailure message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        CloudStorageFailure.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a CloudStorageFailure message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} CloudStorageFailure
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        CloudStorageFailure.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.bucket = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.objectName = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.objectGeneration = reader.int64();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.avroFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 6: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a CloudStorageFailure message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} CloudStorageFailure
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        CloudStorageFailure.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a CloudStorageFailure message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        CloudStorageFailure.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.bucket != null && message.hasOwnProperty("bucket"))
+                                if (!$util.isString(message.bucket))
+                                    return "bucket: string expected";
+                            if (message.objectName != null && message.hasOwnProperty("objectName"))
+                                if (!$util.isString(message.objectName))
+                                    return "objectName: string expected";
+                            if (message.objectGeneration != null && message.hasOwnProperty("objectGeneration"))
+                                if (!$util.isInteger(message.objectGeneration) && !(message.objectGeneration && $util.isInteger(message.objectGeneration.low) && $util.isInteger(message.objectGeneration.high)))
+                                    return "objectGeneration: integer|Long expected";
+                            if (message.avroFailureReason != null && message.hasOwnProperty("avroFailureReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.verify(message.avroFailureReason);
+                                    if (error)
+                                        return "avroFailureReason." + error;
+                                }
+                            }
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a CloudStorageFailure message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} CloudStorageFailure
+                         */
+                        CloudStorageFailure.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure();
+                            if (object.bucket != null)
+                                message.bucket = String(object.bucket);
+                            if (object.objectName != null)
+                                message.objectName = String(object.objectName);
+                            if (object.objectGeneration != null)
+                                if ($util.Long)
+                                    (message.objectGeneration = $util.Long.fromValue(object.objectGeneration)).unsigned = false;
+                                else if (typeof object.objectGeneration === "string")
+                                    message.objectGeneration = parseInt(object.objectGeneration, 10);
+                                else if (typeof object.objectGeneration === "number")
+                                    message.objectGeneration = object.objectGeneration;
+                                else if (typeof object.objectGeneration === "object")
+                                    message.objectGeneration = new $util.LongBits(object.objectGeneration.low >>> 0, object.objectGeneration.high >>> 0).toNumber();
+                            if (object.avroFailureReason != null) {
+                                if (typeof object.avroFailureReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.avroFailureReason: object expected");
+                                message.avroFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.fromObject(object.avroFailureReason);
+                            }
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a CloudStorageFailure message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure} message CloudStorageFailure
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        CloudStorageFailure.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.bucket = "";
+                                object.objectName = "";
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.objectGeneration = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.objectGeneration = options.longs === String ? "0" : 0;
+                            }
+                            if (message.bucket != null && message.hasOwnProperty("bucket"))
+                                object.bucket = message.bucket;
+                            if (message.objectName != null && message.hasOwnProperty("objectName"))
+                                object.objectName = message.objectName;
+                            if (message.objectGeneration != null && message.hasOwnProperty("objectGeneration"))
+                                if (typeof message.objectGeneration === "number")
+                                    object.objectGeneration = options.longs === String ? String(message.objectGeneration) : message.objectGeneration;
+                                else
+                                    object.objectGeneration = options.longs === String ? $util.Long.prototype.toString.call(message.objectGeneration) : options.longs === Number ? new $util.LongBits(message.objectGeneration.low >>> 0, message.objectGeneration.high >>> 0).toNumber() : message.objectGeneration;
+                            if (message.avroFailureReason != null && message.hasOwnProperty("avroFailureReason")) {
+                                object.avroFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.toObject(message.avroFailureReason, options);
+                                if (options.oneofs)
+                                    object.reason = "avroFailureReason";
+                            }
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this CloudStorageFailure to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        CloudStorageFailure.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for CloudStorageFailure
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        CloudStorageFailure.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure";
+                        };
+    
+                        return CloudStorageFailure;
+                    })();
+    
+                    IngestionFailureEvent.AwsMskFailureReason = (function() {
+    
+                        /**
+                         * Properties of an AwsMskFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IAwsMskFailureReason
+                         * @property {string|null} [clusterArn] AwsMskFailureReason clusterArn
+                         * @property {string|null} [kafkaTopic] AwsMskFailureReason kafkaTopic
+                         * @property {number|Long|null} [partitionId] AwsMskFailureReason partitionId
+                         * @property {number|Long|null} [offset] AwsMskFailureReason offset
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AwsMskFailureReason apiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new AwsMskFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an AwsMskFailureReason.
+                         * @implements IAwsMskFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason=} [properties] Properties to set
+                         */
+                        function AwsMskFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AwsMskFailureReason clusterArn.
+                         * @member {string} clusterArn
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.clusterArn = "";
+    
+                        /**
+                         * AwsMskFailureReason kafkaTopic.
+                         * @member {string} kafkaTopic
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.kafkaTopic = "";
+    
+                        /**
+                         * AwsMskFailureReason partitionId.
+                         * @member {number|Long} partitionId
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.partitionId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * AwsMskFailureReason offset.
+                         * @member {number|Long} offset
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.offset = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * AwsMskFailureReason apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.apiViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * AwsMskFailureReason reason.
+                         * @member {"apiViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        Object.defineProperty(AwsMskFailureReason.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new AwsMskFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} AwsMskFailureReason instance
+                         */
+                        AwsMskFailureReason.create = function create(properties) {
+                            return new AwsMskFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AwsMskFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason} message AwsMskFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsMskFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.clusterArn != null && Object.hasOwnProperty.call(message, "clusterArn"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.clusterArn);
+                            if (message.kafkaTopic != null && Object.hasOwnProperty.call(message, "kafkaTopic"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.kafkaTopic);
+                            if (message.partitionId != null && Object.hasOwnProperty.call(message, "partitionId"))
+                                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.partitionId);
+                            if (message.offset != null && Object.hasOwnProperty.call(message, "offset"))
+                                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AwsMskFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason} message AwsMskFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsMskFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AwsMskFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} AwsMskFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsMskFailureReason.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.clusterArn = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.kafkaTopic = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.partitionId = reader.int64();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.offset = reader.int64();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AwsMskFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} AwsMskFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsMskFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AwsMskFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AwsMskFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.clusterArn != null && message.hasOwnProperty("clusterArn"))
+                                if (!$util.isString(message.clusterArn))
+                                    return "clusterArn: string expected";
+                            if (message.kafkaTopic != null && message.hasOwnProperty("kafkaTopic"))
+                                if (!$util.isString(message.kafkaTopic))
+                                    return "kafkaTopic: string expected";
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (!$util.isInteger(message.partitionId) && !(message.partitionId && $util.isInteger(message.partitionId.low) && $util.isInteger(message.partitionId.high)))
+                                    return "partitionId: integer|Long expected";
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (!$util.isInteger(message.offset) && !(message.offset && $util.isInteger(message.offset.low) && $util.isInteger(message.offset.high)))
+                                    return "offset: integer|Long expected";
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AwsMskFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} AwsMskFailureReason
+                         */
+                        AwsMskFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason();
+                            if (object.clusterArn != null)
+                                message.clusterArn = String(object.clusterArn);
+                            if (object.kafkaTopic != null)
+                                message.kafkaTopic = String(object.kafkaTopic);
+                            if (object.partitionId != null)
+                                if ($util.Long)
+                                    (message.partitionId = $util.Long.fromValue(object.partitionId)).unsigned = false;
+                                else if (typeof object.partitionId === "string")
+                                    message.partitionId = parseInt(object.partitionId, 10);
+                                else if (typeof object.partitionId === "number")
+                                    message.partitionId = object.partitionId;
+                                else if (typeof object.partitionId === "object")
+                                    message.partitionId = new $util.LongBits(object.partitionId.low >>> 0, object.partitionId.high >>> 0).toNumber();
+                            if (object.offset != null)
+                                if ($util.Long)
+                                    (message.offset = $util.Long.fromValue(object.offset)).unsigned = false;
+                                else if (typeof object.offset === "string")
+                                    message.offset = parseInt(object.offset, 10);
+                                else if (typeof object.offset === "number")
+                                    message.offset = object.offset;
+                                else if (typeof object.offset === "object")
+                                    message.offset = new $util.LongBits(object.offset.low >>> 0, object.offset.high >>> 0).toNumber();
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AwsMskFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason} message AwsMskFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AwsMskFailureReason.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.clusterArn = "";
+                                object.kafkaTopic = "";
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.partitionId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.partitionId = options.longs === String ? "0" : 0;
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.offset = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.offset = options.longs === String ? "0" : 0;
+                            }
+                            if (message.clusterArn != null && message.hasOwnProperty("clusterArn"))
+                                object.clusterArn = message.clusterArn;
+                            if (message.kafkaTopic != null && message.hasOwnProperty("kafkaTopic"))
+                                object.kafkaTopic = message.kafkaTopic;
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (typeof message.partitionId === "number")
+                                    object.partitionId = options.longs === String ? String(message.partitionId) : message.partitionId;
+                                else
+                                    object.partitionId = options.longs === String ? $util.Long.prototype.toString.call(message.partitionId) : options.longs === Number ? new $util.LongBits(message.partitionId.low >>> 0, message.partitionId.high >>> 0).toNumber() : message.partitionId;
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (typeof message.offset === "number")
+                                    object.offset = options.longs === String ? String(message.offset) : message.offset;
+                                else
+                                    object.offset = options.longs === String ? $util.Long.prototype.toString.call(message.offset) : options.longs === Number ? new $util.LongBits(message.offset.low >>> 0, message.offset.high >>> 0).toNumber() : message.offset;
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AwsMskFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AwsMskFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AwsMskFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AwsMskFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason";
+                        };
+    
+                        return AwsMskFailureReason;
+                    })();
+    
+                    IngestionFailureEvent.AzureEventHubsFailureReason = (function() {
+    
+                        /**
+                         * Properties of an AzureEventHubsFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IAzureEventHubsFailureReason
+                         * @property {string|null} [namespace] AzureEventHubsFailureReason namespace
+                         * @property {string|null} [eventHub] AzureEventHubsFailureReason eventHub
+                         * @property {number|Long|null} [partitionId] AzureEventHubsFailureReason partitionId
+                         * @property {number|Long|null} [offset] AzureEventHubsFailureReason offset
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AzureEventHubsFailureReason apiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new AzureEventHubsFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an AzureEventHubsFailureReason.
+                         * @implements IAzureEventHubsFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason=} [properties] Properties to set
+                         */
+                        function AzureEventHubsFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AzureEventHubsFailureReason namespace.
+                         * @member {string} namespace
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.namespace = "";
+    
+                        /**
+                         * AzureEventHubsFailureReason eventHub.
+                         * @member {string} eventHub
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.eventHub = "";
+    
+                        /**
+                         * AzureEventHubsFailureReason partitionId.
+                         * @member {number|Long} partitionId
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.partitionId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * AzureEventHubsFailureReason offset.
+                         * @member {number|Long} offset
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.offset = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * AzureEventHubsFailureReason apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.apiViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * AzureEventHubsFailureReason reason.
+                         * @member {"apiViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        Object.defineProperty(AzureEventHubsFailureReason.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new AzureEventHubsFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} AzureEventHubsFailureReason instance
+                         */
+                        AzureEventHubsFailureReason.create = function create(properties) {
+                            return new AzureEventHubsFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AzureEventHubsFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason} message AzureEventHubsFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AzureEventHubsFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.namespace != null && Object.hasOwnProperty.call(message, "namespace"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.namespace);
+                            if (message.eventHub != null && Object.hasOwnProperty.call(message, "eventHub"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.eventHub);
+                            if (message.partitionId != null && Object.hasOwnProperty.call(message, "partitionId"))
+                                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.partitionId);
+                            if (message.offset != null && Object.hasOwnProperty.call(message, "offset"))
+                                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AzureEventHubsFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason} message AzureEventHubsFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AzureEventHubsFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AzureEventHubsFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} AzureEventHubsFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AzureEventHubsFailureReason.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.namespace = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.eventHub = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.partitionId = reader.int64();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.offset = reader.int64();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AzureEventHubsFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} AzureEventHubsFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AzureEventHubsFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AzureEventHubsFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AzureEventHubsFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                                if (!$util.isString(message.namespace))
+                                    return "namespace: string expected";
+                            if (message.eventHub != null && message.hasOwnProperty("eventHub"))
+                                if (!$util.isString(message.eventHub))
+                                    return "eventHub: string expected";
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (!$util.isInteger(message.partitionId) && !(message.partitionId && $util.isInteger(message.partitionId.low) && $util.isInteger(message.partitionId.high)))
+                                    return "partitionId: integer|Long expected";
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (!$util.isInteger(message.offset) && !(message.offset && $util.isInteger(message.offset.low) && $util.isInteger(message.offset.high)))
+                                    return "offset: integer|Long expected";
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AzureEventHubsFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} AzureEventHubsFailureReason
+                         */
+                        AzureEventHubsFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason();
+                            if (object.namespace != null)
+                                message.namespace = String(object.namespace);
+                            if (object.eventHub != null)
+                                message.eventHub = String(object.eventHub);
+                            if (object.partitionId != null)
+                                if ($util.Long)
+                                    (message.partitionId = $util.Long.fromValue(object.partitionId)).unsigned = false;
+                                else if (typeof object.partitionId === "string")
+                                    message.partitionId = parseInt(object.partitionId, 10);
+                                else if (typeof object.partitionId === "number")
+                                    message.partitionId = object.partitionId;
+                                else if (typeof object.partitionId === "object")
+                                    message.partitionId = new $util.LongBits(object.partitionId.low >>> 0, object.partitionId.high >>> 0).toNumber();
+                            if (object.offset != null)
+                                if ($util.Long)
+                                    (message.offset = $util.Long.fromValue(object.offset)).unsigned = false;
+                                else if (typeof object.offset === "string")
+                                    message.offset = parseInt(object.offset, 10);
+                                else if (typeof object.offset === "number")
+                                    message.offset = object.offset;
+                                else if (typeof object.offset === "object")
+                                    message.offset = new $util.LongBits(object.offset.low >>> 0, object.offset.high >>> 0).toNumber();
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AzureEventHubsFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason} message AzureEventHubsFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AzureEventHubsFailureReason.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.namespace = "";
+                                object.eventHub = "";
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.partitionId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.partitionId = options.longs === String ? "0" : 0;
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.offset = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.offset = options.longs === String ? "0" : 0;
+                            }
+                            if (message.namespace != null && message.hasOwnProperty("namespace"))
+                                object.namespace = message.namespace;
+                            if (message.eventHub != null && message.hasOwnProperty("eventHub"))
+                                object.eventHub = message.eventHub;
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (typeof message.partitionId === "number")
+                                    object.partitionId = options.longs === String ? String(message.partitionId) : message.partitionId;
+                                else
+                                    object.partitionId = options.longs === String ? $util.Long.prototype.toString.call(message.partitionId) : options.longs === Number ? new $util.LongBits(message.partitionId.low >>> 0, message.partitionId.high >>> 0).toNumber() : message.partitionId;
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (typeof message.offset === "number")
+                                    object.offset = options.longs === String ? String(message.offset) : message.offset;
+                                else
+                                    object.offset = options.longs === String ? $util.Long.prototype.toString.call(message.offset) : options.longs === Number ? new $util.LongBits(message.offset.low >>> 0, message.offset.high >>> 0).toNumber() : message.offset;
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AzureEventHubsFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AzureEventHubsFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AzureEventHubsFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AzureEventHubsFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason";
+                        };
+    
+                        return AzureEventHubsFailureReason;
+                    })();
+    
+                    IngestionFailureEvent.ConfluentCloudFailureReason = (function() {
+    
+                        /**
+                         * Properties of a ConfluentCloudFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IConfluentCloudFailureReason
+                         * @property {string|null} [clusterId] ConfluentCloudFailureReason clusterId
+                         * @property {string|null} [kafkaTopic] ConfluentCloudFailureReason kafkaTopic
+                         * @property {number|Long|null} [partitionId] ConfluentCloudFailureReason partitionId
+                         * @property {number|Long|null} [offset] ConfluentCloudFailureReason offset
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] ConfluentCloudFailureReason apiViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new ConfluentCloudFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents a ConfluentCloudFailureReason.
+                         * @implements IConfluentCloudFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason=} [properties] Properties to set
+                         */
+                        function ConfluentCloudFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * ConfluentCloudFailureReason clusterId.
+                         * @member {string} clusterId
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.clusterId = "";
+    
+                        /**
+                         * ConfluentCloudFailureReason kafkaTopic.
+                         * @member {string} kafkaTopic
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.kafkaTopic = "";
+    
+                        /**
+                         * ConfluentCloudFailureReason partitionId.
+                         * @member {number|Long} partitionId
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.partitionId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * ConfluentCloudFailureReason offset.
+                         * @member {number|Long} offset
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.offset = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                        /**
+                         * ConfluentCloudFailureReason apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.apiViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * ConfluentCloudFailureReason reason.
+                         * @member {"apiViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        Object.defineProperty(ConfluentCloudFailureReason.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new ConfluentCloudFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} ConfluentCloudFailureReason instance
+                         */
+                        ConfluentCloudFailureReason.create = function create(properties) {
+                            return new ConfluentCloudFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified ConfluentCloudFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason} message ConfluentCloudFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ConfluentCloudFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.clusterId != null && Object.hasOwnProperty.call(message, "clusterId"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.clusterId);
+                            if (message.kafkaTopic != null && Object.hasOwnProperty.call(message, "kafkaTopic"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.kafkaTopic);
+                            if (message.partitionId != null && Object.hasOwnProperty.call(message, "partitionId"))
+                                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.partitionId);
+                            if (message.offset != null && Object.hasOwnProperty.call(message, "offset"))
+                                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified ConfluentCloudFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason} message ConfluentCloudFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        ConfluentCloudFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a ConfluentCloudFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} ConfluentCloudFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ConfluentCloudFailureReason.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.clusterId = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.kafkaTopic = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.partitionId = reader.int64();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.offset = reader.int64();
+                                        break;
+                                    }
+                                case 5: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a ConfluentCloudFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} ConfluentCloudFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        ConfluentCloudFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a ConfluentCloudFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        ConfluentCloudFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.clusterId != null && message.hasOwnProperty("clusterId"))
+                                if (!$util.isString(message.clusterId))
+                                    return "clusterId: string expected";
+                            if (message.kafkaTopic != null && message.hasOwnProperty("kafkaTopic"))
+                                if (!$util.isString(message.kafkaTopic))
+                                    return "kafkaTopic: string expected";
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (!$util.isInteger(message.partitionId) && !(message.partitionId && $util.isInteger(message.partitionId.low) && $util.isInteger(message.partitionId.high)))
+                                    return "partitionId: integer|Long expected";
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (!$util.isInteger(message.offset) && !(message.offset && $util.isInteger(message.offset.low) && $util.isInteger(message.offset.high)))
+                                    return "offset: integer|Long expected";
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a ConfluentCloudFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} ConfluentCloudFailureReason
+                         */
+                        ConfluentCloudFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason();
+                            if (object.clusterId != null)
+                                message.clusterId = String(object.clusterId);
+                            if (object.kafkaTopic != null)
+                                message.kafkaTopic = String(object.kafkaTopic);
+                            if (object.partitionId != null)
+                                if ($util.Long)
+                                    (message.partitionId = $util.Long.fromValue(object.partitionId)).unsigned = false;
+                                else if (typeof object.partitionId === "string")
+                                    message.partitionId = parseInt(object.partitionId, 10);
+                                else if (typeof object.partitionId === "number")
+                                    message.partitionId = object.partitionId;
+                                else if (typeof object.partitionId === "object")
+                                    message.partitionId = new $util.LongBits(object.partitionId.low >>> 0, object.partitionId.high >>> 0).toNumber();
+                            if (object.offset != null)
+                                if ($util.Long)
+                                    (message.offset = $util.Long.fromValue(object.offset)).unsigned = false;
+                                else if (typeof object.offset === "string")
+                                    message.offset = parseInt(object.offset, 10);
+                                else if (typeof object.offset === "number")
+                                    message.offset = object.offset;
+                                else if (typeof object.offset === "object")
+                                    message.offset = new $util.LongBits(object.offset.low >>> 0, object.offset.high >>> 0).toNumber();
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from a ConfluentCloudFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason} message ConfluentCloudFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        ConfluentCloudFailureReason.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.clusterId = "";
+                                object.kafkaTopic = "";
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.partitionId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.partitionId = options.longs === String ? "0" : 0;
+                                if ($util.Long) {
+                                    var long = new $util.Long(0, 0, false);
+                                    object.offset = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                                } else
+                                    object.offset = options.longs === String ? "0" : 0;
+                            }
+                            if (message.clusterId != null && message.hasOwnProperty("clusterId"))
+                                object.clusterId = message.clusterId;
+                            if (message.kafkaTopic != null && message.hasOwnProperty("kafkaTopic"))
+                                object.kafkaTopic = message.kafkaTopic;
+                            if (message.partitionId != null && message.hasOwnProperty("partitionId"))
+                                if (typeof message.partitionId === "number")
+                                    object.partitionId = options.longs === String ? String(message.partitionId) : message.partitionId;
+                                else
+                                    object.partitionId = options.longs === String ? $util.Long.prototype.toString.call(message.partitionId) : options.longs === Number ? new $util.LongBits(message.partitionId.low >>> 0, message.partitionId.high >>> 0).toNumber() : message.partitionId;
+                            if (message.offset != null && message.hasOwnProperty("offset"))
+                                if (typeof message.offset === "number")
+                                    object.offset = options.longs === String ? String(message.offset) : message.offset;
+                                else
+                                    object.offset = options.longs === String ? $util.Long.prototype.toString.call(message.offset) : options.longs === Number ? new $util.LongBits(message.offset.low >>> 0, message.offset.high >>> 0).toNumber() : message.offset;
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this ConfluentCloudFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        ConfluentCloudFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for ConfluentCloudFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        ConfluentCloudFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason";
+                        };
+    
+                        return ConfluentCloudFailureReason;
+                    })();
+    
+                    return IngestionFailureEvent;
                 })();
     
                 v1.Topic = (function() {
@@ -3039,12 +6490,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Topic.decode = function decode(reader, length) {
+                    Topic.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Topic(), key, value;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -3479,12 +6932,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    PubsubMessage.decode = function decode(reader, length) {
+                    PubsubMessage.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PubsubMessage(), key, value;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.data = reader.bytes();
@@ -3779,12 +7234,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    GetTopicRequest.decode = function decode(reader, length) {
+                    GetTopicRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.GetTopicRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.topic = reader.string();
@@ -3993,12 +7450,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    UpdateTopicRequest.decode = function decode(reader, length) {
+                    UpdateTopicRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.UpdateTopicRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.topic = $root.google.pubsub.v1.Topic.decode(reader, reader.uint32());
@@ -4232,12 +7691,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    PublishRequest.decode = function decode(reader, length) {
+                    PublishRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PublishRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.topic = reader.string();
@@ -4469,12 +7930,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    PublishResponse.decode = function decode(reader, length) {
+                    PublishResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PublishResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.messageIds && message.messageIds.length))
@@ -4708,12 +8171,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListTopicsRequest.decode = function decode(reader, length) {
+                    ListTopicsRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListTopicsRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.project = reader.string();
@@ -4949,12 +8414,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListTopicsResponse.decode = function decode(reader, length) {
+                    ListTopicsResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListTopicsResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.topics && message.topics.length))
@@ -5206,12 +8673,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListTopicSubscriptionsRequest.decode = function decode(reader, length) {
+                    ListTopicSubscriptionsRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListTopicSubscriptionsRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.topic = reader.string();
@@ -5447,12 +8916,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListTopicSubscriptionsResponse.decode = function decode(reader, length) {
+                    ListTopicSubscriptionsResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListTopicSubscriptionsResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.subscriptions && message.subscriptions.length))
@@ -5699,12 +9170,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListTopicSnapshotsRequest.decode = function decode(reader, length) {
+                    ListTopicSnapshotsRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListTopicSnapshotsRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.topic = reader.string();
@@ -5940,12 +9413,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListTopicSnapshotsResponse.decode = function decode(reader, length) {
+                    ListTopicSnapshotsResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListTopicSnapshotsResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.snapshots && message.snapshots.length))
@@ -6170,12 +9645,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    DeleteTopicRequest.decode = function decode(reader, length) {
+                    DeleteTopicRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DeleteTopicRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.topic = reader.string();
@@ -6373,12 +9850,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    DetachSubscriptionRequest.decode = function decode(reader, length) {
+                    DetachSubscriptionRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DetachSubscriptionRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -6565,12 +10044,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    DetachSubscriptionResponse.decode = function decode(reader, length) {
+                    DetachSubscriptionResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DetachSubscriptionResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             default:
                                 reader.skipType(tag & 7);
@@ -7514,12 +10995,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Subscription.decode = function decode(reader, length) {
+                    Subscription.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Subscription(), key, value;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -8061,12 +11544,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        AnalyticsHubSubscriptionInfo.decode = function decode(reader, length) {
+                        AnalyticsHubSubscriptionInfo.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         message.listing = reader.string();
@@ -8291,12 +11776,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    RetryPolicy.decode = function decode(reader, length) {
+                    RetryPolicy.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.RetryPolicy();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.minimumBackoff = $root.google.protobuf.Duration.decode(reader, reader.uint32());
@@ -8528,12 +12015,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    DeadLetterPolicy.decode = function decode(reader, length) {
+                    DeadLetterPolicy.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DeadLetterPolicy();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.deadLetterTopic = reader.string();
@@ -8744,12 +12233,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ExpirationPolicy.decode = function decode(reader, length) {
+                    ExpirationPolicy.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ExpirationPolicy();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.ttl = $root.google.protobuf.Duration.decode(reader, reader.uint32());
@@ -9023,12 +12514,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    PushConfig.decode = function decode(reader, length) {
+                    PushConfig.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PushConfig(), key, value;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.pushEndpoint = reader.string();
@@ -9349,12 +12842,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        OidcToken.decode = function decode(reader, length) {
+                        OidcToken.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PushConfig.OidcToken();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         message.serviceAccountEmail = reader.string();
@@ -9554,12 +13049,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        PubsubWrapper.decode = function decode(reader, length) {
+                        PubsubWrapper.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PushConfig.PubsubWrapper();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 default:
                                     reader.skipType(tag & 7);
@@ -9740,12 +13237,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        NoWrapper.decode = function decode(reader, length) {
+                        NoWrapper.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PushConfig.NoWrapper();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         message.writeMetadata = reader.bool();
@@ -10012,12 +13511,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    BigQueryConfig.decode = function decode(reader, length) {
+                    BigQueryConfig.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.BigQueryConfig();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.table = reader.string();
@@ -10473,12 +13974,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    CloudStorageConfig.decode = function decode(reader, length) {
+                    CloudStorageConfig.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CloudStorageConfig();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.bucket = reader.string();
@@ -10878,12 +14381,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        TextConfig.decode = function decode(reader, length) {
+                        TextConfig.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CloudStorageConfig.TextConfig();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 default:
                                     reader.skipType(tag & 7);
@@ -11075,12 +14580,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        AvroConfig.decode = function decode(reader, length) {
+                        AvroConfig.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CloudStorageConfig.AvroConfig();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         message.writeMetadata = reader.bool();
@@ -11338,12 +14845,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ReceivedMessage.decode = function decode(reader, length) {
+                    ReceivedMessage.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ReceivedMessage();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.ackId = reader.string();
@@ -11571,12 +15080,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    GetSubscriptionRequest.decode = function decode(reader, length) {
+                    GetSubscriptionRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.GetSubscriptionRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -11785,12 +15296,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    UpdateSubscriptionRequest.decode = function decode(reader, length) {
+                    UpdateSubscriptionRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.UpdateSubscriptionRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = $root.google.pubsub.v1.Subscription.decode(reader, reader.uint32());
@@ -12033,12 +15546,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListSubscriptionsRequest.decode = function decode(reader, length) {
+                    ListSubscriptionsRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSubscriptionsRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.project = reader.string();
@@ -12274,12 +15789,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListSubscriptionsResponse.decode = function decode(reader, length) {
+                    ListSubscriptionsResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSubscriptionsResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.subscriptions && message.subscriptions.length))
@@ -12509,12 +16026,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    DeleteSubscriptionRequest.decode = function decode(reader, length) {
+                    DeleteSubscriptionRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DeleteSubscriptionRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -12723,12 +16242,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ModifyPushConfigRequest.decode = function decode(reader, length) {
+                    ModifyPushConfigRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ModifyPushConfigRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -12966,12 +16487,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    PullRequest.decode = function decode(reader, length) {
+                    PullRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PullRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -13196,12 +16719,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    PullResponse.decode = function decode(reader, length) {
+                    PullResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.PullResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.receivedMessages && message.receivedMessages.length))
@@ -13442,12 +16967,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ModifyAckDeadlineRequest.decode = function decode(reader, length) {
+                    ModifyAckDeadlineRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ModifyAckDeadlineRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -13698,12 +17225,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    AcknowledgeRequest.decode = function decode(reader, length) {
+                    AcknowledgeRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.AcknowledgeRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -14014,12 +17543,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    StreamingPullRequest.decode = function decode(reader, length) {
+                    StreamingPullRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -14414,12 +17945,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    StreamingPullResponse.decode = function decode(reader, length) {
+                    StreamingPullResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.receivedMessages && message.receivedMessages.length))
@@ -14727,12 +18260,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        AcknowledgeConfirmation.decode = function decode(reader, length) {
+                        AcknowledgeConfirmation.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullResponse.AcknowledgeConfirmation();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         if (!(message.ackIds && message.ackIds.length))
@@ -15051,12 +18586,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        ModifyAckDeadlineConfirmation.decode = function decode(reader, length) {
+                        ModifyAckDeadlineConfirmation.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullResponse.ModifyAckDeadlineConfirmation();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         if (!(message.ackIds && message.ackIds.length))
@@ -15332,12 +18869,14 @@
                          * @throws {Error} If the payload is not a reader or valid buffer
                          * @throws {$protobuf.util.ProtocolError} If required fields are missing
                          */
-                        SubscriptionProperties.decode = function decode(reader, length) {
+                        SubscriptionProperties.decode = function decode(reader, length, error) {
                             if (!(reader instanceof $Reader))
                                 reader = $Reader.create(reader);
                             var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.StreamingPullResponse.SubscriptionProperties();
                             while (reader.pos < end) {
                                 var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
                                 switch (tag >>> 3) {
                                 case 1: {
                                         message.exactlyOnceDeliveryEnabled = reader.bool();
@@ -15575,12 +19114,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    CreateSnapshotRequest.decode = function decode(reader, length) {
+                    CreateSnapshotRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CreateSnapshotRequest(), key, value;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -15848,12 +19389,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    UpdateSnapshotRequest.decode = function decode(reader, length) {
+                    UpdateSnapshotRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.UpdateSnapshotRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.snapshot = $root.google.pubsub.v1.Snapshot.decode(reader, reader.uint32());
@@ -16109,12 +19652,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Snapshot.decode = function decode(reader, length) {
+                    Snapshot.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Snapshot(), key, value;
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -16388,12 +19933,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    GetSnapshotRequest.decode = function decode(reader, length) {
+                    GetSnapshotRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.GetSnapshotRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.snapshot = reader.string();
@@ -16613,12 +20160,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListSnapshotsRequest.decode = function decode(reader, length) {
+                    ListSnapshotsRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSnapshotsRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.project = reader.string();
@@ -16854,12 +20403,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListSnapshotsResponse.decode = function decode(reader, length) {
+                    ListSnapshotsResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSnapshotsResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.snapshots && message.snapshots.length))
@@ -17089,12 +20640,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    DeleteSnapshotRequest.decode = function decode(reader, length) {
+                    DeleteSnapshotRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DeleteSnapshotRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.snapshot = reader.string();
@@ -17328,12 +20881,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    SeekRequest.decode = function decode(reader, length) {
+                    SeekRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.SeekRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.subscription = reader.string();
@@ -17561,12 +21116,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    SeekResponse.decode = function decode(reader, length) {
+                    SeekResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.SeekResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             default:
                                 reader.skipType(tag & 7);
@@ -18156,12 +21713,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Schema.decode = function decode(reader, length) {
+                    Schema.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.Schema();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -18491,12 +22050,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    CreateSchemaRequest.decode = function decode(reader, length) {
+                    CreateSchemaRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CreateSchemaRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.parent = reader.string();
@@ -18735,12 +22296,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    GetSchemaRequest.decode = function decode(reader, length) {
+                    GetSchemaRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.GetSchemaRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -19008,12 +22571,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListSchemasRequest.decode = function decode(reader, length) {
+                    ListSchemasRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSchemasRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.parent = reader.string();
@@ -19285,12 +22850,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListSchemasResponse.decode = function decode(reader, length) {
+                    ListSchemasResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSchemasResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.schemas && message.schemas.length))
@@ -19553,12 +23120,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListSchemaRevisionsRequest.decode = function decode(reader, length) {
+                    ListSchemaRevisionsRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSchemaRevisionsRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -19830,12 +23399,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ListSchemaRevisionsResponse.decode = function decode(reader, length) {
+                    ListSchemaRevisionsResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ListSchemaRevisionsResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.schemas && message.schemas.length))
@@ -20076,12 +23647,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    CommitSchemaRequest.decode = function decode(reader, length) {
+                    CommitSchemaRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.CommitSchemaRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -20308,12 +23881,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    RollbackSchemaRequest.decode = function decode(reader, length) {
+                    RollbackSchemaRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.RollbackSchemaRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -20535,12 +24110,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    DeleteSchemaRevisionRequest.decode = function decode(reader, length) {
+                    DeleteSchemaRevisionRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DeleteSchemaRevisionRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -20751,12 +24328,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    DeleteSchemaRequest.decode = function decode(reader, length) {
+                    DeleteSchemaRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.DeleteSchemaRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.name = reader.string();
@@ -20965,12 +24544,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ValidateSchemaRequest.decode = function decode(reader, length) {
+                    ValidateSchemaRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ValidateSchemaRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.parent = reader.string();
@@ -21175,12 +24756,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ValidateSchemaResponse.decode = function decode(reader, length) {
+                    ValidateSchemaResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ValidateSchemaResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             default:
                                 reader.skipType(tag & 7);
@@ -21419,12 +25002,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ValidateMessageRequest.decode = function decode(reader, length) {
+                    ValidateMessageRequest.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ValidateMessageRequest();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.parent = reader.string();
@@ -21710,12 +25295,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ValidateMessageResponse.decode = function decode(reader, length) {
+                    ValidateMessageResponse.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.ValidateMessageResponse();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             default:
                                 reader.skipType(tag & 7);
@@ -21940,12 +25527,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                Http.decode = function decode(reader, length) {
+                Http.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.Http();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 if (!(message.rules && message.rules.length))
@@ -22290,12 +25879,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                HttpRule.decode = function decode(reader, length) {
+                HttpRule.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.HttpRule();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.selector = reader.string();
@@ -22674,12 +26265,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                CustomHttpPattern.decode = function decode(reader, length) {
+                CustomHttpPattern.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.CustomHttpPattern();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.kind = reader.string();
@@ -22906,12 +26499,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                CommonLanguageSettings.decode = function decode(reader, length) {
+                CommonLanguageSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.CommonLanguageSettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.referenceDocsUri = reader.string();
@@ -23275,12 +26870,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                ClientLibrarySettings.decode = function decode(reader, length) {
+                ClientLibrarySettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.ClientLibrarySettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.version = reader.string();
@@ -23804,12 +27401,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                Publishing.decode = function decode(reader, length) {
+                Publishing.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.Publishing();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 2: {
                                 if (!(message.methodSettings && message.methodSettings.length))
@@ -24255,12 +27854,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                JavaSettings.decode = function decode(reader, length) {
+                JavaSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.JavaSettings(), key, value;
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.libraryPackage = reader.string();
@@ -24522,12 +28123,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                CppSettings.decode = function decode(reader, length) {
+                CppSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.CppSettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.common = $root.google.api.CommonLanguageSettings.decode(reader, reader.uint32());
@@ -24730,12 +28333,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                PhpSettings.decode = function decode(reader, length) {
+                PhpSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.PhpSettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.common = $root.google.api.CommonLanguageSettings.decode(reader, reader.uint32());
@@ -24938,12 +28543,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                PythonSettings.decode = function decode(reader, length) {
+                PythonSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.PythonSettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.common = $root.google.api.CommonLanguageSettings.decode(reader, reader.uint32());
@@ -25146,12 +28753,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                NodeSettings.decode = function decode(reader, length) {
+                NodeSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.NodeSettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.common = $root.google.api.CommonLanguageSettings.decode(reader, reader.uint32());
@@ -25419,12 +29028,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                DotnetSettings.decode = function decode(reader, length) {
+                DotnetSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.DotnetSettings(), key, value;
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.common = $root.google.api.CommonLanguageSettings.decode(reader, reader.uint32());
@@ -25798,12 +29409,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                RubySettings.decode = function decode(reader, length) {
+                RubySettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.RubySettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.common = $root.google.api.CommonLanguageSettings.decode(reader, reader.uint32());
@@ -26006,12 +29619,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                GoSettings.decode = function decode(reader, length) {
+                GoSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.GoSettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.common = $root.google.api.CommonLanguageSettings.decode(reader, reader.uint32());
@@ -26238,12 +29853,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                MethodSettings.decode = function decode(reader, length) {
+                MethodSettings.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.MethodSettings();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.selector = reader.string();
@@ -26516,12 +30133,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    LongRunning.decode = function decode(reader, length) {
+                    LongRunning.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.MethodSettings.LongRunning();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.initialPollDelay = $root.google.protobuf.Duration.decode(reader, reader.uint32());
@@ -26943,12 +30562,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                ResourceDescriptor.decode = function decode(reader, length) {
+                ResourceDescriptor.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.ResourceDescriptor();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.type = reader.string();
@@ -27338,12 +30959,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                ResourceReference.decode = function decode(reader, length) {
+                ResourceReference.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.api.ResourceReference();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.type = reader.string();
@@ -27568,12 +31191,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                FileDescriptorSet.decode = function decode(reader, length) {
+                FileDescriptorSet.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FileDescriptorSet();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 if (!(message.file && message.file.length))
@@ -27968,12 +31593,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                FileDescriptorProto.decode = function decode(reader, length) {
+                FileDescriptorProto.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FileDescriptorProto();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.name = reader.string();
@@ -28635,12 +32262,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                DescriptorProto.decode = function decode(reader, length) {
+                DescriptorProto.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.DescriptorProto();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.name = reader.string();
@@ -29120,12 +32749,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ExtensionRange.decode = function decode(reader, length) {
+                    ExtensionRange.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.DescriptorProto.ExtensionRange();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.start = reader.int32();
@@ -29364,12 +32995,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    ReservedRange.decode = function decode(reader, length) {
+                    ReservedRange.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.DescriptorProto.ReservedRange();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.start = reader.int32();
@@ -29620,12 +33253,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                ExtensionRangeOptions.decode = function decode(reader, length) {
+                ExtensionRangeOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.ExtensionRangeOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 999: {
                                 if (!(message.uninterpretedOption && message.uninterpretedOption.length))
@@ -29965,12 +33600,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Declaration.decode = function decode(reader, length) {
+                    Declaration.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.ExtensionRangeOptions.Declaration();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.number = reader.int32();
@@ -30344,12 +33981,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                FieldDescriptorProto.decode = function decode(reader, length) {
+                FieldDescriptorProto.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FieldDescriptorProto();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.name = reader.string();
@@ -30869,12 +34508,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                OneofDescriptorProto.decode = function decode(reader, length) {
+                OneofDescriptorProto.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.OneofDescriptorProto();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.name = reader.string();
@@ -31140,12 +34781,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                EnumDescriptorProto.decode = function decode(reader, length) {
+                EnumDescriptorProto.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.EnumDescriptorProto();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.name = reader.string();
@@ -31459,12 +35102,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    EnumReservedRange.decode = function decode(reader, length) {
+                    EnumReservedRange.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.EnumDescriptorProto.EnumReservedRange();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.start = reader.int32();
@@ -31700,12 +35345,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                EnumValueDescriptorProto.decode = function decode(reader, length) {
+                EnumValueDescriptorProto.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.EnumValueDescriptorProto();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.name = reader.string();
@@ -31957,12 +35604,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                ServiceDescriptorProto.decode = function decode(reader, length) {
+                ServiceDescriptorProto.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.ServiceDescriptorProto();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.name = reader.string();
@@ -32265,12 +35914,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                MethodDescriptorProto.decode = function decode(reader, length) {
+                MethodDescriptorProto.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.MethodDescriptorProto();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.name = reader.string();
@@ -32769,12 +36420,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                FileOptions.decode = function decode(reader, length) {
+                FileOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FileOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.javaPackage = reader.string();
@@ -33389,12 +37042,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                MessageOptions.decode = function decode(reader, length) {
+                MessageOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.MessageOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.messageSetWireFormat = reader.bool();
@@ -33869,12 +37524,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                FieldOptions.decode = function decode(reader, length) {
+                FieldOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FieldOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.ctype = reader.int32();
@@ -34600,12 +38257,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    EditionDefault.decode = function decode(reader, length) {
+                    EditionDefault.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FieldOptions.EditionDefault();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 3: {
                                     message.edition = reader.int32();
@@ -34896,12 +38555,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                OneofOptions.decode = function decode(reader, length) {
+                OneofOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.OneofOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.features = $root.google.protobuf.FeatureSet.decode(reader, reader.uint32());
@@ -35182,12 +38843,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                EnumOptions.decode = function decode(reader, length) {
+                EnumOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.EnumOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 2: {
                                 message.allowAlias = reader.bool();
@@ -35494,12 +39157,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                EnumValueOptions.decode = function decode(reader, length) {
+                EnumValueOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.EnumValueOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.deprecated = reader.bool();
@@ -35816,12 +39481,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                ServiceOptions.decode = function decode(reader, length) {
+                ServiceOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.ServiceOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 34: {
                                 message.features = $root.google.protobuf.FeatureSet.decode(reader, reader.uint32());
@@ -36164,12 +39831,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                MethodOptions.decode = function decode(reader, length) {
+                MethodOptions.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.MethodOptions();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 33: {
                                 message.deprecated = reader.bool();
@@ -36581,12 +40250,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                UninterpretedOption.decode = function decode(reader, length) {
+                UninterpretedOption.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.UninterpretedOption();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 2: {
                                 if (!(message.name && message.name.length))
@@ -36920,12 +40591,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    NamePart.decode = function decode(reader, length) {
+                    NamePart.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.UninterpretedOption.NamePart();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     message.namePart = reader.string();
@@ -37196,12 +40869,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                FeatureSet.decode = function decode(reader, length) {
+                FeatureSet.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FeatureSet();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.fieldPresence = reader.int32();
@@ -37731,12 +41406,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                FeatureSetDefaults.decode = function decode(reader, length) {
+                FeatureSetDefaults.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FeatureSetDefaults();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 if (!(message.defaults && message.defaults.length))
@@ -38115,12 +41792,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    FeatureSetEditionDefault.decode = function decode(reader, length) {
+                    FeatureSetEditionDefault.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 3: {
                                     message.edition = reader.int32();
@@ -38405,12 +42084,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                SourceCodeInfo.decode = function decode(reader, length) {
+                SourceCodeInfo.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.SourceCodeInfo();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 if (!(message.location && message.location.length))
@@ -38680,12 +42361,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Location.decode = function decode(reader, length) {
+                    Location.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.SourceCodeInfo.Location();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.path && message.path.length))
@@ -38991,12 +42674,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                GeneratedCodeInfo.decode = function decode(reader, length) {
+                GeneratedCodeInfo.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.GeneratedCodeInfo();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 if (!(message.annotation && message.annotation.length))
@@ -39259,12 +42944,14 @@
                      * @throws {Error} If the payload is not a reader or valid buffer
                      * @throws {$protobuf.util.ProtocolError} If required fields are missing
                      */
-                    Annotation.decode = function decode(reader, length) {
+                    Annotation.decode = function decode(reader, length, error) {
                         if (!(reader instanceof $Reader))
                             reader = $Reader.create(reader);
                         var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.GeneratedCodeInfo.Annotation();
                         while (reader.pos < end) {
                             var tag = reader.uint32();
+                            if (tag === error)
+                                break;
                             switch (tag >>> 3) {
                             case 1: {
                                     if (!(message.path && message.path.length))
@@ -39585,12 +43272,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                Duration.decode = function decode(reader, length) {
+                Duration.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.Duration();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.seconds = reader.int64();
@@ -39804,12 +43493,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                Empty.decode = function decode(reader, length) {
+                Empty.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.Empty();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         default:
                             reader.skipType(tag & 7);
@@ -39992,12 +43683,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                FieldMask.decode = function decode(reader, length) {
+                FieldMask.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.FieldMask();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 if (!(message.paths && message.paths.length))
@@ -40220,12 +43913,14 @@
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                Timestamp.decode = function decode(reader, length) {
+                Timestamp.decode = function decode(reader, length, error) {
                     if (!(reader instanceof $Reader))
                         reader = $Reader.create(reader);
                     var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.protobuf.Timestamp();
                     while (reader.pos < end) {
                         var tag = reader.uint32();
+                        if (tag === error)
+                            break;
                         switch (tag >>> 3) {
                         case 1: {
                                 message.seconds = reader.int64();

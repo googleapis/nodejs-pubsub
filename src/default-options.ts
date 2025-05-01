@@ -34,16 +34,16 @@ export const defaultOptions = {
     // The maximum length of time a message's lease will be extended by.
     maxAckDeadline: Duration.from({minutes: 10}),
 
-    // The maximum number of minutes that a message's lease will ever
+    // The maximum amount of time that a message's lease will ever
     // be extended.
-    maxExtensionMinutes: 60,
+    maxExtensionTime: Duration.from({minutes: 60}),
 
     // The maximum number of subscription streams/threads that will ever
     // be opened.
     maxStreams: 5,
 
     // The starting number of seconds that ack deadlines will be extended.
-    ackDeadline: 10,
+    startingAckDeadline: Duration.from({seconds: 10}),
   },
 
   publish: {
