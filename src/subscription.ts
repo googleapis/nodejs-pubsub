@@ -15,7 +15,7 @@
  */
 
 import * as extend from 'extend';
-import {CallOptions} from 'google-gax';
+import {CallOptions, Duration} from 'google-gax';
 import snakeCase = require('lodash.snakecase');
 
 import {google} from '../protos/protos';
@@ -61,6 +61,7 @@ export type SubscriptionMetadata = {
 
 export type SubscriptionOptions = SubscriberOptions & {topic?: Topic};
 export type SubscriptionCloseCallback = (err?: Error) => void;
+export type SubscriptionCloseOptions = {timeout?: Duration};
 
 type SubscriptionCallback = ResourceCallback<
   Subscription,
@@ -361,26 +362,37 @@ export class Subscription extends EventEmitter {
    * message events unless you call {Subscription#open} or add new message
    * listeners.
    *
+   * @param {object} [options] Options for the close operation.
+   * @param {google.protobuf.Duration | number} [options.timeout] Timeout for the close operation. This specifies the maximum amount of time in seconds to wait for the subscriber to drain/close. If not specified, the default is 300 seconds.
    * @param {function} [callback] The callback function.
    * @param {?error} callback.err An error returned while closing the
    *     Subscription.
    *
    * @example
    * ```
-   * subscription.close(err => {
+   * subscription.close({timeout: 60}, err => { // timeout in seconds
    *   if (err) {
    *     // Error handling omitted.
    *   }
    * });
    *
    * // If the callback is omitted a Promise will be returned.
-   * subscription.close().then(() => {});
+   * subscription.close({timeout: 60}).then(() => {}); // timeout in seconds
    * ```
    */
-  close(): Promise<void>;
+  close(options?: SubscriptionCloseOptions): Promise<void>;
   close(callback: SubscriptionCloseCallback): void;
-  close(callback?: SubscriptionCloseCallback): void | Promise<void> {
-    this._subscriber.close().then(() => callback!(), callback);
+  close(
+    options: SubscriptionCloseOptions,
+    callback: SubscriptionCloseCallback,
+  ): void;
+  close(
+    optsOrCallback?: SubscriptionCloseOptions | SubscriptionCloseCallback,
+    callback?: SubscriptionCloseCallback,
+  ): void | Promise<void> {
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+    this._subscriber.close(options).then(() => callback!(), callback);
   }
 
   /**
