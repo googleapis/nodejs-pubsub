@@ -90,7 +90,7 @@ export class FlowControlledPublisher {
       const waitPromise = this.flowControl.willSend(size, 1);
       return waitPromise.then(doPublish);
     } else {
-      this.flowControl.willSend(size, 1).then(() => {});
+      void this.flowControl.willSend(size, 1).then(() => {});
       doPublish();
       return null;
     }

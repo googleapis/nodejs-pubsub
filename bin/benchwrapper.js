@@ -76,5 +76,5 @@ server.bindAsync(
     } else {
       server.start();
     }
-  }
+  },
 );

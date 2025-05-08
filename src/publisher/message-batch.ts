@@ -59,7 +59,7 @@ export class MessageBatch {
 
   constructor(
     public options: BatchPublishOptions,
-    public topicName: string
+    public topicName: string,
   ) {
     this.messages = [];
     this.callbacks = [];
@@ -90,6 +90,12 @@ export class MessageBatch {
     tracing.PubsubSpans.createPublishSchedulerSpan(message);
   }
 
+  /**
+   * Ends the current batch, and returns the messages and callbacks we've queued up.
+   *
+   * @private
+   * @internal
+   */
   end(): BatchResults {
     this.messages.forEach(m => m.publishSchedulerSpan?.end());
     return {

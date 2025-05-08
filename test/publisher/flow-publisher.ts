@@ -60,17 +60,17 @@ describe('Flow control publisher', () => {
       parentSpan: tracing.PubsubSpans.createPublisherSpan(
         {},
         'projects/foo/topics/topic',
-        'tests'
+        'tests',
       ),
     };
-    fcp.publish(message as unknown as PubsubMessage);
+    await fcp.publish(message as unknown as PubsubMessage);
     assert.strictEqual(!!message.parentSpan, true);
   });
 
   it('should not create a flow span if no parent exists', async () => {
     const fcp = new fp.FlowControlledPublisher(publisher);
     const message = {data: Buffer.from('foo'), parentSpan: undefined};
-    fcp.publish(message as unknown as PubsubMessage);
+    await fcp.publish(message as unknown as PubsubMessage);
     assert.strictEqual(!message.parentSpan, true);
   });
 

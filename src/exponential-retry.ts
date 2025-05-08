@@ -170,7 +170,7 @@ export class ExponentialRetry<T> {
 
         next.retryInfo!.callback(
           next as unknown as T,
-          Duration.from({millis: now - next.retryInfo!.firstRetry})
+          Duration.from({millis: now - next.retryInfo!.firstRetry}),
         );
       } else {
         break;
