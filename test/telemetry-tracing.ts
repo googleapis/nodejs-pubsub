@@ -23,7 +23,7 @@ import {exporter} from './tracing';
 import {SpanKind} from '@opentelemetry/api';
 import sinon = require('sinon');
 import {PubsubMessage} from '../src/publisher';
-import { Duration } from '../src/temporal'
+import {Duration} from '../src/temporal'
 
 describe('OpenTelemetryTracer', () => {
   beforeEach(() => {
