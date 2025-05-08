@@ -297,7 +297,7 @@ export class PubsubSpans {
     params: AttributeParams,
     message?: PubsubMessage,
     caller?: string,
-    operation?: string
+    operation?: string,
   ): SpanAttributes {
     const destinationName = params.topicName ?? params.subName;
     const destinationId = params.topicId ?? params.subId;
@@ -368,7 +368,7 @@ export class PubsubSpans {
         topicInfo,
         message,
         caller,
-        'create'
+        'create',
       ),
     });
     if (topicInfo.topicId) {
@@ -408,7 +408,7 @@ export class PubsubSpans {
       subInfo,
       message,
       caller,
-      'receive'
+      'receive',
     );
     if (subInfo.subId) {
       attributes['messaging.destination.name'] = subInfo.subId;
@@ -477,7 +477,7 @@ export class PubsubSpans {
       getTopicInfo(topicName),
       undefined,
       caller,
-      'create'
+      'create',
     );
     const links: Link[] = messages
       .filter(m => m.parentSpan && isSampled(m.parentSpan))
@@ -520,7 +520,7 @@ export class PubsubSpans {
       subInfo,
       undefined,
       caller,
-      'receive'
+      'receive',
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))
@@ -568,7 +568,7 @@ export class PubsubSpans {
       subInfo,
       undefined,
       caller,
-      'receive'
+      'receive',
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))
