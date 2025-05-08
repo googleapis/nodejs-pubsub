@@ -19,7 +19,6 @@ import {
   Span,
   context,
   trace,
-  propagation,
   SpanKind,
   TextMapGetter,
   TextMapSetter,
@@ -27,6 +26,7 @@ import {
   Context,
   Link,
 } from '@opentelemetry/api';
+import {W3CTraceContextPropagator} from '@opentelemetry/core';
 import {Attributes, PubsubMessage} from './publisher/pubsub-message';
 import {Duration} from './temporal';
 
@@ -69,6 +69,14 @@ export enum OpenTelemetryLevel {
    */
   Modern = 2,
 }
+
+/**
+ * The W3C trace context propagator, used for injecting/extracting trace context.
+ *
+ * @private
+ * @internal
+ */
+const w3cTraceContextPropagator = new W3CTraceContextPropagator();
 
 // True if user code elsewhere wants to enable OpenTelemetry support.
 let globallyEnabled = false;
@@ -749,7 +757,7 @@ export function injectSpan(span: Span, message: MessageWithAttributes): void {
 
   // Always do propagation injection with the trace context.
   const context = trace.setSpanContext(ROOT_CONTEXT, span.spanContext());
-  propagation.inject(context, message, pubsubSetter);
+  w3cTraceContextPropagator.inject(context, message, pubsubSetter);
 
   // Also put the direct reference to the Span object for while we're
   // passing it around in the client library.
@@ -802,7 +810,11 @@ export function extractSpan(
   let context: Context | undefined;
 
   if (keys.includes(modernAttributeName)) {
-    context = propagation.extract(ROOT_CONTEXT, message, pubsubGetter);
+    context = w3cTraceContextPropagator.extract(
+      ROOT_CONTEXT,
+      message,
+      pubsubGetter,
+    );
   }
 
   const span = PubsubSpans.createReceiveSpan(
