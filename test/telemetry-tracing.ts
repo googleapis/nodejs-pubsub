@@ -212,7 +212,7 @@ describe('OpenTelemetryTracer', () => {
         topicInfo,
         message,
         'tests',
-        'create'
+        'create',
       );
       assert.deepStrictEqual(topicAttrs, {
         'messaging.system': 'gcp_pubsub',
@@ -237,7 +237,7 @@ describe('OpenTelemetryTracer', () => {
         topicInfo,
         message,
         'tests',
-        'create'
+        'create',
       );
       assert.deepStrictEqual(topicAttrs2, {
         'messaging.system': 'gcp_pubsub',
@@ -352,7 +352,7 @@ describe('OpenTelemetryTracer', () => {
       );
       assert.strictEqual(
         childReadSpan.attributes['messaging.operation'],
-        'receive'
+        'receive',
       );
       assert.strictEqual(childReadSpan.kind, SpanKind.CONSUMER);
       assert.ok(childReadSpan.parentSpanId);
