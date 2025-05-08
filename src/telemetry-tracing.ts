@@ -19,7 +19,6 @@ import {
   Span,
   context,
   trace,
-  propagation,
   SpanKind,
   TextMapGetter,
   TextMapSetter,
@@ -811,7 +810,11 @@ export function extractSpan(
   let context: Context | undefined;
 
   if (keys.includes(modernAttributeName)) {
-    context = w3cTraceContextPropagator.extract(ROOT_CONTEXT, message, pubsubGetter);
+    context = w3cTraceContextPropagator.extract(
+      ROOT_CONTEXT,
+      message,
+      pubsubGetter,
+    );
   }
 
   const span = PubsubSpans.createReceiveSpan(
