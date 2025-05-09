@@ -305,6 +305,7 @@ export class PubsubSpans {
     params: AttributeParams,
     message?: PubsubMessage,
     caller?: string,
+    operation?: string,
   ): SpanAttributes {
     const destinationName = params.topicName ?? params.subName;
     const destinationId = params.topicId ?? params.subId;
@@ -351,6 +352,9 @@ export class PubsubSpans {
       if (message.ackId) {
         spanAttributes['messaging.gcp_pubsub.message.ack_id'] = message.ackId;
       }
+      if (operation) {
+        spanAttributes['messaging.operation'] = operation;
+      }
     }
 
     return spanAttributes;
@@ -368,11 +372,15 @@ export class PubsubSpans {
     const topicInfo = getTopicInfo(topicName);
     const span: Span = getTracer().startSpan(`${topicName} create`, {
       kind: SpanKind.PRODUCER,
-      attributes: PubsubSpans.createAttributes(topicInfo, message, caller),
+      attributes: PubsubSpans.createAttributes(
+        topicInfo,
+        message,
+        caller,
+        'create',
+      ),
     });
     if (topicInfo.topicId) {
       span.updateName(`${topicInfo.topicId} create`);
-      span.setAttribute('messaging.operation', 'create');
       span.setAttribute('messaging.destination.name', topicInfo.topicId);
     }
 
@@ -404,10 +412,14 @@ export class PubsubSpans {
 
     const subInfo = getSubscriptionInfo(subName);
     const name = `${subInfo.subId ?? subName} subscribe`;
-    const attributes = this.createAttributes(subInfo, message, caller);
+    const attributes = this.createAttributes(
+      subInfo,
+      message,
+      caller,
+      'receive',
+    );
     if (subInfo.subId) {
       attributes['messaging.destination.name'] = subInfo.subId;
-      attributes['messaging.operation'] = 'receive';
     }
 
     if (context) {
@@ -473,6 +485,7 @@ export class PubsubSpans {
       getTopicInfo(topicName),
       undefined,
       caller,
+      'create',
     );
     const links: Link[] = messages
       .filter(m => m.parentSpan && isSampled(m.parentSpan))
@@ -515,6 +528,7 @@ export class PubsubSpans {
       subInfo,
       undefined,
       caller,
+      'receive',
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))
@@ -531,7 +545,6 @@ export class PubsubSpans {
     );
 
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
-    span?.setAttribute('messaging.operation', 'receive');
 
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
@@ -563,6 +576,7 @@ export class PubsubSpans {
       subInfo,
       undefined,
       caller,
+      'receive',
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))
@@ -579,7 +593,6 @@ export class PubsubSpans {
     );
 
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
-    span?.setAttribute('messaging.operation', 'receive');
 
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
