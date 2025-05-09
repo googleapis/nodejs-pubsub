@@ -1471,20 +1471,6 @@ __Usage:__
 `node validateSchema.js <schema-text>`
 
 
-### Close Subscription with Timeout
-
-Demonstrates closing a subscription with a specified timeout for graceful shutdown.
-
-View the [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/closeSubscriptionWithTimeout.ts).
-
-[![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/validateSchema.js,samples/README.md)
-
-__Usage:__
-
-
-`node closeSubscriptionWithTimeout.js <topic-name> <subscription-name>`
-
-
 
 
 
