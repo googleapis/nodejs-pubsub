@@ -44,7 +44,7 @@ interface Attributes {
 
 async function publishMessageWithCustomAttributes(
   topicNameOrId: string,
-  data: string
+  data: string,
 ) {
   // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
   const dataBuffer = Buffer.from(data);
@@ -58,7 +58,7 @@ async function publishMessageWithCustomAttributes(
   // Cache topic objects (publishers) and reuse them.
   const topic = pubSubClient.topic(topicNameOrId);
 
-  const messageId = topic.publishMessage({
+  const messageId = await topic.publishMessage({
     data: dataBuffer,
     attributes: customAttributes,
   });
@@ -68,7 +68,7 @@ async function publishMessageWithCustomAttributes(
 
 function main(
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
-  data = JSON.stringify({foo: 'bar'})
+  data = JSON.stringify({foo: 'bar'}),
 ) {
   publishMessageWithCustomAttributes(topicNameOrId, data).catch(console.error);
 }

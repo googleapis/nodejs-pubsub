@@ -30,7 +30,7 @@ import {protobuf, IamProtos} from 'google-gax';
 // Dynamically loaded proto JSON is needed to get the type information
 // to fill in default values for request objects
 const root = protobuf.Root.fromJSON(
-  require('../protos/protos.json')
+  require('../protos/protos.json'),
 ).resolveAll();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,7 +47,7 @@ function generateSampleMessage<T extends object>(instance: T) {
     instance.constructor as typeof protobuf.Message
   ).toObject(instance as protobuf.Message<T>, {defaults: true});
   return (instance.constructor as typeof protobuf.Message).fromObject(
-    filledObject
+    filledObject,
   ) as T;
 }
 
@@ -59,7 +59,7 @@ function stubSimpleCall<ResponseType>(response?: ResponseType, error?: Error) {
 
 function stubSimpleCallWithCallback<ResponseType>(
   response?: ResponseType,
-  error?: Error
+  error?: Error,
 ) {
   return error
     ? sinon.stub().callsArgWith(2, error)
@@ -68,7 +68,7 @@ function stubSimpleCallWithCallback<ResponseType>(
 
 function stubPageStreamingCall<ResponseType>(
   responses?: ResponseType[],
-  error?: Error
+  error?: Error,
 ) {
   const pagingStub = sinon.stub();
   if (responses) {
@@ -106,7 +106,7 @@ function stubPageStreamingCall<ResponseType>(
 
 function stubAsyncIterationCall<ResponseType>(
   responses?: ResponseType[],
-  error?: Error
+  error?: Error,
 ) {
   let counter = 0;
   const asyncIterable = {
@@ -252,9 +252,11 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      client.initialize().catch(err => {
+        throw err;
+      });
       assert(client.schemaServiceStub);
-      client.close().then(() => {
+      void client.close().then(() => {
         done();
       });
     });
@@ -265,7 +267,7 @@ describe('v1.SchemaServiceClient', () => {
         projectId: 'bogus',
       });
       assert.strictEqual(client.schemaServiceStub, undefined);
-      client.close().then(() => {
+      void client.close().then(() => {
         done();
       });
     });
@@ -311,18 +313,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.CreateSchemaRequest()
+        new protos.google.pubsub.v1.CreateSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.CreateSchemaRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.createSchema = stubSimpleCall(expectedResponse);
       const [response] = await client.createSchema(request);
@@ -342,18 +344,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.CreateSchemaRequest()
+        new protos.google.pubsub.v1.CreateSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.CreateSchemaRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.createSchema =
         stubSimpleCallWithCallback(expectedResponse);
@@ -362,14 +364,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ISchema | null
+            result?: protos.google.pubsub.v1.ISchema | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -389,20 +391,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.CreateSchemaRequest()
+        new protos.google.pubsub.v1.CreateSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.CreateSchemaRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.createSchema = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.createSchema(request), expectedError);
       const actualRequest = (
@@ -420,17 +422,17 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.CreateSchemaRequest()
+        new protos.google.pubsub.v1.CreateSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.CreateSchemaRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.createSchema(request), expectedError);
     });
   });
@@ -441,18 +443,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetSchemaRequest()
+        new protos.google.pubsub.v1.GetSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.GetSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.getSchema = stubSimpleCall(expectedResponse);
       const [response] = await client.getSchema(request);
@@ -472,18 +474,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetSchemaRequest()
+        new protos.google.pubsub.v1.GetSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.GetSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.getSchema =
         stubSimpleCallWithCallback(expectedResponse);
@@ -492,14 +494,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ISchema | null
+            result?: protos.google.pubsub.v1.ISchema | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -519,16 +521,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetSchemaRequest()
+        new protos.google.pubsub.v1.GetSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.GetSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.getSchema = stubSimpleCall(undefined, expectedError);
       await assert.rejects(client.getSchema(request), expectedError);
@@ -547,17 +549,17 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.GetSchemaRequest()
+        new protos.google.pubsub.v1.GetSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.GetSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.getSchema(request), expectedError);
     });
   });
@@ -568,18 +570,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.CommitSchemaRequest()
+        new protos.google.pubsub.v1.CommitSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.CommitSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.commitSchema = stubSimpleCall(expectedResponse);
       const [response] = await client.commitSchema(request);
@@ -599,18 +601,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.CommitSchemaRequest()
+        new protos.google.pubsub.v1.CommitSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.CommitSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.commitSchema =
         stubSimpleCallWithCallback(expectedResponse);
@@ -619,14 +621,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ISchema | null
+            result?: protos.google.pubsub.v1.ISchema | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -646,20 +648,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.CommitSchemaRequest()
+        new protos.google.pubsub.v1.CommitSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.CommitSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.commitSchema = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.commitSchema(request), expectedError);
       const actualRequest = (
@@ -677,17 +679,17 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.CommitSchemaRequest()
+        new protos.google.pubsub.v1.CommitSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.CommitSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.commitSchema(request), expectedError);
     });
   });
@@ -698,18 +700,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.RollbackSchemaRequest()
+        new protos.google.pubsub.v1.RollbackSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.RollbackSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.rollbackSchema = stubSimpleCall(expectedResponse);
       const [response] = await client.rollbackSchema(request);
@@ -729,18 +731,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.RollbackSchemaRequest()
+        new protos.google.pubsub.v1.RollbackSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.RollbackSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.rollbackSchema =
         stubSimpleCallWithCallback(expectedResponse);
@@ -749,14 +751,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ISchema | null
+            result?: protos.google.pubsub.v1.ISchema | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -776,20 +778,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.RollbackSchemaRequest()
+        new protos.google.pubsub.v1.RollbackSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.RollbackSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.rollbackSchema = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.rollbackSchema(request), expectedError);
       const actualRequest = (
@@ -807,17 +809,17 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.RollbackSchemaRequest()
+        new protos.google.pubsub.v1.RollbackSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.RollbackSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.rollbackSchema(request), expectedError);
     });
   });
@@ -828,18 +830,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteSchemaRevisionRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.deleteSchemaRevision =
         stubSimpleCall(expectedResponse);
@@ -860,18 +862,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteSchemaRevisionRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.Schema()
+        new protos.google.pubsub.v1.Schema(),
       );
       client.innerApiCalls.deleteSchemaRevision =
         stubSimpleCallWithCallback(expectedResponse);
@@ -880,14 +882,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ISchema | null
+            result?: protos.google.pubsub.v1.ISchema | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -907,20 +909,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteSchemaRevisionRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteSchemaRevision = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.deleteSchemaRevision(request), expectedError);
       const actualRequest = (
@@ -938,17 +940,17 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRevisionRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteSchemaRevisionRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.deleteSchemaRevision(request), expectedError);
     });
   });
@@ -959,18 +961,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteSchemaRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.protobuf.Empty()
+        new protos.google.protobuf.Empty(),
       );
       client.innerApiCalls.deleteSchema = stubSimpleCall(expectedResponse);
       const [response] = await client.deleteSchema(request);
@@ -990,18 +992,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteSchemaRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.protobuf.Empty()
+        new protos.google.protobuf.Empty(),
       );
       client.innerApiCalls.deleteSchema =
         stubSimpleCallWithCallback(expectedResponse);
@@ -1010,14 +1012,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.protobuf.IEmpty | null
+            result?: protos.google.protobuf.IEmpty | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1037,20 +1039,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteSchemaRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.deleteSchema = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.deleteSchema(request), expectedError);
       const actualRequest = (
@@ -1068,17 +1070,17 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.DeleteSchemaRequest()
+        new protos.google.pubsub.v1.DeleteSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.DeleteSchemaRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.deleteSchema(request), expectedError);
     });
   });
@@ -1089,18 +1091,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateSchemaRequest()
+        new protos.google.pubsub.v1.ValidateSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ValidateSchemaRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateSchemaResponse()
+        new protos.google.pubsub.v1.ValidateSchemaResponse(),
       );
       client.innerApiCalls.validateSchema = stubSimpleCall(expectedResponse);
       const [response] = await client.validateSchema(request);
@@ -1120,18 +1122,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateSchemaRequest()
+        new protos.google.pubsub.v1.ValidateSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ValidateSchemaRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateSchemaResponse()
+        new protos.google.pubsub.v1.ValidateSchemaResponse(),
       );
       client.innerApiCalls.validateSchema =
         stubSimpleCallWithCallback(expectedResponse);
@@ -1140,14 +1142,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.IValidateSchemaResponse | null
+            result?: protos.google.pubsub.v1.IValidateSchemaResponse | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1167,20 +1169,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateSchemaRequest()
+        new protos.google.pubsub.v1.ValidateSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ValidateSchemaRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.validateSchema = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.validateSchema(request), expectedError);
       const actualRequest = (
@@ -1198,17 +1200,17 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateSchemaRequest()
+        new protos.google.pubsub.v1.ValidateSchemaRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ValidateSchemaRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.validateSchema(request), expectedError);
     });
   });
@@ -1219,18 +1221,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateMessageRequest()
+        new protos.google.pubsub.v1.ValidateMessageRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ValidateMessageRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateMessageResponse()
+        new protos.google.pubsub.v1.ValidateMessageResponse(),
       );
       client.innerApiCalls.validateMessage = stubSimpleCall(expectedResponse);
       const [response] = await client.validateMessage(request);
@@ -1250,18 +1252,18 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateMessageRequest()
+        new protos.google.pubsub.v1.ValidateMessageRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ValidateMessageRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateMessageResponse()
+        new protos.google.pubsub.v1.ValidateMessageResponse(),
       );
       client.innerApiCalls.validateMessage =
         stubSimpleCallWithCallback(expectedResponse);
@@ -1270,14 +1272,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.IValidateMessageResponse | null
+            result?: protos.google.pubsub.v1.IValidateMessageResponse | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1297,20 +1299,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateMessageRequest()
+        new protos.google.pubsub.v1.ValidateMessageRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ValidateMessageRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.validateMessage = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.validateMessage(request), expectedError);
       const actualRequest = (
@@ -1328,17 +1330,17 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ValidateMessageRequest()
+        new protos.google.pubsub.v1.ValidateMessageRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ValidateMessageRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      client.close();
+      void client.close();
       await assert.rejects(client.validateMessage(request), expectedError);
     });
   });
@@ -1349,16 +1351,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemasRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemasRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
@@ -1382,16 +1384,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemasRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemasRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
@@ -1404,14 +1406,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ISchema[] | null
+            result?: protos.google.pubsub.v1.ISchema[] | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1431,20 +1433,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemasRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemasRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listSchemas = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.listSchemas(request), expectedError);
       const actualRequest = (
@@ -1462,16 +1464,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemasRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemasRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
@@ -1497,14 +1499,14 @@ describe('v1.SchemaServiceClient', () => {
       assert(
         (client.descriptors.page.listSchemas.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listSchemas, request)
+          .calledWith(client.innerApiCalls.listSchemas, request),
       );
       assert(
         (client.descriptors.page.listSchemas.createStream as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1513,20 +1515,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemasRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemasRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSchemas.createStream = stubPageStreamingCall(
         undefined,
-        expectedError
+        expectedError,
       );
       const stream = client.listSchemasStream(request);
       const promise = new Promise((resolve, reject) => {
@@ -1545,14 +1547,14 @@ describe('v1.SchemaServiceClient', () => {
       assert(
         (client.descriptors.page.listSchemas.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listSchemas, request)
+          .calledWith(client.innerApiCalls.listSchemas, request),
       );
       assert(
         (client.descriptors.page.listSchemas.createStream as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1561,16 +1563,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemasRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemasRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
@@ -1586,16 +1588,16 @@ describe('v1.SchemaServiceClient', () => {
       assert.deepStrictEqual(responses, expectedResponse);
       assert.deepStrictEqual(
         (client.descriptors.page.listSchemas.asyncIterate as SinonStub).getCall(
-          0
+          0,
         ).args[1],
-        request
+        request,
       );
       assert(
         (client.descriptors.page.listSchemas.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1604,20 +1606,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemasRequest()
+        new protos.google.pubsub.v1.ListSchemasRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemasRequest',
-        ['parent']
+        ['parent'],
       );
       request.parent = defaultValue1;
-      const expectedHeaderRequestParams = `parent=${defaultValue1}`;
+      const expectedHeaderRequestParams = `parent=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSchemas.asyncIterate = stubAsyncIterationCall(
         undefined,
-        expectedError
+        expectedError,
       );
       const iterable = client.listSchemasAsync(request);
       await assert.rejects(async () => {
@@ -1628,16 +1630,16 @@ describe('v1.SchemaServiceClient', () => {
       });
       assert.deepStrictEqual(
         (client.descriptors.page.listSchemas.asyncIterate as SinonStub).getCall(
-          0
+          0,
         ).args[1],
-        request
+        request,
       );
       assert(
         (client.descriptors.page.listSchemas.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
   });
@@ -1648,16 +1650,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemaRevisionsRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
@@ -1682,16 +1684,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemaRevisionsRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
@@ -1704,14 +1706,14 @@ describe('v1.SchemaServiceClient', () => {
           request,
           (
             err?: Error | null,
-            result?: protos.google.pubsub.v1.ISchema[] | null
+            result?: protos.google.pubsub.v1.ISchema[] | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -1731,20 +1733,20 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemaRevisionsRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.innerApiCalls.listSchemaRevisions = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(client.listSchemaRevisions(request), expectedError);
       const actualRequest = (
@@ -1762,16 +1764,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemaRevisionsRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
@@ -1797,14 +1799,14 @@ describe('v1.SchemaServiceClient', () => {
       assert(
         (client.descriptors.page.listSchemaRevisions.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listSchemaRevisions, request)
+          .calledWith(client.innerApiCalls.listSchemaRevisions, request),
       );
       assert(
         (client.descriptors.page.listSchemaRevisions.createStream as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1813,16 +1815,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemaRevisionsRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSchemaRevisions.createStream =
         stubPageStreamingCall(undefined, expectedError);
@@ -1843,14 +1845,14 @@ describe('v1.SchemaServiceClient', () => {
       assert(
         (client.descriptors.page.listSchemaRevisions.createStream as SinonStub)
           .getCall(0)
-          .calledWith(client.innerApiCalls.listSchemaRevisions, request)
+          .calledWith(client.innerApiCalls.listSchemaRevisions, request),
       );
       assert(
         (client.descriptors.page.listSchemaRevisions.createStream as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1859,16 +1861,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemaRevisionsRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedResponse = [
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
         generateSampleMessage(new protos.google.pubsub.v1.Schema()),
@@ -1886,14 +1888,14 @@ describe('v1.SchemaServiceClient', () => {
         (
           client.descriptors.page.listSchemaRevisions.asyncIterate as SinonStub
         ).getCall(0).args[1],
-        request
+        request,
       );
       assert(
         (client.descriptors.page.listSchemaRevisions.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
 
@@ -1902,16 +1904,16 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new protos.google.pubsub.v1.ListSchemaRevisionsRequest()
+        new protos.google.pubsub.v1.ListSchemaRevisionsRequest(),
       );
       const defaultValue1 = getTypeDefaultValue(
         '.google.pubsub.v1.ListSchemaRevisionsRequest',
-        ['name']
+        ['name'],
       );
       request.name = defaultValue1;
-      const expectedHeaderRequestParams = `name=${defaultValue1}`;
+      const expectedHeaderRequestParams = `name=${defaultValue1 ?? ''}`;
       const expectedError = new Error('expected');
       client.descriptors.page.listSchemaRevisions.asyncIterate =
         stubAsyncIterationCall(undefined, expectedError);
@@ -1926,14 +1928,14 @@ describe('v1.SchemaServiceClient', () => {
         (
           client.descriptors.page.listSchemaRevisions.asyncIterate as SinonStub
         ).getCall(0).args[1],
-        request
+        request,
       );
       assert(
         (client.descriptors.page.listSchemaRevisions.asyncIterate as SinonStub)
           .getCall(0)
           .args[2].otherArgs.headers[
             'x-goog-request-params'
-          ].includes(expectedHeaderRequestParams)
+          ].includes(expectedHeaderRequestParams),
       );
     });
   });
@@ -1943,9 +1945,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.GetIamPolicyRequest()
+        new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -1957,7 +1959,7 @@ describe('v1.SchemaServiceClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.Policy()
+        new IamProtos.google.iam.v1.Policy(),
       );
       client.iamClient.getIamPolicy = stubSimpleCall(expectedResponse);
       const response = await client.getIamPolicy(request, expectedOptions);
@@ -1965,7 +1967,7 @@ describe('v1.SchemaServiceClient', () => {
       assert(
         (client.iamClient.getIamPolicy as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
     it('invokes getIamPolicy without error using callback', async () => {
@@ -1973,9 +1975,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.GetIamPolicyRequest()
+        new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -1987,25 +1989,25 @@ describe('v1.SchemaServiceClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.Policy()
+        new IamProtos.google.iam.v1.Policy(),
       );
       client.iamClient.getIamPolicy = sinon
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        client.getIamPolicy(
+        void client.getIamPolicy(
           request,
           expectedOptions,
           (
             err?: Error | null,
-            result?: IamProtos.google.iam.v1.Policy | null
+            result?: IamProtos.google.iam.v1.Policy | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -2017,9 +2019,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.GetIamPolicyRequest()
+        new IamProtos.google.iam.v1.GetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2034,12 +2036,12 @@ describe('v1.SchemaServiceClient', () => {
       client.iamClient.getIamPolicy = stubSimpleCall(undefined, expectedError);
       await assert.rejects(
         client.getIamPolicy(request, expectedOptions),
-        expectedError
+        expectedError,
       );
       assert(
         (client.iamClient.getIamPolicy as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
   });
@@ -2049,9 +2051,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.SetIamPolicyRequest()
+        new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2063,7 +2065,7 @@ describe('v1.SchemaServiceClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.Policy()
+        new IamProtos.google.iam.v1.Policy(),
       );
       client.iamClient.setIamPolicy = stubSimpleCall(expectedResponse);
       const response = await client.setIamPolicy(request, expectedOptions);
@@ -2071,7 +2073,7 @@ describe('v1.SchemaServiceClient', () => {
       assert(
         (client.iamClient.setIamPolicy as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
     it('invokes setIamPolicy without error using callback', async () => {
@@ -2079,9 +2081,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.SetIamPolicyRequest()
+        new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2093,25 +2095,25 @@ describe('v1.SchemaServiceClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.Policy()
+        new IamProtos.google.iam.v1.Policy(),
       );
       client.iamClient.setIamPolicy = sinon
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        client.setIamPolicy(
+        void client.setIamPolicy(
           request,
           expectedOptions,
           (
             err?: Error | null,
-            result?: IamProtos.google.iam.v1.Policy | null
+            result?: IamProtos.google.iam.v1.Policy | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -2123,9 +2125,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.SetIamPolicyRequest()
+        new IamProtos.google.iam.v1.SetIamPolicyRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2140,12 +2142,12 @@ describe('v1.SchemaServiceClient', () => {
       client.iamClient.setIamPolicy = stubSimpleCall(undefined, expectedError);
       await assert.rejects(
         client.setIamPolicy(request, expectedOptions),
-        expectedError
+        expectedError,
       );
       assert(
         (client.iamClient.setIamPolicy as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
   });
@@ -2155,9 +2157,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsRequest()
+        new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2169,18 +2171,18 @@ describe('v1.SchemaServiceClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsResponse()
+        new IamProtos.google.iam.v1.TestIamPermissionsResponse(),
       );
       client.iamClient.testIamPermissions = stubSimpleCall(expectedResponse);
       const response = await client.testIamPermissions(
         request,
-        expectedOptions
+        expectedOptions,
       );
       assert.deepStrictEqual(response, [expectedResponse]);
       assert(
         (client.iamClient.testIamPermissions as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
     it('invokes testIamPermissions without error using callback', async () => {
@@ -2188,9 +2190,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsRequest()
+        new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2202,25 +2204,25 @@ describe('v1.SchemaServiceClient', () => {
         },
       };
       const expectedResponse = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsResponse()
+        new IamProtos.google.iam.v1.TestIamPermissionsResponse(),
       );
       client.iamClient.testIamPermissions = sinon
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        client.testIamPermissions(
+        void client.testIamPermissions(
           request,
           expectedOptions,
           (
             err?: Error | null,
-            result?: IamProtos.google.iam.v1.TestIamPermissionsResponse | null
+            result?: IamProtos.google.iam.v1.TestIamPermissionsResponse | null,
           ) => {
             if (err) {
               reject(err);
             } else {
               resolve(result);
             }
-          }
+          },
         );
       });
       const response = await promise;
@@ -2232,9 +2234,9 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       const request = generateSampleMessage(
-        new IamProtos.google.iam.v1.TestIamPermissionsRequest()
+        new IamProtos.google.iam.v1.TestIamPermissionsRequest(),
       );
       request.resource = '';
       const expectedHeaderRequestParams = 'resource=';
@@ -2248,22 +2250,22 @@ describe('v1.SchemaServiceClient', () => {
       const expectedError = new Error('expected');
       client.iamClient.testIamPermissions = stubSimpleCall(
         undefined,
-        expectedError
+        expectedError,
       );
       await assert.rejects(
         client.testIamPermissions(request, expectedOptions),
-        expectedError
+        expectedError,
       );
       assert(
         (client.iamClient.testIamPermissions as SinonStub)
           .getCall(0)
-          .calledWith(request, expectedOptions, undefined)
+          .calledWith(request, expectedOptions, undefined),
       );
     });
   });
 
   describe('Path templates', () => {
-    describe('project', () => {
+    describe('project', async () => {
       const fakePath = '/rendered/path/project';
       const expectedParameters = {
         project: 'projectValue',
@@ -2272,7 +2274,7 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.projectPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -2286,7 +2288,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.projectPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2296,12 +2298,12 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.projectPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });
 
-    describe('projectTopic', () => {
+    describe('projectTopic', async () => {
       const fakePath = '/rendered/path/projectTopic';
       const expectedParameters = {
         project: 'projectValue',
@@ -2311,7 +2313,7 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.projectTopicPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -2325,7 +2327,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.projectTopicPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2335,7 +2337,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.projectTopicPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
 
@@ -2345,12 +2347,12 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.projectTopicPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });
 
-    describe('schema', () => {
+    describe('schema', async () => {
       const fakePath = '/rendered/path/schema';
       const expectedParameters = {
         project: 'projectValue',
@@ -2360,7 +2362,7 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.schemaPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -2374,7 +2376,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.schemaPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2384,7 +2386,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.schemaPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
 
@@ -2394,12 +2396,12 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.schemaPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });
 
-    describe('snapshot', () => {
+    describe('snapshot', async () => {
       const fakePath = '/rendered/path/snapshot';
       const expectedParameters = {
         project: 'projectValue',
@@ -2409,7 +2411,7 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.snapshotPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -2423,7 +2425,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.snapshotPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2433,7 +2435,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.snapshotPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
 
@@ -2443,12 +2445,12 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.snapshotPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });
 
-    describe('subscription', () => {
+    describe('subscription', async () => {
       const fakePath = '/rendered/path/subscription';
       const expectedParameters = {
         project: 'projectValue',
@@ -2458,7 +2460,7 @@ describe('v1.SchemaServiceClient', () => {
         credentials: {client_email: 'bogus', private_key: 'bogus'},
         projectId: 'bogus',
       });
-      client.initialize();
+      await client.initialize();
       client.pathTemplates.subscriptionPathTemplate.render = sinon
         .stub()
         .returns(fakePath);
@@ -2469,13 +2471,13 @@ describe('v1.SchemaServiceClient', () => {
       it('subscriptionPath', () => {
         const result = client.subscriptionPath(
           'projectValue',
-          'subscriptionValue'
+          'subscriptionValue',
         );
         assert.strictEqual(result, fakePath);
         assert(
           (client.pathTemplates.subscriptionPathTemplate.render as SinonStub)
             .getCall(-1)
-            .calledWith(expectedParameters)
+            .calledWith(expectedParameters),
         );
       });
 
@@ -2485,7 +2487,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.subscriptionPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
 
@@ -2495,7 +2497,7 @@ describe('v1.SchemaServiceClient', () => {
         assert(
           (client.pathTemplates.subscriptionPathTemplate.match as SinonStub)
             .getCall(-1)
-            .calledWith(fakePath)
+            .calledWith(fakePath),
         );
       });
     });

@@ -28,7 +28,7 @@ const fakeUtil = Object.assign({}, util, {
   promisifySome(
     class_: Function,
     classProtos: object,
-    methods: string[]
+    methods: string[],
   ): void {
     if (class_.name === 'Snapshot') {
       promisified = true;
@@ -197,14 +197,14 @@ describe('Snapshot', () => {
       it('should throw on create method', async () => {
         await assert.rejects(
           () => snapshot.create(),
-          /This is only available if you accessed this object through Subscription#snapshot/
+          /This is only available if you accessed this object through Subscription#snapshot/,
         );
       });
 
       it('should throw on seek method', async () => {
         await assert.rejects(
           () => snapshot.seek(),
-          /This is only available if you accessed this object through Subscription#snapshot/
+          /This is only available if you accessed this object through Subscription#snapshot/,
         );
       });
     });

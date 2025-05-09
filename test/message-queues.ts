@@ -26,13 +26,14 @@ import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
 import {Message, Subscriber} from '../src/subscriber';
 import {DebugMessage} from '../src/debug';
+import {TestUtils} from './test-utils';
 
 class FakeClient {
   async acknowledge(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reqOpts: {subscription: string; ackIds: string[]},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callOptions: CallOptions
+    callOptions: CallOptions,
   ): Promise<void> {}
   async modifyAckDeadline(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,7 +43,7 @@ class FakeClient {
       ackDeadlineSeconds: number;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callOptions: CallOptions
+    callOptions: CallOptions,
   ): Promise<void> {}
 }
 
@@ -80,7 +81,7 @@ function fakeMessage() {
 class MessageQueue extends messageTypes.MessageQueue {
   batches: messageTypes.QueuedMessages[] = [];
   async _sendBatch(
-    batch: messageTypes.QueuedMessages
+    batch: messageTypes.QueuedMessages,
   ): Promise<messageTypes.QueuedMessages> {
     this.batches.push(batch);
     return [];
@@ -147,7 +148,7 @@ describe('MessageQueues', () => {
 
     describe('add', () => {
       it('should increase the number of pending requests', () => {
-        messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.add(new FakeMessage() as Message);
         assert.strictEqual(messageQueue.numPendingRequests, 1);
       });
 
@@ -155,7 +156,7 @@ describe('MessageQueues', () => {
         const stub = sandbox.stub(messageQueue, 'flush');
 
         messageQueue.setOptions({maxMessages: 1});
-        messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.add(new FakeMessage() as Message);
 
         assert.strictEqual(stub.callCount, 1);
       });
@@ -164,18 +165,18 @@ describe('MessageQueues', () => {
         const stub = sandbox.stub(messageQueue, 'flush');
 
         messageQueue.bytes = messageTypes.MAX_BATCH_BYTES - 10;
-        messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.add(new FakeMessage() as Message);
 
         assert.strictEqual(stub.callCount, 1);
       });
 
       it('should schedule a flush if needed', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(messageQueue, 'flush');
         const delay = 1000;
 
         messageQueue.setOptions({maxMilliseconds: delay});
-        messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.add(new FakeMessage() as Message);
 
         assert.strictEqual(stub.callCount, 0);
         clock.tick(delay);
@@ -183,7 +184,7 @@ describe('MessageQueues', () => {
       });
 
       it('should return a Promise that resolves when the ack is sent', async () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const delay = 1000;
         messageQueue.setOptions({maxMilliseconds: delay});
 
@@ -204,28 +205,28 @@ describe('MessageQueues', () => {
 
     describe('flush', () => {
       it('should cancel scheduled flushes', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const spy = sandbox.spy(messageQueue, 'flush');
         const delay = 1000;
 
         messageQueue.setOptions({maxMilliseconds: delay});
-        messageQueue.add(new FakeMessage() as Message);
-        messageQueue.flush();
+        void messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.flush();
         clock.tick(delay);
 
         assert.strictEqual(spy.callCount, 1);
       });
 
       it('should remove the messages from the queue', () => {
-        messageQueue.add(new FakeMessage() as Message);
-        messageQueue.flush();
+        void messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.flush();
 
         assert.strictEqual(messageQueue.numPendingRequests, 0);
       });
 
       it('should remove the bytes of messages from the queue', () => {
-        messageQueue.add(new FakeMessage() as Message);
-        messageQueue.flush();
+        void messageQueue.add(new FakeMessage() as Message);
+        void messageQueue.flush();
 
         assert.strictEqual(messageQueue.bytes, 0);
       });
@@ -234,8 +235,8 @@ describe('MessageQueues', () => {
         const message = new FakeMessage();
         const deadline = 10;
 
-        messageQueue.add(message as Message, deadline);
-        messageQueue.flush();
+        void messageQueue.add(message as Message, deadline);
+        void messageQueue.flush();
 
         const [batch] = messageQueue.batches;
         assert.strictEqual(batch[0].message.ackId, message.ackId);
@@ -253,12 +254,12 @@ describe('MessageQueues', () => {
           done();
         });
 
-        messageQueue.flush();
+        void messageQueue.flush();
       });
 
-      it('should resolve any pending promises', () => {
+      it('should resolve any pending promises', async () => {
         const promise = messageQueue.onFlush();
-        setImmediate(() => messageQueue.flush());
+        setImmediate(async () => await messageQueue.flush());
         return promise;
       });
 
@@ -277,8 +278,8 @@ describe('MessageQueues', () => {
         const onDrainBeforeFlush = messageQueue
           .onDrain()
           .then(() => log.push('drain1'));
-        messageQueue.add(message as Message, deadline);
-        messageQueue.flush();
+        void messageQueue.add(message as Message, deadline);
+        void messageQueue.flush();
         assert.deepStrictEqual(log, ['send:start']);
         sendDone.resolve();
         await messageQueue.onDrain().then(() => log.push('drain2'));
@@ -329,7 +330,7 @@ describe('MessageQueues', () => {
 
         for (let i = 0; i < 3000; i++) {
           assert.strictEqual(stub.callCount, 0);
-          messageQueue.add(fakeMessage());
+          void messageQueue.add(fakeMessage());
         }
 
         assert.strictEqual(stub.callCount, 1);
@@ -343,29 +344,29 @@ describe('MessageQueues', () => {
 
         for (let i = 0; i < maxMessages; i++) {
           assert.strictEqual(stub.callCount, 0);
-          messageQueue.add(fakeMessage());
+          void messageQueue.add(fakeMessage());
         }
 
         assert.strictEqual(stub.callCount, 1);
       });
 
       it('should default maxMilliseconds to 100', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(messageQueue, 'flush');
 
-        messageQueue.add(fakeMessage());
+        void messageQueue.add(fakeMessage());
         clock.tick(100);
 
         assert.strictEqual(stub.callCount, 1);
       });
 
       it('should respect user supplied maxMilliseconds', () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         const stub = sandbox.stub(messageQueue, 'flush');
         const maxMilliseconds = 10000;
 
         messageQueue.setOptions({maxMilliseconds});
-        messageQueue.add(fakeMessage());
+        void messageQueue.add(fakeMessage());
         clock.tick(maxMilliseconds);
 
         assert.strictEqual(stub.callCount, 1);
@@ -448,7 +449,7 @@ describe('MessageQueues', () => {
       });
 
       messages.forEach(message => ackQueue.add(message as Message));
-      ackQueue.flush();
+      void ackQueue.flush();
     });
 
     // The analogous modAck version is very similar, so please sync changes.
@@ -481,7 +482,7 @@ describe('MessageQueues', () => {
 
         sandbox.stub(fakeSubscriber.client, 'acknowledge').resolves();
         const proms = ackQueue.requests.map(
-          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
         await ackQueue.flush();
         const results = await Promise.allSettled(proms);
@@ -503,9 +504,9 @@ describe('MessageQueues', () => {
 
         sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
         const proms = ackQueue.requests.map(
-          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
-        proms.shift();
+        void proms.shift();
         await ackQueue.flush();
 
         const results = await Promise.allSettled<void>(proms);
@@ -557,7 +558,7 @@ describe('MessageQueues', () => {
       // This doesn't need to be duplicated down to modAck because it's just
       // testing common code.
       it('should retry transient failures', async () => {
-        const clock = sandbox.useFakeTimers();
+        const clock = TestUtils.useFakeTimers(sandbox);
         sandbox.stub(global.Math, 'random').returns(0.5);
 
         const message = fakeMessage();
@@ -569,7 +570,7 @@ describe('MessageQueues', () => {
         };
 
         sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
-        ackQueue.add(message);
+        void ackQueue.add(message);
         await ackQueue.flush();
 
         // Make sure the one handled by errorInfo was retried.
@@ -636,7 +637,7 @@ describe('MessageQueues', () => {
       };
 
       messages.forEach(message =>
-        modAckQueue.add(message as Message, deadline)
+        modAckQueue.add(message as Message, deadline),
       );
       await modAckQueue.flush();
 
@@ -676,10 +677,10 @@ describe('MessageQueues', () => {
       };
 
       messages1.forEach(message =>
-        modAckQueue.add(message as Message, deadline1)
+        modAckQueue.add(message as Message, deadline1),
       );
       messages2.forEach(message =>
-        modAckQueue.add(message as Message, deadline2)
+        modAckQueue.add(message as Message, deadline2),
       );
       await modAckQueue.flush();
 
@@ -697,7 +698,7 @@ describe('MessageQueues', () => {
         .resolves();
 
       modAckQueue.setOptions({callOptions: fakeCallOptions});
-      modAckQueue.add(new FakeMessage() as Message, 10);
+      await modAckQueue.add(new FakeMessage() as Message, 10);
       await modAckQueue.flush();
 
       const [, callOptions] = stub.lastCall.args;
@@ -740,7 +741,7 @@ describe('MessageQueues', () => {
       });
 
       messages.forEach(message => modAckQueue.add(message as Message));
-      modAckQueue.flush();
+      void modAckQueue.flush();
     });
 
     describe('handle modAck responses when !isExactlyOnceDelivery', () => {
@@ -772,7 +773,7 @@ describe('MessageQueues', () => {
 
         sandbox.stub(fakeSubscriber.client, 'modifyAckDeadline').resolves();
         const proms = modAckQueue.requests.map(
-          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
         await modAckQueue.flush();
         const results = await Promise.allSettled(proms);
@@ -796,9 +797,9 @@ describe('MessageQueues', () => {
           .stub(fakeSubscriber.client, 'modifyAckDeadline')
           .rejects(fakeError);
         const proms = modAckQueue.requests.map(
-          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise
+          (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
-        proms.shift();
+        void proms.shift();
         await modAckQueue.flush();
 
         const results = await Promise.allSettled<void>(proms);

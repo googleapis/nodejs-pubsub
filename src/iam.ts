@@ -168,7 +168,7 @@ export class IAM {
   getPolicy(gaxOpts: CallOptions, callback: GetPolicyCallback): void;
   getPolicy(
     optsOrCallback?: CallOptions | GetPolicyCallback,
-    callback?: GetPolicyCallback
+    callback?: GetPolicyCallback,
   ): Promise<GetPolicyResponse> | void {
     const gaxOpts = typeof optsOrCallback === 'object' ? optsOrCallback : {};
     callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
@@ -184,7 +184,7 @@ export class IAM {
         reqOpts,
         gaxOpts,
       },
-      callback!
+      callback!,
     );
   }
 
@@ -251,13 +251,13 @@ export class IAM {
   setPolicy(
     policy: Policy,
     gaxOpts: CallOptions,
-    callback: SetPolicyCallback
+    callback: SetPolicyCallback,
   ): void;
   setPolicy(policy: Policy, callback: SetPolicyCallback): void;
   setPolicy(
     policy: Policy,
     optsOrCallback?: CallOptions | SetPolicyCallback,
-    callback?: SetPolicyCallback
+    callback?: SetPolicyCallback,
   ): Promise<SetPolicyResponse> | void {
     if (!(typeof policy === 'object')) {
       throw new Error('A policy object is required.');
@@ -278,7 +278,7 @@ export class IAM {
         reqOpts,
         gaxOpts,
       },
-      callback!
+      callback!,
     );
   }
 
@@ -362,21 +362,21 @@ export class IAM {
    */
   testPermissions(
     permissions: string | string[],
-    gaxOpts?: CallOptions
+    gaxOpts?: CallOptions,
   ): Promise<TestIamPermissionsResponse>;
   testPermissions(
     permissions: string | string[],
     gaxOpts: CallOptions,
-    callback: TestIamPermissionsCallback
+    callback: TestIamPermissionsCallback,
   ): void;
   testPermissions(
     permissions: string | string[],
-    callback: TestIamPermissionsCallback
+    callback: TestIamPermissionsCallback,
   ): void;
   testPermissions(
     permissions: string | string[],
     optsOrCallback?: CallOptions | TestIamPermissionsCallback,
-    callback?: TestIamPermissionsCallback
+    callback?: TestIamPermissionsCallback,
   ): Promise<TestIamPermissionsResponse> | void {
     if (!Array.isArray(permissions) && !(typeof permissions === 'string')) {
       throw new Error('Permissions are required.');
@@ -411,10 +411,10 @@ export class IAM {
             acc[permission] = availablePermissions.indexOf(permission) > -1;
             return acc;
           },
-          {} as {[key: string]: boolean}
+          {} as {[key: string]: boolean},
         );
         callback!(null, permissionHash, resp!);
-      }
+      },
     );
   }
 }

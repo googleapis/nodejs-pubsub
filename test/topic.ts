@@ -34,7 +34,7 @@ const fakeUtil = Object.assign({}, util, {
   promisifySome(
     class_: Function,
     classProtos: object,
-    methods: string[]
+    methods: string[],
   ): void {
     if (class_.name === 'Topic') {
       promisified = true;
@@ -196,7 +196,7 @@ describe('Topic', () => {
     it('should format name', () => {
       const formattedName = Topic.formatName_(
         PROJECT_ID,
-        TOPIC_UNFORMATTED_NAME
+        TOPIC_UNFORMATTED_NAME,
       );
       assert.strictEqual(formattedName, TOPIC_NAME);
     });
@@ -229,7 +229,7 @@ describe('Topic', () => {
       PUBSUB.createSubscription = (
         topic_: Topic,
         name: string,
-        options: CreateSubscriptionOptions
+        options: CreateSubscriptionOptions,
       ) => {
         assert.strictEqual(topic_, topic);
         assert.strictEqual(name, NAME);
@@ -288,7 +288,7 @@ describe('Topic', () => {
       beforeEach(() => {
         topic.getMetadata = (
           gaxOpts: CallOptions,
-          callback: RequestCallback<google.pubsub.v1.ITopic>
+          callback: RequestCallback<google.pubsub.v1.ITopic>,
         ) => {
           callback(null, fakeMetadata);
         };
@@ -301,7 +301,7 @@ describe('Topic', () => {
             assert.strictEqual(_topic, topic);
             assert.strictEqual(resp, fakeMetadata);
             done();
-          }
+          },
         );
       });
 
@@ -324,7 +324,7 @@ describe('Topic', () => {
 
         topic.getMetadata = (
           gaxOpts: CallOptions,
-          callback: GetTopicMetadataCallback
+          callback: GetTopicMetadataCallback,
         ) => {
           callback(error, apiResponse);
         };
@@ -335,7 +335,7 @@ describe('Topic', () => {
             assert.strictEqual(_topic, null);
             assert.strictEqual(resp, apiResponse);
             done();
-          }
+          },
         );
       });
 
@@ -345,7 +345,7 @@ describe('Topic', () => {
 
         topic.getMetadata = (
           gaxOpts: CallOptions,
-          callback: GetTopicMetadataCallback
+          callback: GetTopicMetadataCallback,
         ) => {
           callback(error, apiResponse);
         };
@@ -356,7 +356,7 @@ describe('Topic', () => {
             assert.strictEqual(_topic, null);
             assert.strictEqual(resp, apiResponse);
             done();
-          }
+          },
         );
       });
 
@@ -370,7 +370,7 @@ describe('Topic', () => {
 
         topic.getMetadata = (
           gaxOpts: CallOptions,
-          callback: GetTopicMetadataCallback
+          callback: GetTopicMetadataCallback,
         ) => {
           callback(error, apiResponse);
         };
@@ -455,7 +455,7 @@ describe('Topic', () => {
 
       topic.request = (
         config: RequestConfig,
-        callback: GetTopicMetadataCallback
+        callback: GetTopicMetadataCallback,
       ) => {
         callback(error, apiResponse);
       };
@@ -472,7 +472,7 @@ describe('Topic', () => {
 
       topic.request = (
         config: RequestConfig,
-        callback: GetTopicMetadataCallback
+        callback: GetTopicMetadataCallback,
       ) => {
         callback(null, apiResponse);
       };
@@ -509,14 +509,14 @@ describe('Topic', () => {
         {
           topic: topic.name,
         },
-        options
+        options,
       );
 
       const expectedGaxOpts = Object.assign(
         {
           autoPaginate: options.autoPaginate,
         },
-        options.gaxOpts
+        options.gaxOpts,
       );
 
       delete expectedOptions.gaxOpts;
@@ -554,7 +554,7 @@ describe('Topic', () => {
 
       topic.request = (
         config: RequestConfig,
-        callback: RequestCallback<string[]>
+        callback: RequestCallback<string[]>,
       ) => {
         callback(null, fakeSubs);
       };
@@ -590,7 +590,7 @@ describe('Topic', () => {
           assert.strictEqual(nextQuery, nextQuery_);
           assert.strictEqual(apiResponse, apiResponse_);
           done();
-        }
+        },
       );
     });
   });
@@ -746,7 +746,7 @@ describe('Topic', () => {
 
       topic.parent.subscription = (
         name: string,
-        options: SubscriptionOptions
+        options: SubscriptionOptions,
       ) => {
         assert.strictEqual(name, subscriptionName);
         assert.deepStrictEqual(options, opts);
@@ -759,7 +759,7 @@ describe('Topic', () => {
     it('should attach the topic instance to the options', done => {
       topic.parent.subscription = (
         name: string,
-        options: SubscriptionOptions
+        options: SubscriptionOptions,
       ) => {
         assert.strictEqual(options.topic, topic);
         done();

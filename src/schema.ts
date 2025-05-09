@@ -122,7 +122,7 @@ export class Schema {
   async create(
     type: SchemaType,
     definition: string,
-    gaxOpts?: CallOptions
+    gaxOpts?: CallOptions,
   ): Promise<void> {
     const name = await this.getName();
     await this.pubsub.createSchema(name, type, definition, gaxOpts);
@@ -142,7 +142,7 @@ export class Schema {
    */
   async get(
     view: SchemaView = SchemaViews.Full,
-    gaxOpts?: CallOptions
+    gaxOpts?: CallOptions,
   ): Promise<ISchema> {
     const client = await this.pubsub.getSchemaClient();
     const name = await this.getName();
@@ -151,7 +151,7 @@ export class Schema {
         name,
         view,
       },
-      gaxOpts
+      gaxOpts,
     );
 
     return schema;
@@ -173,7 +173,7 @@ export class Schema {
       {
         name,
       },
-      gaxOpts
+      gaxOpts,
     );
   }
 
@@ -200,7 +200,7 @@ export class Schema {
     encoding:
       | google.pubsub.v1.Encoding
       | keyof typeof google.pubsub.v1.Encoding,
-    gaxOpts?: CallOptions
+    gaxOpts?: CallOptions,
   ): Promise<void> {
     const client = await this.pubsub.getSchemaClient();
     const name = await this.getName();
@@ -212,7 +212,7 @@ export class Schema {
         message,
         encoding,
       },
-      gaxOpts
+      gaxOpts,
     );
   }
 

@@ -31,8 +31,6 @@ import * as defer from 'p-defer';
 import {TestResources} from './testResources';
 import {commandFor} from './common';
 
-// Tests run as Node 14.
-// eslint-disable-next-line n/no-unsupported-features/node-builtins
 import {promises as fs} from 'fs';
 
 const execSync = (cmd: string) => cp.execSync(cmd, {encoding: 'utf-8'});
@@ -385,7 +383,7 @@ describe('schema', () => {
     const topic = await createTopicWithSchema(id, schema.id, Encodings.Json);
     const sub = await createSub(id, topic.name);
 
-    topic.publishMessage({
+    await topic.publishMessage({
       data: Buffer.from(
         JSON.stringify({
           name: 'Alberta',
@@ -421,7 +419,7 @@ describe('schema', () => {
     );
     const sub = await createSub(id, topic.name);
 
-    topic.publishMessage({
+    await topic.publishMessage({
       data: Buffer.from(
         JSON.stringify({
           name: 'Alberta',
@@ -445,7 +443,7 @@ describe('schema', () => {
     const topic = await createTopicWithSchema(id, schema.id, Encodings.Json);
     const sub = await createSub(id, topic.name);
 
-    topic.publishMessage({
+    await topic.publishMessage({
       data: Buffer.from(
         JSON.stringify({
           name: 'Quebec',

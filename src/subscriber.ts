@@ -152,7 +152,7 @@ export class SubscriberSpans {
   schedulerStart() {
     if (!this.scheduler) {
       this.scheduler = tracing.PubsubSpans.createReceiveSchedulerSpan(
-        this.parent
+        this.parent,
       );
     }
   }
@@ -171,7 +171,7 @@ export class SubscriberSpans {
     if (!this.processing) {
       this.processing = tracing.PubsubSpans.createReceiveProcessSpan(
         this.parent,
-        subName
+        subName,
       );
     }
   }
@@ -283,7 +283,7 @@ export class Message implements tracing.MessageWithAttributes {
    */
   constructor(
     sub: Subscriber,
-    {ackId, message, deliveryAttempt}: google.pubsub.v1.IReceivedMessage
+    {ackId, message, deliveryAttempt}: google.pubsub.v1.IReceivedMessage,
   ) {
     /**
      * This ID is used to acknowledge the message.
@@ -406,7 +406,7 @@ export class Message implements tracing.MessageWithAttributes {
       this._handled = true;
       this.subSpans.ackCall();
       this.subSpans.processingEnd();
-      this._subscriber.ack(this);
+      void this._subscriber.ack(this);
     }
   }
 
@@ -456,7 +456,7 @@ export class Message implements tracing.MessageWithAttributes {
   modAck(deadline: number): void {
     if (!this._handled) {
       this.subSpans.modAckCall(Duration.from({seconds: deadline}));
-      this._subscriber.modAck(this, deadline);
+      void this._subscriber.modAck(this, deadline);
     }
   }
 
@@ -506,7 +506,7 @@ export class Message implements tracing.MessageWithAttributes {
       this._handled = true;
       this.subSpans.nackCall();
       this.subSpans.processingEnd();
-      this._subscriber.nack(this);
+      void this._subscriber.nack(this);
     }
   }
 
@@ -560,6 +560,8 @@ export class Message implements tracing.MessageWithAttributes {
  *     ever have, while it's under library control.
  * @property {Duration} [maxAckDeadline] The maximum time that ackDeadline should
  *     ever have, while it's under library control.
+ * @property {Duration} [maxExtensionTime] The maximum time that ackDeadline should
+ *     ever have, while it's under library control.
  * @property {BatchOptions} [batching] Request batching options; this is for
  *     batching acks and modacks being sent back to the server.
  * @property {FlowControlOptions} [flowControl] Flow control options.
@@ -569,19 +571,13 @@ export class Message implements tracing.MessageWithAttributes {
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
  */
 export interface SubscriberOptions {
-  /** @deprecated Use minAckDeadline and maxAckDeadline. */
-  ackDeadline?: number;
-
   minAckDeadline?: Duration;
   maxAckDeadline?: Duration;
+  maxExtensionTime?: Duration;
   batching?: BatchOptions;
   flowControl?: FlowControlOptions;
   useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
-
-  /** @deprecated Unset this and instantiate a tracer; support will be
-   *    enabled automatically. */
-  enableOpenTelemetryTracing?: boolean;
 }
 
 const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
@@ -601,10 +597,10 @@ export class Subscriber extends EventEmitter {
   maxBytes: number;
   useLegacyFlowControl: boolean;
   isOpen: boolean;
+  maxExtensionTime: Duration;
   private _acks!: AckQueue;
   private _histogram: Histogram;
   private _inventory!: LeaseManager;
-  private _useLegacyOpenTelemetry: boolean;
   private _latencies: Histogram;
   private _modAcks!: ModAckQueue;
   private _name!: string;
@@ -617,12 +613,13 @@ export class Subscriber extends EventEmitter {
   constructor(subscription: Subscription, options = {}) {
     super();
 
-    this.ackDeadline = defaultOptions.subscription.ackDeadline;
+    this.ackDeadline =
+      defaultOptions.subscription.startingAckDeadline.totalOf('second');
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
+    this.maxExtensionTime = defaultOptions.subscription.maxExtensionTime;
     this.useLegacyFlowControl = false;
     this.isOpen = false;
-    this._useLegacyOpenTelemetry = false;
     this._histogram = new Histogram({min: 10, max: 600});
     this._latencies = new Histogram();
     this._subscription = subscription;
@@ -718,7 +715,7 @@ export class Subscriber extends EventEmitter {
         ? 60
         : 10;
       this._stream.setStreamAckDeadline(
-        Duration.from({seconds: subscriptionAckDeadlineSeconds})
+        Duration.from({seconds: subscriptionAckDeadlineSeconds}),
       );
     }
   }
@@ -881,7 +878,7 @@ export class Subscriber extends EventEmitter {
    */
   async modAckWithResponse(
     message: Message,
-    deadline: number
+    deadline: number,
   ): Promise<AckResponse> {
     const startTime = Date.now();
 
@@ -951,7 +948,7 @@ export class Subscriber extends EventEmitter {
 
     this._stream.start().catch(err => {
       this.emit('error', err);
-      this.close();
+      void this.close();
     });
 
     this.isOpen = true;
@@ -965,17 +962,6 @@ export class Subscriber extends EventEmitter {
    */
   setOptions(options: SubscriberOptions): void {
     this._options = options;
-
-    this._useLegacyOpenTelemetry = options.enableOpenTelemetryTracing || false;
-
-    // The user-set ackDeadline value basically pegs the extension time.
-    // We'll emulate it by overwriting min/max.
-    const passedAckDeadline = options.ackDeadline;
-    if (passedAckDeadline !== undefined) {
-      this.ackDeadline = passedAckDeadline;
-      options.minAckDeadline = Duration.from({seconds: passedAckDeadline});
-      options.maxAckDeadline = Duration.from({seconds: passedAckDeadline});
-    }
 
     this.useLegacyFlowControl = options.useLegacyFlowControl || false;
     if (options.flowControl) {
@@ -999,13 +985,25 @@ export class Subscriber extends EventEmitter {
 
       options.streamingOptions.maxStreams = Math.min(
         maxStreams,
-        this.maxMessages
+        this.maxMessages,
       );
     }
 
     if (this._inventory) {
       this._inventory.setOptions(this._options.flowControl!);
     }
+
+    this.updateAckDeadline();
+  }
+
+  /**
+   * Retrieves our effective options. This is mostly for unit test use.
+   *
+   * @private
+   * @returns {SubscriberOptions} The options.
+   */
+  getOptions(): SubscriberOptions {
+    return this._options;
   }
 
   /**
@@ -1015,11 +1013,9 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   private createParentSpan(message: Message): void {
-    const enabled = tracing.isEnabled({
-      enableOpenTelemetryTracing: this._useLegacyOpenTelemetry,
-    });
+    const enabled = tracing.isEnabled();
     if (enabled) {
-      tracing.extractSpan(message, this.name, enabled);
+      tracing.extractSpan(message, this.name);
     }
   }
 
@@ -1058,7 +1054,7 @@ export class Subscriber extends EventEmitter {
           // lease on the message before actually leasing it.
           message.subSpans.modAckStart(
             Duration.from({seconds: this.ackDeadline}),
-            true
+            true,
           );
           message
             .modAckWithResponse(this.ackDeadline)
@@ -1076,7 +1072,7 @@ export class Subscriber extends EventEmitter {
         } else {
           message.subSpans.modAckStart(
             Duration.from({seconds: this.ackDeadline}),
-            true
+            true,
           );
           message.modAck(this.ackDeadline);
           message.subSpans.modAckEnd();
@@ -1106,12 +1102,12 @@ export class Subscriber extends EventEmitter {
 
     if (this._acks.numPendingRequests) {
       promises.push(this._acks.onFlush());
-      this._acks.flush();
+      await this._acks.flush();
     }
 
     if (this._modAcks.numPendingRequests) {
       promises.push(this._modAcks.onFlush());
-      this._modAcks.flush();
+      await this._modAcks.flush();
     }
 
     if (this._acks.numInFlightRequests) {

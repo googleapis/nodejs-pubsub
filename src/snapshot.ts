@@ -145,7 +145,7 @@ export class Snapshot {
         method: 'deleteSnapshot',
         reqOpts,
       },
-      callback!
+      callback!,
     );
   }
 
@@ -201,11 +201,11 @@ export class Snapshot {
   create(gaxOpts: CallOptions, callback: CreateSnapshotCallback): void;
   create(
     optsOrCallback?: CallOptions | CreateSnapshotCallback,
-    callback?: CreateSnapshotCallback
+    callback?: CreateSnapshotCallback,
   ): void | Promise<CreateSnapshotResponse> {
     if (!(this.parent instanceof Subscription)) {
       throw new Error(
-        'This is only available if you accessed this object through Subscription#snapshot'
+        'This is only available if you accessed this object through Subscription#snapshot',
       );
     }
 
@@ -222,7 +222,7 @@ export class Snapshot {
         }
         Object.assign(this, snapshot);
         callback!(null, this, resp);
-      }
+      },
     );
   }
 
@@ -258,11 +258,11 @@ export class Snapshot {
   seek(gaxOpts: CallOptions, callback: SeekCallback): void;
   seek(
     gaxOpts?: CallOptions | SeekCallback,
-    callback?: SeekCallback
+    callback?: SeekCallback,
   ): void | Promise<SeekResponse> {
     if (!(this.parent instanceof Subscription)) {
       throw new Error(
-        'This is only available if you accessed this object through Subscription#snapshot'
+        'This is only available if you accessed this object through Subscription#snapshot',
       );
     }
     return this.parent.seek(this.name, gaxOpts! as CallOptions, callback!);

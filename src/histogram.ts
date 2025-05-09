@@ -34,7 +34,7 @@ export class Histogram {
   constructor(options?: HistogramOptions) {
     this.options = Object.assign(
       {min: 0, max: Number.MAX_SAFE_INTEGER},
-      options
+      options,
     );
     this.data = new Map();
     this.length = 0;

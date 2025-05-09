@@ -72,7 +72,7 @@ async function publishOrderedMessage(topicNameOrId, data, orderingKey) {
   const topic = pubSubClient.topic(topicNameOrId, publishOptions);
 
   // Publishes the message
-  const messageId = topic.publishMessage(message);
+  const messageId = await topic.publishMessage(message);
 
   console.log(`Message ${messageId} published.`);
 
@@ -80,12 +80,12 @@ async function publishOrderedMessage(topicNameOrId, data, orderingKey) {
 }
 // [END pubsub_publish_with_ordering_keys]
 
-async function main(
+function main(
   topicNameOrId = 'YOUR_TOPIC_NAME_OR_ID',
   data = JSON.stringify({foo: 'bar'}),
-  orderingKey = 'key1'
+  orderingKey = 'key1',
 ) {
-  await publishOrderedMessage(topicNameOrId, data, orderingKey).catch(err => {
+  publishOrderedMessage(topicNameOrId, data, orderingKey).catch(err => {
     console.error(err.message);
     process.exitCode = 1;
   });

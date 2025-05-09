@@ -73,7 +73,7 @@ export class FlowControl {
     ) {
       // Undefined is okay, but if either is zero, no publishes ever happen.
       throw new Error(
-        'When using publisher flow control, maxOutstandingBytes and maxOutstandingMessages must not be zero'
+        'When using publisher flow control, maxOutstandingBytes and maxOutstandingMessages must not be zero',
       );
     }
   }

@@ -184,8 +184,3 @@ if (process.env.DEBUG_GRPC) {
 }
 import * as protos from '../protos/protos';
 export {protos};
-
-// Deprecated; please see the updated OpenTelemetry sample
-// for an example of how to use telemetry in this library.
-import {legacyExports} from './telemetry-tracing';
-export {legacyExports as openTelemetry};
