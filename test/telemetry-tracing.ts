@@ -23,7 +23,7 @@ import {exporter} from './tracing';
 import {SpanKind} from '@opentelemetry/api';
 import sinon = require('sinon');
 import {PubsubMessage} from '../src/publisher';
-import {Duration} from '../src/temporal'
+import {Duration} from '../src/temporal';
 
 describe('OpenTelemetryTracer', () => {
   beforeEach(() => {
@@ -288,7 +288,7 @@ describe('OpenTelemetryTracer', () => {
         firstSpan.attributes['messaging.destination.name'],
         tests.topicInfo.topicId,
       );
-      assert.strictEqual(firstSpan.attributes['messaging.operation'], 'create')
+      assert.strictEqual(firstSpan.attributes['messaging.operation'], 'create');
       assert.strictEqual(
         firstSpan.attributes['messaging.system'],
         'gcp_pubsub',
@@ -344,7 +344,10 @@ describe('OpenTelemetryTracer', () => {
       assert.ok(parentReadSpan && childReadSpan);
 
       assert.strictEqual(childReadSpan.name, 'sub subscribe');
-      assert.strictEqual(childReadSpan.attributes['messaging.operation'], 'receive')
+      assert.strictEqual(
+        childReadSpan.attributes['messaging.operation'],
+        'receive',
+      );
       assert.strictEqual(
         childReadSpan.attributes['messaging.destination.name'],
         'sub',
@@ -387,16 +390,16 @@ describe('OpenTelemetryTracer', () => {
     it('creates ack rpc span', () => {
       const message: PubsubMessage = {};
       const topicName = 'projects/test/topics/topicfoo';
-      const subName = 'subTest'
+      const subName = 'subTest';
       const producerSpan = otel.PubsubSpans.createPublisherSpan(
         message,
         topicName,
-        'test'
+        'test',
       ) as trace.Span;
       const span = otel.PubsubSpans.createAckRpcSpan(
         [producerSpan],
         subName,
-        'tests'
+        'tests',
       );
       assert.ok(span);
       producerSpan.end();
@@ -411,32 +414,38 @@ describe('OpenTelemetryTracer', () => {
       assert.strictEqual(firstSpan.name, `${subName} ack`);
       assert.strictEqual(
         firstSpan.attributes['messaging.destination.name'],
-        subName
+        subName,
       );
-      assert.strictEqual(firstSpan.attributes['messaging.operation'], 'receive');
-      assert.strictEqual(firstSpan.attributes['messaging.batch.message_count'], 1);
+      assert.strictEqual(
+        firstSpan.attributes['messaging.operation'],
+        'receive',
+      );
+      assert.strictEqual(
+        firstSpan.attributes['messaging.batch.message_count'],
+        1,
+      );
       assert.strictEqual(
         firstSpan.attributes['messaging.system'],
-        'gcp_pubsub'
+        'gcp_pubsub',
       );
     });
-    
+
     it('creates modack rpc span', () => {
       const message: PubsubMessage = {};
       const topicName = 'projects/test/topics/topicfoo';
-      const subName = 'subTest'
+      const subName = 'subTest';
       const producerSpan = otel.PubsubSpans.createPublisherSpan(
         message,
         topicName,
-        'test'
+        'test',
       ) as trace.Span;
       const span = otel.PubsubSpans.createModackRpcSpan(
         [producerSpan],
         subName,
         'modack',
         'test',
-        Duration.from({ seconds: 1 }),
-        true
+        Duration.from({seconds: 1}),
+        true,
       );
       assert.ok(span);
       producerSpan.end();
@@ -451,16 +460,26 @@ describe('OpenTelemetryTracer', () => {
       assert.strictEqual(firstSpan.name, `${subName} modack`);
       assert.strictEqual(
         firstSpan.attributes['messaging.destination.name'],
-        subName
+        subName,
       );
-      assert.strictEqual(firstSpan.attributes['messaging.operation'], 'receive');
-      assert.strictEqual(firstSpan.attributes['messaging.gcp_pubsub.message.ack_deadline_seconds'], 1);
-      assert.strictEqual(firstSpan.attributes['messaging.gcp_pubsub.is_receipt_modack'], true)
+      assert.strictEqual(
+        firstSpan.attributes['messaging.operation'],
+        'receive',
+      );
+      assert.strictEqual(
+        firstSpan.attributes[
+          'messaging.gcp_pubsub.message.ack_deadline_seconds'
+        ],
+        1,
+      );
+      assert.strictEqual(
+        firstSpan.attributes['messaging.gcp_pubsub.is_receipt_modack'],
+        true,
+      );
       assert.strictEqual(
         firstSpan.attributes['messaging.system'],
-        'gcp_pubsub'
+        'gcp_pubsub',
       );
     });
   });
-    
 });
