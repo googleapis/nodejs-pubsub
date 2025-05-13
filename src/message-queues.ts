@@ -261,7 +261,8 @@ export abstract class MessageQueue {
       this._requests.length + 1 >= this._options.maxMessages! ||
       this.bytes + size >= MAX_BATCH_BYTES
     ) {
-      this.flush();
+      // No need to wait on this one; it clears the old batch out.
+      this.flush().catch(() => {});
     }
 
     // Just throw it in for another round of processing on the next batch.
