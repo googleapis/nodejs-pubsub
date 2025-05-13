@@ -213,6 +213,7 @@ describe('OpenTelemetryTracer', () => {
         topicInfo,
         message,
         'tests',
+        'create',
       );
       assert.deepStrictEqual(topicAttrs, {
         'messaging.system': 'gcp_pubsub',
@@ -223,6 +224,7 @@ describe('OpenTelemetryTracer', () => {
         'messaging.gcp_pubsub.message.exactly_once_delivery':
           message.isExactlyOnceDelivery,
         'messaging.gcp_pubsub.message.ack_id': message.ackId,
+        'messaging.operation': 'create',
         'code.function': 'tests',
       });
 
@@ -236,10 +238,12 @@ describe('OpenTelemetryTracer', () => {
         topicInfo,
         message,
         'tests',
+        'create',
       );
       assert.deepStrictEqual(topicAttrs2, {
         'messaging.system': 'gcp_pubsub',
         'messaging.destination.name': topicInfo.topicId,
+        'messaging.operation': 'create',
         'gcp.project_id': topicInfo.projectId,
         'messaging.message.envelope.size': message.data?.length,
         'code.function': 'tests',
@@ -284,6 +288,7 @@ describe('OpenTelemetryTracer', () => {
       const firstSpan = spans.pop();
       assert.ok(firstSpan);
       assert.strictEqual(firstSpan.name, `${tests.topicInfo.topicId} create`);
+      assert.strictEqual(firstSpan.attributes['messaging.operation'], 'create');
       assert.strictEqual(
         firstSpan.attributes['messaging.destination.name'],
         tests.topicInfo.topicId,
@@ -314,7 +319,6 @@ describe('OpenTelemetryTracer', () => {
       const firstSpan = spans.pop();
       assert.ok(firstSpan);
       assert.strictEqual(firstSpan.name, 'other create');
-
       assert.strictEqual(
         firstSpan.attributes['messaging.destination.name'],
         'other',
@@ -351,6 +355,10 @@ describe('OpenTelemetryTracer', () => {
       assert.strictEqual(
         childReadSpan.attributes['messaging.destination.name'],
         'sub',
+      );
+      assert.strictEqual(
+        childReadSpan.attributes['messaging.operation'],
+        'receive',
       );
       assert.strictEqual(childReadSpan.kind, SpanKind.CONSUMER);
       assert.ok(childReadSpan.parentSpanId);
