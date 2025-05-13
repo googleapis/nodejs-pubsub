@@ -15,7 +15,7 @@
  */
 
 import * as extend from 'extend';
-import {CallOptions, Duration} from 'google-gax';
+import {CallOptions} from 'google-gax';
 import snakeCase = require('lodash.snakecase');
 
 import {google} from '../protos/protos';
@@ -41,7 +41,12 @@ import {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-import {Message, Subscriber, SubscriberOptions} from './subscriber';
+import {
+  Message,
+  Subscriber,
+  SubscriberOptions,
+  SubscriptionCloseOptions,
+} from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
 import {StatusError} from './message-stream';
@@ -61,7 +66,6 @@ export type SubscriptionMetadata = {
 
 export type SubscriptionOptions = SubscriberOptions & {topic?: Topic};
 export type SubscriptionCloseCallback = (err?: Error) => void;
-export type SubscriptionCloseOptions = {timeout?: Duration};
 
 type SubscriptionCallback = ResourceCallback<
   Subscription,
@@ -363,21 +367,16 @@ export class Subscription extends EventEmitter {
    * listeners.
    *
    * @param {object} [options] Options for the close operation.
-   * @param {google.protobuf.Duration | number} [options.timeout] Timeout for the close operation. This specifies the maximum amount of time in seconds to wait for the subscriber to drain/close. If not specified, the default is 300 seconds.
+   * @param {Duration} [options.timeout] Timeout for the close operation. This
+   *   specifies the maximum amount of time to wait for the subscriber to
+   *   drain/close. If not specified, the default is to wait indefinitely.
    * @param {function} [callback] The callback function.
    * @param {?error} callback.err An error returned while closing the
    *     Subscription.
    *
    * @example
    * ```
-   * subscription.close({timeout: 60}, err => { // timeout in seconds
-   *   if (err) {
-   *     // Error handling omitted.
-   *   }
-   * });
-   *
-   * // If the callback is omitted a Promise will be returned.
-   * subscription.close({timeout: 60}).then(() => {}); // timeout in seconds
+   * await subscription.close({timeout: Duration.from({seconds: 60})});
    * ```
    */
   close(options?: SubscriptionCloseOptions): Promise<void>;
