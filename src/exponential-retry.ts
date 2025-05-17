@@ -147,6 +147,7 @@ export class ExponentialRetry<T> {
   reset(item: T) {
     const retried = item as RetriedItem<T>;
     delete retried.retryInfo;
+    this._items.remove(retried);
   }
 
   // Takes a time delta and adds fuzz.
