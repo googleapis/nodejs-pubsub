@@ -4189,6 +4189,7 @@
                      * @property {google.pubsub.v1.IngestionFailureEvent.IAwsMskFailureReason|null} [awsMskFailure] IngestionFailureEvent awsMskFailure
                      * @property {google.pubsub.v1.IngestionFailureEvent.IAzureEventHubsFailureReason|null} [azureEventHubsFailure] IngestionFailureEvent azureEventHubsFailure
                      * @property {google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason|null} [confluentCloudFailure] IngestionFailureEvent confluentCloudFailure
+                     * @property {google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason|null} [awsKinesisFailure] IngestionFailureEvent awsKinesisFailure
                      */
     
                     /**
@@ -4254,17 +4255,25 @@
                      */
                     IngestionFailureEvent.prototype.confluentCloudFailure = null;
     
+                    /**
+                     * IngestionFailureEvent awsKinesisFailure.
+                     * @member {google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason|null|undefined} awsKinesisFailure
+                     * @memberof google.pubsub.v1.IngestionFailureEvent
+                     * @instance
+                     */
+                    IngestionFailureEvent.prototype.awsKinesisFailure = null;
+    
                     // OneOf field names bound to virtual getters and setters
                     var $oneOfFields;
     
                     /**
                      * IngestionFailureEvent failure.
-                     * @member {"cloudStorageFailure"|"awsMskFailure"|"azureEventHubsFailure"|"confluentCloudFailure"|undefined} failure
+                     * @member {"cloudStorageFailure"|"awsMskFailure"|"azureEventHubsFailure"|"confluentCloudFailure"|"awsKinesisFailure"|undefined} failure
                      * @memberof google.pubsub.v1.IngestionFailureEvent
                      * @instance
                      */
                     Object.defineProperty(IngestionFailureEvent.prototype, "failure", {
-                        get: $util.oneOfGetter($oneOfFields = ["cloudStorageFailure", "awsMskFailure", "azureEventHubsFailure", "confluentCloudFailure"]),
+                        get: $util.oneOfGetter($oneOfFields = ["cloudStorageFailure", "awsMskFailure", "azureEventHubsFailure", "confluentCloudFailure", "awsKinesisFailure"]),
                         set: $util.oneOfSetter($oneOfFields)
                     });
     
@@ -4304,6 +4313,8 @@
                             $root.google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.encode(message.azureEventHubsFailure, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                         if (message.confluentCloudFailure != null && Object.hasOwnProperty.call(message, "confluentCloudFailure"))
                             $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.encode(message.confluentCloudFailure, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                        if (message.awsKinesisFailure != null && Object.hasOwnProperty.call(message, "awsKinesisFailure"))
+                            $root.google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.encode(message.awsKinesisFailure, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
                         return writer;
                     };
     
@@ -4362,6 +4373,10 @@
                                 }
                             case 6: {
                                     message.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 7: {
+                                    message.awsKinesisFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.decode(reader, reader.uint32());
                                     break;
                                 }
                             default:
@@ -4444,6 +4459,16 @@
                                     return "confluentCloudFailure." + error;
                             }
                         }
+                        if (message.awsKinesisFailure != null && message.hasOwnProperty("awsKinesisFailure")) {
+                            if (properties.failure === 1)
+                                return "failure: multiple values";
+                            properties.failure = 1;
+                            {
+                                var error = $root.google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.verify(message.awsKinesisFailure);
+                                if (error)
+                                    return "awsKinesisFailure." + error;
+                            }
+                        }
                         return null;
                     };
     
@@ -4482,6 +4507,11 @@
                             if (typeof object.confluentCloudFailure !== "object")
                                 throw TypeError(".google.pubsub.v1.IngestionFailureEvent.confluentCloudFailure: object expected");
                             message.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.fromObject(object.confluentCloudFailure);
+                        }
+                        if (object.awsKinesisFailure != null) {
+                            if (typeof object.awsKinesisFailure !== "object")
+                                throw TypeError(".google.pubsub.v1.IngestionFailureEvent.awsKinesisFailure: object expected");
+                            message.awsKinesisFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.fromObject(object.awsKinesisFailure);
                         }
                         return message;
                     };
@@ -4526,6 +4556,11 @@
                             object.confluentCloudFailure = $root.google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.toObject(message.confluentCloudFailure, options);
                             if (options.oneofs)
                                 object.failure = "confluentCloudFailure";
+                        }
+                        if (message.awsKinesisFailure != null && message.hasOwnProperty("awsKinesisFailure")) {
+                            object.awsKinesisFailure = $root.google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.toObject(message.awsKinesisFailure, options);
+                            if (options.oneofs)
+                                object.failure = "awsKinesisFailure";
                         }
                         return object;
                     };
@@ -4910,6 +4945,183 @@
                         return AvroFailureReason;
                     })();
     
+                    IngestionFailureEvent.SchemaViolationReason = (function() {
+    
+                        /**
+                         * Properties of a SchemaViolationReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface ISchemaViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new SchemaViolationReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents a SchemaViolationReason.
+                         * @implements ISchemaViolationReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason=} [properties] Properties to set
+                         */
+                        function SchemaViolationReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * Creates a new SchemaViolationReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason} SchemaViolationReason instance
+                         */
+                        SchemaViolationReason.create = function create(properties) {
+                            return new SchemaViolationReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified SchemaViolationReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason} message SchemaViolationReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        SchemaViolationReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified SchemaViolationReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason} message SchemaViolationReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        SchemaViolationReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a SchemaViolationReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason} SchemaViolationReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        SchemaViolationReason.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a SchemaViolationReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason} SchemaViolationReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        SchemaViolationReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a SchemaViolationReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        SchemaViolationReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a SchemaViolationReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason} SchemaViolationReason
+                         */
+                        SchemaViolationReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason)
+                                return object;
+                            return new $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason();
+                        };
+    
+                        /**
+                         * Creates a plain object from a SchemaViolationReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason} message SchemaViolationReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        SchemaViolationReason.toObject = function toObject() {
+                            return {};
+                        };
+    
+                        /**
+                         * Converts this SchemaViolationReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        SchemaViolationReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for SchemaViolationReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        SchemaViolationReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason";
+                        };
+    
+                        return SchemaViolationReason;
+                    })();
+    
                     IngestionFailureEvent.CloudStorageFailure = (function() {
     
                         /**
@@ -4921,6 +5133,7 @@
                          * @property {number|Long|null} [objectGeneration] CloudStorageFailure objectGeneration
                          * @property {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason|null} [avroFailureReason] CloudStorageFailure avroFailureReason
                          * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] CloudStorageFailure apiViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] CloudStorageFailure schemaViolationReason
                          */
     
                         /**
@@ -4978,17 +5191,25 @@
                          */
                         CloudStorageFailure.prototype.apiViolationReason = null;
     
+                        /**
+                         * CloudStorageFailure schemaViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null|undefined} schemaViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.schemaViolationReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * CloudStorageFailure reason.
-                         * @member {"avroFailureReason"|"apiViolationReason"|undefined} reason
+                         * @member {"avroFailureReason"|"apiViolationReason"|"schemaViolationReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
                          * @instance
                          */
                         Object.defineProperty(CloudStorageFailure.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["avroFailureReason", "apiViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["avroFailureReason", "apiViolationReason", "schemaViolationReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -5026,6 +5247,8 @@
                                 $root.google.pubsub.v1.IngestionFailureEvent.AvroFailureReason.encode(message.avroFailureReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                             if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                            if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
                             return writer;
                         };
     
@@ -5080,6 +5303,10 @@
                                     }
                                 case 6: {
                                         message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 7: {
+                                        message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -5145,6 +5372,16 @@
                                         return "apiViolationReason." + error;
                                 }
                             }
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify(message.schemaViolationReason);
+                                    if (error)
+                                        return "schemaViolationReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -5182,6 +5419,11 @@
                                 if (typeof object.apiViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.apiViolationReason: object expected");
                                 message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            if (object.schemaViolationReason != null) {
+                                if (typeof object.schemaViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.schemaViolationReason: object expected");
+                                message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
                             }
                             return message;
                         };
@@ -5227,6 +5469,11 @@
                                 if (options.oneofs)
                                     object.reason = "apiViolationReason";
                             }
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                object.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.toObject(message.schemaViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "schemaViolationReason";
+                            }
                             return object;
                         };
     
@@ -5270,6 +5517,7 @@
                          * @property {number|Long|null} [partitionId] AwsMskFailureReason partitionId
                          * @property {number|Long|null} [offset] AwsMskFailureReason offset
                          * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AwsMskFailureReason apiViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] AwsMskFailureReason schemaViolationReason
                          */
     
                         /**
@@ -5327,17 +5575,25 @@
                          */
                         AwsMskFailureReason.prototype.apiViolationReason = null;
     
+                        /**
+                         * AwsMskFailureReason schemaViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null|undefined} schemaViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.schemaViolationReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * AwsMskFailureReason reason.
-                         * @member {"apiViolationReason"|undefined} reason
+                         * @member {"apiViolationReason"|"schemaViolationReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
                          * @instance
                          */
                         Object.defineProperty(AwsMskFailureReason.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -5375,6 +5631,8 @@
                                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
                             if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                             return writer;
                         };
     
@@ -5429,6 +5687,10 @@
                                     }
                                 case 5: {
                                         message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 6: {
+                                        message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -5487,6 +5749,16 @@
                                         return "apiViolationReason." + error;
                                 }
                             }
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify(message.schemaViolationReason);
+                                    if (error)
+                                        return "schemaViolationReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -5528,6 +5800,11 @@
                                 if (typeof object.apiViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.apiViolationReason: object expected");
                                 message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            if (object.schemaViolationReason != null) {
+                                if (typeof object.schemaViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.schemaViolationReason: object expected");
+                                message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
                             }
                             return message;
                         };
@@ -5578,6 +5855,11 @@
                                 if (options.oneofs)
                                     object.reason = "apiViolationReason";
                             }
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                object.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.toObject(message.schemaViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "schemaViolationReason";
+                            }
                             return object;
                         };
     
@@ -5621,6 +5903,7 @@
                          * @property {number|Long|null} [partitionId] AzureEventHubsFailureReason partitionId
                          * @property {number|Long|null} [offset] AzureEventHubsFailureReason offset
                          * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AzureEventHubsFailureReason apiViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] AzureEventHubsFailureReason schemaViolationReason
                          */
     
                         /**
@@ -5678,17 +5961,25 @@
                          */
                         AzureEventHubsFailureReason.prototype.apiViolationReason = null;
     
+                        /**
+                         * AzureEventHubsFailureReason schemaViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null|undefined} schemaViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.schemaViolationReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * AzureEventHubsFailureReason reason.
-                         * @member {"apiViolationReason"|undefined} reason
+                         * @member {"apiViolationReason"|"schemaViolationReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
                          * @instance
                          */
                         Object.defineProperty(AzureEventHubsFailureReason.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -5726,6 +6017,8 @@
                                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
                             if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                             return writer;
                         };
     
@@ -5780,6 +6073,10 @@
                                     }
                                 case 5: {
                                         message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 6: {
+                                        message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -5838,6 +6135,16 @@
                                         return "apiViolationReason." + error;
                                 }
                             }
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify(message.schemaViolationReason);
+                                    if (error)
+                                        return "schemaViolationReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -5879,6 +6186,11 @@
                                 if (typeof object.apiViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.apiViolationReason: object expected");
                                 message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            if (object.schemaViolationReason != null) {
+                                if (typeof object.schemaViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.schemaViolationReason: object expected");
+                                message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
                             }
                             return message;
                         };
@@ -5929,6 +6241,11 @@
                                 if (options.oneofs)
                                     object.reason = "apiViolationReason";
                             }
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                object.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.toObject(message.schemaViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "schemaViolationReason";
+                            }
                             return object;
                         };
     
@@ -5972,6 +6289,7 @@
                          * @property {number|Long|null} [partitionId] ConfluentCloudFailureReason partitionId
                          * @property {number|Long|null} [offset] ConfluentCloudFailureReason offset
                          * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] ConfluentCloudFailureReason apiViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] ConfluentCloudFailureReason schemaViolationReason
                          */
     
                         /**
@@ -6029,17 +6347,25 @@
                          */
                         ConfluentCloudFailureReason.prototype.apiViolationReason = null;
     
+                        /**
+                         * ConfluentCloudFailureReason schemaViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null|undefined} schemaViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.schemaViolationReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * ConfluentCloudFailureReason reason.
-                         * @member {"apiViolationReason"|undefined} reason
+                         * @member {"apiViolationReason"|"schemaViolationReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
                          * @instance
                          */
                         Object.defineProperty(ConfluentCloudFailureReason.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -6077,6 +6403,8 @@
                                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.offset);
                             if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                             return writer;
                         };
     
@@ -6131,6 +6459,10 @@
                                     }
                                 case 5: {
                                         message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 6: {
+                                        message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -6189,6 +6521,16 @@
                                         return "apiViolationReason." + error;
                                 }
                             }
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify(message.schemaViolationReason);
+                                    if (error)
+                                        return "schemaViolationReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -6230,6 +6572,11 @@
                                 if (typeof object.apiViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.apiViolationReason: object expected");
                                 message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
+                            }
+                            if (object.schemaViolationReason != null) {
+                                if (typeof object.schemaViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.schemaViolationReason: object expected");
+                                message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
                             }
                             return message;
                         };
@@ -6280,6 +6627,11 @@
                                 if (options.oneofs)
                                     object.reason = "apiViolationReason";
                             }
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                object.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.toObject(message.schemaViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "schemaViolationReason";
+                            }
                             return object;
                         };
     
@@ -6312,7 +6664,813 @@
                         return ConfluentCloudFailureReason;
                     })();
     
+                    IngestionFailureEvent.AwsKinesisFailureReason = (function() {
+    
+                        /**
+                         * Properties of an AwsKinesisFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IAwsKinesisFailureReason
+                         * @property {string|null} [streamArn] AwsKinesisFailureReason streamArn
+                         * @property {string|null} [partitionKey] AwsKinesisFailureReason partitionKey
+                         * @property {string|null} [sequenceNumber] AwsKinesisFailureReason sequenceNumber
+                         * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] AwsKinesisFailureReason schemaViolationReason
+                         */
+    
+                        /**
+                         * Constructs a new AwsKinesisFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents an AwsKinesisFailureReason.
+                         * @implements IAwsKinesisFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason=} [properties] Properties to set
+                         */
+                        function AwsKinesisFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * AwsKinesisFailureReason streamArn.
+                         * @member {string} streamArn
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @instance
+                         */
+                        AwsKinesisFailureReason.prototype.streamArn = "";
+    
+                        /**
+                         * AwsKinesisFailureReason partitionKey.
+                         * @member {string} partitionKey
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @instance
+                         */
+                        AwsKinesisFailureReason.prototype.partitionKey = "";
+    
+                        /**
+                         * AwsKinesisFailureReason sequenceNumber.
+                         * @member {string} sequenceNumber
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @instance
+                         */
+                        AwsKinesisFailureReason.prototype.sequenceNumber = "";
+    
+                        /**
+                         * AwsKinesisFailureReason schemaViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null|undefined} schemaViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @instance
+                         */
+                        AwsKinesisFailureReason.prototype.schemaViolationReason = null;
+    
+                        // OneOf field names bound to virtual getters and setters
+                        var $oneOfFields;
+    
+                        /**
+                         * AwsKinesisFailureReason reason.
+                         * @member {"schemaViolationReason"|undefined} reason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @instance
+                         */
+                        Object.defineProperty(AwsKinesisFailureReason.prototype, "reason", {
+                            get: $util.oneOfGetter($oneOfFields = ["schemaViolationReason"]),
+                            set: $util.oneOfSetter($oneOfFields)
+                        });
+    
+                        /**
+                         * Creates a new AwsKinesisFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason} AwsKinesisFailureReason instance
+                         */
+                        AwsKinesisFailureReason.create = function create(properties) {
+                            return new AwsKinesisFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified AwsKinesisFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason} message AwsKinesisFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsKinesisFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            if (message.streamArn != null && Object.hasOwnProperty.call(message, "streamArn"))
+                                writer.uint32(/* id 1, wireType 2 =*/10).string(message.streamArn);
+                            if (message.partitionKey != null && Object.hasOwnProperty.call(message, "partitionKey"))
+                                writer.uint32(/* id 2, wireType 2 =*/18).string(message.partitionKey);
+                            if (message.sequenceNumber != null && Object.hasOwnProperty.call(message, "sequenceNumber"))
+                                writer.uint32(/* id 3, wireType 2 =*/26).string(message.sequenceNumber);
+                            if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified AwsKinesisFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason} message AwsKinesisFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        AwsKinesisFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes an AwsKinesisFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason} AwsKinesisFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsKinesisFailureReason.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                case 1: {
+                                        message.streamArn = reader.string();
+                                        break;
+                                    }
+                                case 2: {
+                                        message.partitionKey = reader.string();
+                                        break;
+                                    }
+                                case 3: {
+                                        message.sequenceNumber = reader.string();
+                                        break;
+                                    }
+                                case 4: {
+                                        message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes an AwsKinesisFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason} AwsKinesisFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        AwsKinesisFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies an AwsKinesisFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        AwsKinesisFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            var properties = {};
+                            if (message.streamArn != null && message.hasOwnProperty("streamArn"))
+                                if (!$util.isString(message.streamArn))
+                                    return "streamArn: string expected";
+                            if (message.partitionKey != null && message.hasOwnProperty("partitionKey"))
+                                if (!$util.isString(message.partitionKey))
+                                    return "partitionKey: string expected";
+                            if (message.sequenceNumber != null && message.hasOwnProperty("sequenceNumber"))
+                                if (!$util.isString(message.sequenceNumber))
+                                    return "sequenceNumber: string expected";
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify(message.schemaViolationReason);
+                                    if (error)
+                                        return "schemaViolationReason." + error;
+                                }
+                            }
+                            return null;
+                        };
+    
+                        /**
+                         * Creates an AwsKinesisFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason} AwsKinesisFailureReason
+                         */
+                        AwsKinesisFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason)
+                                return object;
+                            var message = new $root.google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason();
+                            if (object.streamArn != null)
+                                message.streamArn = String(object.streamArn);
+                            if (object.partitionKey != null)
+                                message.partitionKey = String(object.partitionKey);
+                            if (object.sequenceNumber != null)
+                                message.sequenceNumber = String(object.sequenceNumber);
+                            if (object.schemaViolationReason != null) {
+                                if (typeof object.schemaViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.schemaViolationReason: object expected");
+                                message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Creates a plain object from an AwsKinesisFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason} message AwsKinesisFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        AwsKinesisFailureReason.toObject = function toObject(message, options) {
+                            if (!options)
+                                options = {};
+                            var object = {};
+                            if (options.defaults) {
+                                object.streamArn = "";
+                                object.partitionKey = "";
+                                object.sequenceNumber = "";
+                            }
+                            if (message.streamArn != null && message.hasOwnProperty("streamArn"))
+                                object.streamArn = message.streamArn;
+                            if (message.partitionKey != null && message.hasOwnProperty("partitionKey"))
+                                object.partitionKey = message.partitionKey;
+                            if (message.sequenceNumber != null && message.hasOwnProperty("sequenceNumber"))
+                                object.sequenceNumber = message.sequenceNumber;
+                            if (message.schemaViolationReason != null && message.hasOwnProperty("schemaViolationReason")) {
+                                object.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.toObject(message.schemaViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "schemaViolationReason";
+                            }
+                            return object;
+                        };
+    
+                        /**
+                         * Converts this AwsKinesisFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        AwsKinesisFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for AwsKinesisFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        AwsKinesisFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason";
+                        };
+    
+                        return AwsKinesisFailureReason;
+                    })();
+    
                     return IngestionFailureEvent;
+                })();
+    
+                v1.JavaScriptUDF = (function() {
+    
+                    /**
+                     * Properties of a JavaScriptUDF.
+                     * @memberof google.pubsub.v1
+                     * @interface IJavaScriptUDF
+                     * @property {string|null} [functionName] JavaScriptUDF functionName
+                     * @property {string|null} [code] JavaScriptUDF code
+                     */
+    
+                    /**
+                     * Constructs a new JavaScriptUDF.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a JavaScriptUDF.
+                     * @implements IJavaScriptUDF
+                     * @constructor
+                     * @param {google.pubsub.v1.IJavaScriptUDF=} [properties] Properties to set
+                     */
+                    function JavaScriptUDF(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * JavaScriptUDF functionName.
+                     * @member {string} functionName
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @instance
+                     */
+                    JavaScriptUDF.prototype.functionName = "";
+    
+                    /**
+                     * JavaScriptUDF code.
+                     * @member {string} code
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @instance
+                     */
+                    JavaScriptUDF.prototype.code = "";
+    
+                    /**
+                     * Creates a new JavaScriptUDF instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {google.pubsub.v1.IJavaScriptUDF=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.JavaScriptUDF} JavaScriptUDF instance
+                     */
+                    JavaScriptUDF.create = function create(properties) {
+                        return new JavaScriptUDF(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified JavaScriptUDF message. Does not implicitly {@link google.pubsub.v1.JavaScriptUDF.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {google.pubsub.v1.IJavaScriptUDF} message JavaScriptUDF message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    JavaScriptUDF.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.functionName != null && Object.hasOwnProperty.call(message, "functionName"))
+                            writer.uint32(/* id 1, wireType 2 =*/10).string(message.functionName);
+                        if (message.code != null && Object.hasOwnProperty.call(message, "code"))
+                            writer.uint32(/* id 2, wireType 2 =*/18).string(message.code);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified JavaScriptUDF message, length delimited. Does not implicitly {@link google.pubsub.v1.JavaScriptUDF.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {google.pubsub.v1.IJavaScriptUDF} message JavaScriptUDF message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    JavaScriptUDF.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a JavaScriptUDF message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.JavaScriptUDF} JavaScriptUDF
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    JavaScriptUDF.decode = function decode(reader, length, error) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.JavaScriptUDF();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            if (tag === error)
+                                break;
+                            switch (tag >>> 3) {
+                            case 1: {
+                                    message.functionName = reader.string();
+                                    break;
+                                }
+                            case 2: {
+                                    message.code = reader.string();
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a JavaScriptUDF message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.JavaScriptUDF} JavaScriptUDF
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    JavaScriptUDF.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a JavaScriptUDF message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    JavaScriptUDF.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        if (message.functionName != null && message.hasOwnProperty("functionName"))
+                            if (!$util.isString(message.functionName))
+                                return "functionName: string expected";
+                        if (message.code != null && message.hasOwnProperty("code"))
+                            if (!$util.isString(message.code))
+                                return "code: string expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a JavaScriptUDF message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.JavaScriptUDF} JavaScriptUDF
+                     */
+                    JavaScriptUDF.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.JavaScriptUDF)
+                            return object;
+                        var message = new $root.google.pubsub.v1.JavaScriptUDF();
+                        if (object.functionName != null)
+                            message.functionName = String(object.functionName);
+                        if (object.code != null)
+                            message.code = String(object.code);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a JavaScriptUDF message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {google.pubsub.v1.JavaScriptUDF} message JavaScriptUDF
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    JavaScriptUDF.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.functionName = "";
+                            object.code = "";
+                        }
+                        if (message.functionName != null && message.hasOwnProperty("functionName"))
+                            object.functionName = message.functionName;
+                        if (message.code != null && message.hasOwnProperty("code"))
+                            object.code = message.code;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this JavaScriptUDF to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    JavaScriptUDF.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for JavaScriptUDF
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.JavaScriptUDF
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    JavaScriptUDF.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.JavaScriptUDF";
+                    };
+    
+                    return JavaScriptUDF;
+                })();
+    
+                v1.MessageTransform = (function() {
+    
+                    /**
+                     * Properties of a MessageTransform.
+                     * @memberof google.pubsub.v1
+                     * @interface IMessageTransform
+                     * @property {google.pubsub.v1.IJavaScriptUDF|null} [javascriptUdf] MessageTransform javascriptUdf
+                     * @property {boolean|null} [enabled] MessageTransform enabled
+                     * @property {boolean|null} [disabled] MessageTransform disabled
+                     */
+    
+                    /**
+                     * Constructs a new MessageTransform.
+                     * @memberof google.pubsub.v1
+                     * @classdesc Represents a MessageTransform.
+                     * @implements IMessageTransform
+                     * @constructor
+                     * @param {google.pubsub.v1.IMessageTransform=} [properties] Properties to set
+                     */
+                    function MessageTransform(properties) {
+                        if (properties)
+                            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                if (properties[keys[i]] != null)
+                                    this[keys[i]] = properties[keys[i]];
+                    }
+    
+                    /**
+                     * MessageTransform javascriptUdf.
+                     * @member {google.pubsub.v1.IJavaScriptUDF|null|undefined} javascriptUdf
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     */
+                    MessageTransform.prototype.javascriptUdf = null;
+    
+                    /**
+                     * MessageTransform enabled.
+                     * @member {boolean} enabled
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     */
+                    MessageTransform.prototype.enabled = false;
+    
+                    /**
+                     * MessageTransform disabled.
+                     * @member {boolean} disabled
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     */
+                    MessageTransform.prototype.disabled = false;
+    
+                    // OneOf field names bound to virtual getters and setters
+                    var $oneOfFields;
+    
+                    /**
+                     * MessageTransform transform.
+                     * @member {"javascriptUdf"|undefined} transform
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     */
+                    Object.defineProperty(MessageTransform.prototype, "transform", {
+                        get: $util.oneOfGetter($oneOfFields = ["javascriptUdf"]),
+                        set: $util.oneOfSetter($oneOfFields)
+                    });
+    
+                    /**
+                     * Creates a new MessageTransform instance using the specified properties.
+                     * @function create
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {google.pubsub.v1.IMessageTransform=} [properties] Properties to set
+                     * @returns {google.pubsub.v1.MessageTransform} MessageTransform instance
+                     */
+                    MessageTransform.create = function create(properties) {
+                        return new MessageTransform(properties);
+                    };
+    
+                    /**
+                     * Encodes the specified MessageTransform message. Does not implicitly {@link google.pubsub.v1.MessageTransform.verify|verify} messages.
+                     * @function encode
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {google.pubsub.v1.IMessageTransform} message MessageTransform message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    MessageTransform.encode = function encode(message, writer) {
+                        if (!writer)
+                            writer = $Writer.create();
+                        if (message.javascriptUdf != null && Object.hasOwnProperty.call(message, "javascriptUdf"))
+                            $root.google.pubsub.v1.JavaScriptUDF.encode(message.javascriptUdf, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                        if (message.enabled != null && Object.hasOwnProperty.call(message, "enabled"))
+                            writer.uint32(/* id 3, wireType 0 =*/24).bool(message.enabled);
+                        if (message.disabled != null && Object.hasOwnProperty.call(message, "disabled"))
+                            writer.uint32(/* id 4, wireType 0 =*/32).bool(message.disabled);
+                        return writer;
+                    };
+    
+                    /**
+                     * Encodes the specified MessageTransform message, length delimited. Does not implicitly {@link google.pubsub.v1.MessageTransform.verify|verify} messages.
+                     * @function encodeDelimited
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {google.pubsub.v1.IMessageTransform} message MessageTransform message or plain object to encode
+                     * @param {$protobuf.Writer} [writer] Writer to encode to
+                     * @returns {$protobuf.Writer} Writer
+                     */
+                    MessageTransform.encodeDelimited = function encodeDelimited(message, writer) {
+                        return this.encode(message, writer).ldelim();
+                    };
+    
+                    /**
+                     * Decodes a MessageTransform message from the specified reader or buffer.
+                     * @function decode
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @param {number} [length] Message length if known beforehand
+                     * @returns {google.pubsub.v1.MessageTransform} MessageTransform
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    MessageTransform.decode = function decode(reader, length, error) {
+                        if (!(reader instanceof $Reader))
+                            reader = $Reader.create(reader);
+                        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.MessageTransform();
+                        while (reader.pos < end) {
+                            var tag = reader.uint32();
+                            if (tag === error)
+                                break;
+                            switch (tag >>> 3) {
+                            case 2: {
+                                    message.javascriptUdf = $root.google.pubsub.v1.JavaScriptUDF.decode(reader, reader.uint32());
+                                    break;
+                                }
+                            case 3: {
+                                    message.enabled = reader.bool();
+                                    break;
+                                }
+                            case 4: {
+                                    message.disabled = reader.bool();
+                                    break;
+                                }
+                            default:
+                                reader.skipType(tag & 7);
+                                break;
+                            }
+                        }
+                        return message;
+                    };
+    
+                    /**
+                     * Decodes a MessageTransform message from the specified reader or buffer, length delimited.
+                     * @function decodeDelimited
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                     * @returns {google.pubsub.v1.MessageTransform} MessageTransform
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    MessageTransform.decodeDelimited = function decodeDelimited(reader) {
+                        if (!(reader instanceof $Reader))
+                            reader = new $Reader(reader);
+                        return this.decode(reader, reader.uint32());
+                    };
+    
+                    /**
+                     * Verifies a MessageTransform message.
+                     * @function verify
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {Object.<string,*>} message Plain object to verify
+                     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                     */
+                    MessageTransform.verify = function verify(message) {
+                        if (typeof message !== "object" || message === null)
+                            return "object expected";
+                        var properties = {};
+                        if (message.javascriptUdf != null && message.hasOwnProperty("javascriptUdf")) {
+                            properties.transform = 1;
+                            {
+                                var error = $root.google.pubsub.v1.JavaScriptUDF.verify(message.javascriptUdf);
+                                if (error)
+                                    return "javascriptUdf." + error;
+                            }
+                        }
+                        if (message.enabled != null && message.hasOwnProperty("enabled"))
+                            if (typeof message.enabled !== "boolean")
+                                return "enabled: boolean expected";
+                        if (message.disabled != null && message.hasOwnProperty("disabled"))
+                            if (typeof message.disabled !== "boolean")
+                                return "disabled: boolean expected";
+                        return null;
+                    };
+    
+                    /**
+                     * Creates a MessageTransform message from a plain object. Also converts values to their respective internal types.
+                     * @function fromObject
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {Object.<string,*>} object Plain object
+                     * @returns {google.pubsub.v1.MessageTransform} MessageTransform
+                     */
+                    MessageTransform.fromObject = function fromObject(object) {
+                        if (object instanceof $root.google.pubsub.v1.MessageTransform)
+                            return object;
+                        var message = new $root.google.pubsub.v1.MessageTransform();
+                        if (object.javascriptUdf != null) {
+                            if (typeof object.javascriptUdf !== "object")
+                                throw TypeError(".google.pubsub.v1.MessageTransform.javascriptUdf: object expected");
+                            message.javascriptUdf = $root.google.pubsub.v1.JavaScriptUDF.fromObject(object.javascriptUdf);
+                        }
+                        if (object.enabled != null)
+                            message.enabled = Boolean(object.enabled);
+                        if (object.disabled != null)
+                            message.disabled = Boolean(object.disabled);
+                        return message;
+                    };
+    
+                    /**
+                     * Creates a plain object from a MessageTransform message. Also converts values to other types if specified.
+                     * @function toObject
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {google.pubsub.v1.MessageTransform} message MessageTransform
+                     * @param {$protobuf.IConversionOptions} [options] Conversion options
+                     * @returns {Object.<string,*>} Plain object
+                     */
+                    MessageTransform.toObject = function toObject(message, options) {
+                        if (!options)
+                            options = {};
+                        var object = {};
+                        if (options.defaults) {
+                            object.enabled = false;
+                            object.disabled = false;
+                        }
+                        if (message.javascriptUdf != null && message.hasOwnProperty("javascriptUdf")) {
+                            object.javascriptUdf = $root.google.pubsub.v1.JavaScriptUDF.toObject(message.javascriptUdf, options);
+                            if (options.oneofs)
+                                object.transform = "javascriptUdf";
+                        }
+                        if (message.enabled != null && message.hasOwnProperty("enabled"))
+                            object.enabled = message.enabled;
+                        if (message.disabled != null && message.hasOwnProperty("disabled"))
+                            object.disabled = message.disabled;
+                        return object;
+                    };
+    
+                    /**
+                     * Converts this MessageTransform to JSON.
+                     * @function toJSON
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @instance
+                     * @returns {Object.<string,*>} JSON object
+                     */
+                    MessageTransform.prototype.toJSON = function toJSON() {
+                        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                    };
+    
+                    /**
+                     * Gets the default type url for MessageTransform
+                     * @function getTypeUrl
+                     * @memberof google.pubsub.v1.MessageTransform
+                     * @static
+                     * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns {string} The default type url
+                     */
+                    MessageTransform.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                        if (typeUrlPrefix === undefined) {
+                            typeUrlPrefix = "type.googleapis.com";
+                        }
+                        return typeUrlPrefix + "/google.pubsub.v1.MessageTransform";
+                    };
+    
+                    return MessageTransform;
                 })();
     
                 v1.Topic = (function() {
@@ -6330,6 +7488,7 @@
                      * @property {google.protobuf.IDuration|null} [messageRetentionDuration] Topic messageRetentionDuration
                      * @property {google.pubsub.v1.Topic.State|null} [state] Topic state
                      * @property {google.pubsub.v1.IIngestionDataSourceSettings|null} [ingestionDataSourceSettings] Topic ingestionDataSourceSettings
+                     * @property {Array.<google.pubsub.v1.IMessageTransform>|null} [messageTransforms] Topic messageTransforms
                      */
     
                     /**
@@ -6342,6 +7501,7 @@
                      */
                     function Topic(properties) {
                         this.labels = {};
+                        this.messageTransforms = [];
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -6421,6 +7581,14 @@
                     Topic.prototype.ingestionDataSourceSettings = null;
     
                     /**
+                     * Topic messageTransforms.
+                     * @member {Array.<google.pubsub.v1.IMessageTransform>} messageTransforms
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.messageTransforms = $util.emptyArray;
+    
+                    /**
                      * Creates a new Topic instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Topic
@@ -6463,6 +7631,9 @@
                             writer.uint32(/* id 9, wireType 0 =*/72).int32(message.state);
                         if (message.ingestionDataSourceSettings != null && Object.hasOwnProperty.call(message, "ingestionDataSourceSettings"))
                             $root.google.pubsub.v1.IngestionDataSourceSettings.encode(message.ingestionDataSourceSettings, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+                        if (message.messageTransforms != null && message.messageTransforms.length)
+                            for (var i = 0; i < message.messageTransforms.length; ++i)
+                                $root.google.pubsub.v1.MessageTransform.encode(message.messageTransforms[i], writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
                         return writer;
                     };
     
@@ -6554,6 +7725,12 @@
                                     message.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.decode(reader, reader.uint32());
                                     break;
                                 }
+                            case 13: {
+                                    if (!(message.messageTransforms && message.messageTransforms.length))
+                                        message.messageTransforms = [];
+                                    message.messageTransforms.push($root.google.pubsub.v1.MessageTransform.decode(reader, reader.uint32()));
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -6635,6 +7812,15 @@
                             if (error)
                                 return "ingestionDataSourceSettings." + error;
                         }
+                        if (message.messageTransforms != null && message.hasOwnProperty("messageTransforms")) {
+                            if (!Array.isArray(message.messageTransforms))
+                                return "messageTransforms: array expected";
+                            for (var i = 0; i < message.messageTransforms.length; ++i) {
+                                var error = $root.google.pubsub.v1.MessageTransform.verify(message.messageTransforms[i]);
+                                if (error)
+                                    return "messageTransforms." + error;
+                            }
+                        }
                         return null;
                     };
     
@@ -6703,6 +7889,16 @@
                                 throw TypeError(".google.pubsub.v1.Topic.ingestionDataSourceSettings: object expected");
                             message.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.fromObject(object.ingestionDataSourceSettings);
                         }
+                        if (object.messageTransforms) {
+                            if (!Array.isArray(object.messageTransforms))
+                                throw TypeError(".google.pubsub.v1.Topic.messageTransforms: array expected");
+                            message.messageTransforms = [];
+                            for (var i = 0; i < object.messageTransforms.length; ++i) {
+                                if (typeof object.messageTransforms[i] !== "object")
+                                    throw TypeError(".google.pubsub.v1.Topic.messageTransforms: object expected");
+                                message.messageTransforms[i] = $root.google.pubsub.v1.MessageTransform.fromObject(object.messageTransforms[i]);
+                            }
+                        }
                         return message;
                     };
     
@@ -6719,6 +7915,8 @@
                         if (!options)
                             options = {};
                         var object = {};
+                        if (options.arrays || options.defaults)
+                            object.messageTransforms = [];
                         if (options.objects || options.defaults)
                             object.labels = {};
                         if (options.defaults) {
@@ -6753,6 +7951,11 @@
                             object.state = options.enums === String ? $root.google.pubsub.v1.Topic.State[message.state] === undefined ? message.state : $root.google.pubsub.v1.Topic.State[message.state] : message.state;
                         if (message.ingestionDataSourceSettings != null && message.hasOwnProperty("ingestionDataSourceSettings"))
                             object.ingestionDataSourceSettings = $root.google.pubsub.v1.IngestionDataSourceSettings.toObject(message.ingestionDataSourceSettings, options);
+                        if (message.messageTransforms && message.messageTransforms.length) {
+                            object.messageTransforms = [];
+                            for (var j = 0; j < message.messageTransforms.length; ++j)
+                                object.messageTransforms[j] = $root.google.pubsub.v1.MessageTransform.toObject(message.messageTransforms[j], options);
+                        }
                         return object;
                     };
     
@@ -10735,6 +11938,7 @@
                      * @property {google.protobuf.IDuration|null} [topicMessageRetentionDuration] Subscription topicMessageRetentionDuration
                      * @property {google.pubsub.v1.Subscription.State|null} [state] Subscription state
                      * @property {google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null} [analyticsHubSubscriptionInfo] Subscription analyticsHubSubscriptionInfo
+                     * @property {Array.<google.pubsub.v1.IMessageTransform>|null} [messageTransforms] Subscription messageTransforms
                      */
     
                     /**
@@ -10747,6 +11951,7 @@
                      */
                     function Subscription(properties) {
                         this.labels = {};
+                        this.messageTransforms = [];
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -10906,6 +12111,14 @@
                     Subscription.prototype.analyticsHubSubscriptionInfo = null;
     
                     /**
+                     * Subscription messageTransforms.
+                     * @member {Array.<google.pubsub.v1.IMessageTransform>} messageTransforms
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.messageTransforms = $util.emptyArray;
+    
+                    /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Subscription
@@ -10968,6 +12181,9 @@
                             $root.google.pubsub.v1.CloudStorageConfig.encode(message.cloudStorageConfig, writer.uint32(/* id 22, wireType 2 =*/178).fork()).ldelim();
                         if (message.analyticsHubSubscriptionInfo != null && Object.hasOwnProperty.call(message, "analyticsHubSubscriptionInfo"))
                             $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.encode(message.analyticsHubSubscriptionInfo, writer.uint32(/* id 23, wireType 2 =*/186).fork()).ldelim();
+                        if (message.messageTransforms != null && message.messageTransforms.length)
+                            for (var i = 0; i < message.messageTransforms.length; ++i)
+                                $root.google.pubsub.v1.MessageTransform.encode(message.messageTransforms[i], writer.uint32(/* id 25, wireType 2 =*/202).fork()).ldelim();
                         return writer;
                     };
     
@@ -11099,6 +12315,12 @@
                                     message.analyticsHubSubscriptionInfo = $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.decode(reader, reader.uint32());
                                     break;
                                 }
+                            case 25: {
+                                    if (!(message.messageTransforms && message.messageTransforms.length))
+                                        message.messageTransforms = [];
+                                    message.messageTransforms.push($root.google.pubsub.v1.MessageTransform.decode(reader, reader.uint32()));
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -11220,6 +12442,15 @@
                             if (error)
                                 return "analyticsHubSubscriptionInfo." + error;
                         }
+                        if (message.messageTransforms != null && message.hasOwnProperty("messageTransforms")) {
+                            if (!Array.isArray(message.messageTransforms))
+                                return "messageTransforms: array expected";
+                            for (var i = 0; i < message.messageTransforms.length; ++i) {
+                                var error = $root.google.pubsub.v1.MessageTransform.verify(message.messageTransforms[i]);
+                                if (error)
+                                    return "messageTransforms." + error;
+                            }
+                        }
                         return null;
                     };
     
@@ -11323,6 +12554,16 @@
                                 throw TypeError(".google.pubsub.v1.Subscription.analyticsHubSubscriptionInfo: object expected");
                             message.analyticsHubSubscriptionInfo = $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.fromObject(object.analyticsHubSubscriptionInfo);
                         }
+                        if (object.messageTransforms) {
+                            if (!Array.isArray(object.messageTransforms))
+                                throw TypeError(".google.pubsub.v1.Subscription.messageTransforms: array expected");
+                            message.messageTransforms = [];
+                            for (var i = 0; i < object.messageTransforms.length; ++i) {
+                                if (typeof object.messageTransforms[i] !== "object")
+                                    throw TypeError(".google.pubsub.v1.Subscription.messageTransforms: object expected");
+                                message.messageTransforms[i] = $root.google.pubsub.v1.MessageTransform.fromObject(object.messageTransforms[i]);
+                            }
+                        }
                         return message;
                     };
     
@@ -11339,6 +12580,8 @@
                         if (!options)
                             options = {};
                         var object = {};
+                        if (options.arrays || options.defaults)
+                            object.messageTransforms = [];
                         if (options.objects || options.defaults)
                             object.labels = {};
                         if (options.defaults) {
@@ -11403,6 +12646,11 @@
                             object.cloudStorageConfig = $root.google.pubsub.v1.CloudStorageConfig.toObject(message.cloudStorageConfig, options);
                         if (message.analyticsHubSubscriptionInfo != null && message.hasOwnProperty("analyticsHubSubscriptionInfo"))
                             object.analyticsHubSubscriptionInfo = $root.google.pubsub.v1.Subscription.AnalyticsHubSubscriptionInfo.toObject(message.analyticsHubSubscriptionInfo, options);
+                        if (message.messageTransforms && message.messageTransforms.length) {
+                            object.messageTransforms = [];
+                            for (var j = 0; j < message.messageTransforms.length; ++j)
+                                object.messageTransforms[j] = $root.google.pubsub.v1.MessageTransform.toObject(message.messageTransforms[j], options);
+                        }
                         return object;
                     };
     

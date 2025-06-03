@@ -1708,6 +1708,9 @@ export namespace google {
 
                 /** IngestionFailureEvent confluentCloudFailure */
                 confluentCloudFailure?: (google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason|null);
+
+                /** IngestionFailureEvent awsKinesisFailure */
+                awsKinesisFailure?: (google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason|null);
             }
 
             /** Represents an IngestionFailureEvent. */
@@ -1737,8 +1740,11 @@ export namespace google {
                 /** IngestionFailureEvent confluentCloudFailure. */
                 public confluentCloudFailure?: (google.pubsub.v1.IngestionFailureEvent.IConfluentCloudFailureReason|null);
 
+                /** IngestionFailureEvent awsKinesisFailure. */
+                public awsKinesisFailure?: (google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason|null);
+
                 /** IngestionFailureEvent failure. */
-                public failure?: ("cloudStorageFailure"|"awsMskFailure"|"azureEventHubsFailure"|"confluentCloudFailure");
+                public failure?: ("cloudStorageFailure"|"awsMskFailure"|"azureEventHubsFailure"|"confluentCloudFailure"|"awsKinesisFailure");
 
                 /**
                  * Creates a new IngestionFailureEvent instance using the specified properties.
@@ -2002,6 +2008,97 @@ export namespace google {
                     public static getTypeUrl(typeUrlPrefix?: string): string;
                 }
 
+                /** Properties of a SchemaViolationReason. */
+                interface ISchemaViolationReason {
+                }
+
+                /** Represents a SchemaViolationReason. */
+                class SchemaViolationReason implements ISchemaViolationReason {
+
+                    /**
+                     * Constructs a new SchemaViolationReason.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason);
+
+                    /**
+                     * Creates a new SchemaViolationReason instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns SchemaViolationReason instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason): google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason;
+
+                    /**
+                     * Encodes the specified SchemaViolationReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify|verify} messages.
+                     * @param message SchemaViolationReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified SchemaViolationReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.verify|verify} messages.
+                     * @param message SchemaViolationReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a SchemaViolationReason message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns SchemaViolationReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason;
+
+                    /**
+                     * Decodes a SchemaViolationReason message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns SchemaViolationReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason;
+
+                    /**
+                     * Verifies a SchemaViolationReason message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a SchemaViolationReason message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns SchemaViolationReason
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason;
+
+                    /**
+                     * Creates a plain object from a SchemaViolationReason message. Also converts values to other types if specified.
+                     * @param message SchemaViolationReason
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this SchemaViolationReason to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for SchemaViolationReason
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
                 /** Properties of a CloudStorageFailure. */
                 interface ICloudStorageFailure {
 
@@ -2019,6 +2116,9 @@ export namespace google {
 
                     /** CloudStorageFailure apiViolationReason */
                     apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
+
+                    /** CloudStorageFailure schemaViolationReason */
+                    schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
                 }
 
                 /** Represents a CloudStorageFailure. */
@@ -2045,8 +2145,11 @@ export namespace google {
                     /** CloudStorageFailure apiViolationReason. */
                     public apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
 
+                    /** CloudStorageFailure schemaViolationReason. */
+                    public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
                     /** CloudStorageFailure reason. */
-                    public reason?: ("avroFailureReason"|"apiViolationReason");
+                    public reason?: ("avroFailureReason"|"apiViolationReason"|"schemaViolationReason");
 
                     /**
                      * Creates a new CloudStorageFailure instance using the specified properties.
@@ -2143,6 +2246,9 @@ export namespace google {
 
                     /** AwsMskFailureReason apiViolationReason */
                     apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
+
+                    /** AwsMskFailureReason schemaViolationReason */
+                    schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
                 }
 
                 /** Represents an AwsMskFailureReason. */
@@ -2169,8 +2275,11 @@ export namespace google {
                     /** AwsMskFailureReason apiViolationReason. */
                     public apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
 
+                    /** AwsMskFailureReason schemaViolationReason. */
+                    public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
                     /** AwsMskFailureReason reason. */
-                    public reason?: "apiViolationReason";
+                    public reason?: ("apiViolationReason"|"schemaViolationReason");
 
                     /**
                      * Creates a new AwsMskFailureReason instance using the specified properties.
@@ -2267,6 +2376,9 @@ export namespace google {
 
                     /** AzureEventHubsFailureReason apiViolationReason */
                     apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
+
+                    /** AzureEventHubsFailureReason schemaViolationReason */
+                    schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
                 }
 
                 /** Represents an AzureEventHubsFailureReason. */
@@ -2293,8 +2405,11 @@ export namespace google {
                     /** AzureEventHubsFailureReason apiViolationReason. */
                     public apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
 
+                    /** AzureEventHubsFailureReason schemaViolationReason. */
+                    public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
                     /** AzureEventHubsFailureReason reason. */
-                    public reason?: "apiViolationReason";
+                    public reason?: ("apiViolationReason"|"schemaViolationReason");
 
                     /**
                      * Creates a new AzureEventHubsFailureReason instance using the specified properties.
@@ -2391,6 +2506,9 @@ export namespace google {
 
                     /** ConfluentCloudFailureReason apiViolationReason */
                     apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
+
+                    /** ConfluentCloudFailureReason schemaViolationReason */
+                    schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
                 }
 
                 /** Represents a ConfluentCloudFailureReason. */
@@ -2417,8 +2535,11 @@ export namespace google {
                     /** ConfluentCloudFailureReason apiViolationReason. */
                     public apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
 
+                    /** ConfluentCloudFailureReason schemaViolationReason. */
+                    public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
                     /** ConfluentCloudFailureReason reason. */
-                    public reason?: "apiViolationReason";
+                    public reason?: ("apiViolationReason"|"schemaViolationReason");
 
                     /**
                      * Creates a new ConfluentCloudFailureReason instance using the specified properties.
@@ -2497,6 +2618,339 @@ export namespace google {
                      */
                     public static getTypeUrl(typeUrlPrefix?: string): string;
                 }
+
+                /** Properties of an AwsKinesisFailureReason. */
+                interface IAwsKinesisFailureReason {
+
+                    /** AwsKinesisFailureReason streamArn */
+                    streamArn?: (string|null);
+
+                    /** AwsKinesisFailureReason partitionKey */
+                    partitionKey?: (string|null);
+
+                    /** AwsKinesisFailureReason sequenceNumber */
+                    sequenceNumber?: (string|null);
+
+                    /** AwsKinesisFailureReason schemaViolationReason */
+                    schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+                }
+
+                /** Represents an AwsKinesisFailureReason. */
+                class AwsKinesisFailureReason implements IAwsKinesisFailureReason {
+
+                    /**
+                     * Constructs a new AwsKinesisFailureReason.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason);
+
+                    /** AwsKinesisFailureReason streamArn. */
+                    public streamArn: string;
+
+                    /** AwsKinesisFailureReason partitionKey. */
+                    public partitionKey: string;
+
+                    /** AwsKinesisFailureReason sequenceNumber. */
+                    public sequenceNumber: string;
+
+                    /** AwsKinesisFailureReason schemaViolationReason. */
+                    public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
+                    /** AwsKinesisFailureReason reason. */
+                    public reason?: "schemaViolationReason";
+
+                    /**
+                     * Creates a new AwsKinesisFailureReason instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns AwsKinesisFailureReason instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason): google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason;
+
+                    /**
+                     * Encodes the specified AwsKinesisFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.verify|verify} messages.
+                     * @param message AwsKinesisFailureReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified AwsKinesisFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.verify|verify} messages.
+                     * @param message AwsKinesisFailureReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionFailureEvent.IAwsKinesisFailureReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes an AwsKinesisFailureReason message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns AwsKinesisFailureReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason;
+
+                    /**
+                     * Decodes an AwsKinesisFailureReason message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns AwsKinesisFailureReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason;
+
+                    /**
+                     * Verifies an AwsKinesisFailureReason message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates an AwsKinesisFailureReason message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns AwsKinesisFailureReason
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason;
+
+                    /**
+                     * Creates a plain object from an AwsKinesisFailureReason message. Also converts values to other types if specified.
+                     * @param message AwsKinesisFailureReason
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this AwsKinesisFailureReason to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for AwsKinesisFailureReason
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+            }
+
+            /** Properties of a JavaScriptUDF. */
+            interface IJavaScriptUDF {
+
+                /** JavaScriptUDF functionName */
+                functionName?: (string|null);
+
+                /** JavaScriptUDF code */
+                code?: (string|null);
+            }
+
+            /** Represents a JavaScriptUDF. */
+            class JavaScriptUDF implements IJavaScriptUDF {
+
+                /**
+                 * Constructs a new JavaScriptUDF.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IJavaScriptUDF);
+
+                /** JavaScriptUDF functionName. */
+                public functionName: string;
+
+                /** JavaScriptUDF code. */
+                public code: string;
+
+                /**
+                 * Creates a new JavaScriptUDF instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns JavaScriptUDF instance
+                 */
+                public static create(properties?: google.pubsub.v1.IJavaScriptUDF): google.pubsub.v1.JavaScriptUDF;
+
+                /**
+                 * Encodes the specified JavaScriptUDF message. Does not implicitly {@link google.pubsub.v1.JavaScriptUDF.verify|verify} messages.
+                 * @param message JavaScriptUDF message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IJavaScriptUDF, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified JavaScriptUDF message, length delimited. Does not implicitly {@link google.pubsub.v1.JavaScriptUDF.verify|verify} messages.
+                 * @param message JavaScriptUDF message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IJavaScriptUDF, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a JavaScriptUDF message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns JavaScriptUDF
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.JavaScriptUDF;
+
+                /**
+                 * Decodes a JavaScriptUDF message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns JavaScriptUDF
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.JavaScriptUDF;
+
+                /**
+                 * Verifies a JavaScriptUDF message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a JavaScriptUDF message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns JavaScriptUDF
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.JavaScriptUDF;
+
+                /**
+                 * Creates a plain object from a JavaScriptUDF message. Also converts values to other types if specified.
+                 * @param message JavaScriptUDF
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.JavaScriptUDF, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this JavaScriptUDF to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for JavaScriptUDF
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+
+            /** Properties of a MessageTransform. */
+            interface IMessageTransform {
+
+                /** MessageTransform javascriptUdf */
+                javascriptUdf?: (google.pubsub.v1.IJavaScriptUDF|null);
+
+                /** MessageTransform enabled */
+                enabled?: (boolean|null);
+
+                /** MessageTransform disabled */
+                disabled?: (boolean|null);
+            }
+
+            /** Represents a MessageTransform. */
+            class MessageTransform implements IMessageTransform {
+
+                /**
+                 * Constructs a new MessageTransform.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: google.pubsub.v1.IMessageTransform);
+
+                /** MessageTransform javascriptUdf. */
+                public javascriptUdf?: (google.pubsub.v1.IJavaScriptUDF|null);
+
+                /** MessageTransform enabled. */
+                public enabled: boolean;
+
+                /** MessageTransform disabled. */
+                public disabled: boolean;
+
+                /** MessageTransform transform. */
+                public transform?: "javascriptUdf";
+
+                /**
+                 * Creates a new MessageTransform instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns MessageTransform instance
+                 */
+                public static create(properties?: google.pubsub.v1.IMessageTransform): google.pubsub.v1.MessageTransform;
+
+                /**
+                 * Encodes the specified MessageTransform message. Does not implicitly {@link google.pubsub.v1.MessageTransform.verify|verify} messages.
+                 * @param message MessageTransform message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: google.pubsub.v1.IMessageTransform, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified MessageTransform message, length delimited. Does not implicitly {@link google.pubsub.v1.MessageTransform.verify|verify} messages.
+                 * @param message MessageTransform message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: google.pubsub.v1.IMessageTransform, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a MessageTransform message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns MessageTransform
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.MessageTransform;
+
+                /**
+                 * Decodes a MessageTransform message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns MessageTransform
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.MessageTransform;
+
+                /**
+                 * Verifies a MessageTransform message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a MessageTransform message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns MessageTransform
+                 */
+                public static fromObject(object: { [k: string]: any }): google.pubsub.v1.MessageTransform;
+
+                /**
+                 * Creates a plain object from a MessageTransform message. Also converts values to other types if specified.
+                 * @param message MessageTransform
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: google.pubsub.v1.MessageTransform, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this MessageTransform to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for MessageTransform
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
             }
 
             /** Properties of a Topic. */
@@ -2528,6 +2982,9 @@ export namespace google {
 
                 /** Topic ingestionDataSourceSettings */
                 ingestionDataSourceSettings?: (google.pubsub.v1.IIngestionDataSourceSettings|null);
+
+                /** Topic messageTransforms */
+                messageTransforms?: (google.pubsub.v1.IMessageTransform[]|null);
             }
 
             /** Represents a Topic. */
@@ -2565,6 +3022,9 @@ export namespace google {
 
                 /** Topic ingestionDataSourceSettings. */
                 public ingestionDataSourceSettings?: (google.pubsub.v1.IIngestionDataSourceSettings|null);
+
+                /** Topic messageTransforms. */
+                public messageTransforms: google.pubsub.v1.IMessageTransform[];
 
                 /**
                  * Creates a new Topic instance using the specified properties.
@@ -4515,6 +4975,9 @@ export namespace google {
 
                 /** Subscription analyticsHubSubscriptionInfo */
                 analyticsHubSubscriptionInfo?: (google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null);
+
+                /** Subscription messageTransforms */
+                messageTransforms?: (google.pubsub.v1.IMessageTransform[]|null);
             }
 
             /** Represents a Subscription. */
@@ -4582,6 +5045,9 @@ export namespace google {
 
                 /** Subscription analyticsHubSubscriptionInfo. */
                 public analyticsHubSubscriptionInfo?: (google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null);
+
+                /** Subscription messageTransforms. */
+                public messageTransforms: google.pubsub.v1.IMessageTransform[];
 
                 /**
                  * Creates a new Subscription instance using the specified properties.
