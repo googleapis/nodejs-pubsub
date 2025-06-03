@@ -268,9 +268,14 @@ describe('v1.SubscriberClient', () => {
         throw err;
       });
       assert(client.subscriberStub);
-      void client.close().then(() => {
-        done();
-      });
+      client
+        .close()
+        .then(() => {
+          done();
+        })
+        .catch(err => {
+          throw err;
+        });
     });
 
     it('has close method for the non-initialized client', done => {
@@ -279,9 +284,14 @@ describe('v1.SubscriberClient', () => {
         projectId: 'bogus',
       });
       assert.strictEqual(client.subscriberStub, undefined);
-      void client.close().then(() => {
-        done();
-      });
+      client
+        .close()
+        .then(() => {
+          done();
+        })
+        .catch(err => {
+          throw err;
+        });
     });
 
     it('has getProjectId method', async () => {
@@ -445,7 +455,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.createSubscription(request), expectedError);
     });
   });
@@ -575,7 +587,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.getSubscription(request), expectedError);
     });
   });
@@ -710,7 +724,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.updateSubscription(request), expectedError);
     });
   });
@@ -841,7 +857,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.deleteSubscription(request), expectedError);
     });
   });
@@ -971,7 +989,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.modifyAckDeadline(request), expectedError);
     });
   });
@@ -1101,7 +1121,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.acknowledge(request), expectedError);
     });
   });
@@ -1224,7 +1246,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.pull(request), expectedError);
     });
   });
@@ -1354,7 +1378,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.modifyPushConfig(request), expectedError);
     });
   });
@@ -1484,7 +1510,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.snapshot = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.getSnapshot(request), expectedError);
     });
   });
@@ -1614,7 +1642,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.createSnapshot(request), expectedError);
     });
   });
@@ -1748,7 +1778,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.snapshot.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.updateSnapshot(request), expectedError);
     });
   });
@@ -1878,7 +1910,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.snapshot = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.deleteSnapshot(request), expectedError);
     });
   });
@@ -2001,7 +2035,9 @@ describe('v1.SubscriberClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.seek(request), expectedError);
     });
   });
@@ -2737,20 +2773,24 @@ describe('v1.SubscriberClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        void client.getIamPolicy(
-          request,
-          expectedOptions,
-          (
-            err?: Error | null,
-            result?: IamProtos.google.iam.v1.Policy | null,
-          ) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          },
-        );
+        client
+          .getIamPolicy(
+            request,
+            expectedOptions,
+            (
+              err?: Error | null,
+              result?: IamProtos.google.iam.v1.Policy | null,
+            ) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result);
+              }
+            },
+          )
+          .catch(err => {
+            throw err;
+          });
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
@@ -2843,20 +2883,24 @@ describe('v1.SubscriberClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        void client.setIamPolicy(
-          request,
-          expectedOptions,
-          (
-            err?: Error | null,
-            result?: IamProtos.google.iam.v1.Policy | null,
-          ) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          },
-        );
+        client
+          .setIamPolicy(
+            request,
+            expectedOptions,
+            (
+              err?: Error | null,
+              result?: IamProtos.google.iam.v1.Policy | null,
+            ) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result);
+              }
+            },
+          )
+          .catch(err => {
+            throw err;
+          });
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
@@ -2952,20 +2996,24 @@ describe('v1.SubscriberClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        void client.testIamPermissions(
-          request,
-          expectedOptions,
-          (
-            err?: Error | null,
-            result?: IamProtos.google.iam.v1.TestIamPermissionsResponse | null,
-          ) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          },
-        );
+        client
+          .testIamPermissions(
+            request,
+            expectedOptions,
+            (
+              err?: Error | null,
+              result?: IamProtos.google.iam.v1.TestIamPermissionsResponse | null,
+            ) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result);
+              }
+            },
+          )
+          .catch(err => {
+            throw err;
+          });
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
