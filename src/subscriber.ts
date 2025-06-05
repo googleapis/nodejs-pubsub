@@ -17,6 +17,7 @@
 import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
+import {loggingUtils as logging} from 'google-gax';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -32,9 +33,12 @@ import {EventEmitter} from 'events';
 
 export {StatusError} from './message-stream';
 
+const logDebug = logging.log('pubsub').sublog('debug');
+
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
   google.pubsub.v1.StreamingPullResponse.ISubscriptionProperties;
+export type SubscriptionCloseOptions = {timeout?: Duration};
 
 type ValueOf<T> = T[keyof T];
 export const AckResponses = {
@@ -804,23 +808,57 @@ export class Subscriber extends EventEmitter {
   }
 
   /**
-   * Closes the subscriber. The returned promise will resolve once any pending
-   * acks/modAcks are finished.
+   * Closes the subscriber, stopping the reception of new messages and shutting
+   * down the underlying stream. The behavior of the returned Promise will depend
+   * on the timeout option.
    *
-   * @returns {Promise}
+   * @param {SubscriptionCloseOptions} [options] Configuration options for closing
+   *   the subscriber.
+   * @param {Duration} [options.timeout] The maximum duration to wait for pending
+   *   ack/modAck requests to complete before resolving the promise.
+   *   - If a positive `timeout` is provided (e.g., `Duration.from({seconds: 5})`),
+   *     any messages currently held in the subscriber's buffer (not yet acked/nacked
+   *     by user code) will queue nacks immediately. This method will then wait up to
+   *     the specified duration for pending ack/nack requests to be sent to the
+   *     server. If the timeout is reached, the promise resolves, but some pending
+   *     requests might not have completed.
+   *   - If `timeout` is zero (e.g., `Duration.from({seconds: 0})`), buffered messages
+   *     are *not* nacked, and the method does *not* wait for pending ack/nack requests
+   *     to complete. The returned Promise resolves immediately.
+   *   - If `timeout` is omitted or undefined, the behavior is the same as receiving a
+   *     positive timeout, but the returned Promise will resolve after waiting
+   *     indefinitely for all pending ack/nack requests to complete, similar to the
+   *     previous, no-parameter behavior.
+   * @returns {Promise<void>} A promise that resolves when the subscriber is closed
+   *   and pending operations are flushed or the timeout is reached.
    * @private
    */
-  async close(): Promise<void> {
+  async close(options?: SubscriptionCloseOptions): Promise<void> {
     if (!this.isOpen) {
       return;
     }
 
+    // Always close the stream right away so we don't receive more messages.
     this.isOpen = false;
     this._stream.destroy();
+
+    // Grab everything left in inventory so we can nack them if needed.
     const remaining = this._inventory.clear();
 
-    await this._waitForFlush();
+    // Nack remaining messages if a timeout was not provided, or if one was
+    // provided besides zero.
+    const timeout = options?.timeout;
+    const timeoutMs = timeout?.totalOf('millisecond');
+    if (!timeout || (timeoutMs && timeoutMs > 0)) {
+      // Call nack() on each message to queue a nack.
+      remaining.forEach(m => m.nack());
 
+      // Wait until all of those nacks are flushed, or the timeout is reached.
+      await this._waitForFlush(timeout);
+    }
+
+    // Clean up OTel spans for any remaining messages that weren't nacked due
+    // to timeout.
     remaining.forEach(m => {
       m.subSpans.shutdown();
       m.endParentSpan();
@@ -1094,22 +1132,29 @@ export class Subscriber extends EventEmitter {
    * Returns a promise that will resolve once all pending requests have settled.
    *
    * @private
+   * Returns a promise that will resolve once all pending requests have settled,
+   * or reject if the timeout is reached.
    *
-   * @returns {Promise}
+   * @param {Duration} [timeout] Optional timeout duration.
+   * @private
+   *
+   * @returns {Promise<void>}
    */
-  private async _waitForFlush(): Promise<void> {
+  private async _waitForFlush(timeout?: Duration): Promise<void> {
     const promises: Array<Promise<void>> = [];
 
+    // Flush any batched requests immediately.
     if (this._acks.numPendingRequests) {
       promises.push(this._acks.onFlush());
-      await this._acks.flush();
+      this._acks.flush().catch(() => {});
     }
 
     if (this._modAcks.numPendingRequests) {
       promises.push(this._modAcks.onFlush());
-      await this._modAcks.flush();
+      this._modAcks.flush().catch(() => {});
     }
 
+    // Now, prepare the drain promises.
     if (this._acks.numInFlightRequests) {
       promises.push(this._acks.onDrain());
     }
@@ -1118,6 +1163,36 @@ export class Subscriber extends EventEmitter {
       promises.push(this._modAcks.onDrain());
     }
 
-    await Promise.all(promises);
+    if (!promises.length) {
+      // Nothing to wait for.
+      return;
+    }
+
+    // Wait for promises, potentially with a timeout.
+    const settled = Promise.all(promises);
+    const timeoutMs = timeout?.totalOf('millisecond');
+
+    if (timeoutMs && timeoutMs > 0) {
+      let timedOut = false;
+      let timeoutId: NodeJS.Timeout | undefined;
+      const timeoutPromise = new Promise(r => {
+        timeoutId = setTimeout(r, timeoutMs);
+      }).then(() => {
+        timedOut = true;
+      });
+
+      await Promise.race([settled, timeoutPromise]);
+      if (timedOut) {
+        logDebug.warn(
+          '[%s] Some acks/nacks might not have finished sending.',
+          this._subscription.name,
+        );
+      } else {
+        clearTimeout(timeoutId);
+      }
+    } else {
+      // Wait indefinitely if no timeout.
+      await settled;
+    }
   }
 }

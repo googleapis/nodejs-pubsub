@@ -352,15 +352,34 @@ export class PubSub {
   }
 
   /**
-   * Closes out this object, releasing any server connections. Note that once
-   * you close a PubSub object, it may not be used again. Any pending operations
-   * (e.g. queued publish messages) will fail. If you have topic or subscription
-   * objects that may have pending operations, you should call close() on those
-   * first if you want any pending messages to be delivered correctly. The
+   * Closes the PubSub client, releasing any underlying gRPC connections.
+   *
+   * Note that once you close a PubSub object, it may not be used again. Any pending
+   * operations (e.g. queued publish messages) will fail. If you have topic or
+   * subscription objects that may have pending operations, you should call close()
+   * on those first if you want any pending messages to be delivered correctly. The
    * PubSub class doesn't track those.
+
+   * Note that this method primarily closes the gRPC clients (Publisher and Subscriber)
+   * used for API requests. It does **not** automatically handle the graceful shutdown
+   * of active subscriptions.
+   *
+   * For graceful shutdown of subscriptions with specific timeout behavior (e.g.,
+   * ensuring buffered messages are nacked before closing), please refer to the
+   * {@link Subscription#close} method. It is recommended to call
+   * `Subscription.close({timeout: ...})` directly on your active `Subscription`
+   * objects *before* calling `PubSub.close()` if you require that specific
+   * shutdown behavior.
+   *
+   * Calling `PubSub.close()` without first closing active subscriptions might
+   * result in abrupt termination of message processing for those subscriptions.
+   * Any pending operations on associated Topic or Subscription objects (e.g.,
+   * queued publish messages or unacked subscriber messages) may fail after
+   * `PubSub.close()` is called.
    *
    * @callback EmptyCallback
-   * @returns {Promise<void>}
+   * @param {Error} [err] Request error, if any.
+   * @returns {Promise<void>} Resolves when the clients are closed.
    */
   close(): Promise<void>;
   close(callback: EmptyCallback): void;

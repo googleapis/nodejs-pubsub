@@ -178,6 +178,7 @@ interface SubInternals {
   _inventory: FakeLeaseManager;
   _onData(response: PullResponse): void;
   _discardMessage(message: s.Message): void;
+  _waitForFlush(timeout?: Duration): Promise<void>;
 }
 
 function getSubInternals(sub: s.Subscriber) {
@@ -648,6 +649,128 @@ describe('Subscriber', () => {
 
         assert.strictEqual(ackOnDrain.callCount, 1);
         assert.strictEqual(modAckOnDrain.callCount, 1);
+      });
+    });
+
+    describe('close with timeout', () => {
+      let clock: sinon.SinonFakeTimers;
+      let inventory: FakeLeaseManager;
+      let ackQueue: FakeAckQueue;
+      let modAckQueue: FakeModAckQueue;
+      let subInternals: SubInternals;
+
+      beforeEach(() => {
+        clock = sinon.useFakeTimers();
+        inventory = stubs.get('inventory');
+        ackQueue = stubs.get('ackQueue');
+        modAckQueue = stubs.get('modAckQueue');
+
+        // Ensure subscriber is open before each test
+        if (!subscriber.isOpen) {
+          subscriber.open();
+        }
+
+        subInternals = subscriber as unknown as SubInternals;
+      });
+
+      afterEach(() => {
+        clock.restore();
+      });
+
+      it('should call _waitForFlush without timeout if no options', async () => {
+        const waitForFlushSpy = sandbox.spy(subInternals, '_waitForFlush');
+        await subscriber.close();
+        assert(waitForFlushSpy.calledOnce);
+        assert.strictEqual(waitForFlushSpy.firstCall.args[0], undefined);
+      });
+
+      it('should not nack remaining messages if zero timeout', async () => {
+        const mockMessages = [
+          new Message(subscriber, RECEIVED_MESSAGE),
+          new Message(subscriber, RECEIVED_MESSAGE),
+        ];
+        sandbox.stub(inventory, 'clear').returns(mockMessages);
+        const nackSpy = sandbox.spy(subscriber, 'nack');
+
+        await subscriber.close({timeout: Duration.from({seconds: 0})});
+
+        assert(nackSpy.notCalled);
+      });
+
+      it('should nack remaining messages if timeout is non-zero', async () => {
+        const mockMessages = [
+          new Message(subscriber, RECEIVED_MESSAGE),
+          new Message(subscriber, RECEIVED_MESSAGE),
+        ];
+        sandbox.stub(inventory, 'clear').returns(mockMessages);
+        const nackSpy = sandbox.spy(subscriber, 'nack');
+
+        await subscriber.close({timeout: Duration.from({seconds: 5})});
+
+        assert.strictEqual(nackSpy.callCount, mockMessages.length);
+        mockMessages.forEach((msg, i) => {
+          assert.strictEqual(nackSpy.getCall(i).args[0], msg);
+        });
+      });
+
+      it('should wait for drain promises and respect timeout', async () => {
+        const ackDrainDeferred = defer<void>();
+        const modAckDrainDeferred = defer<void>();
+        sandbox.stub(ackQueue, 'onDrain').returns(ackDrainDeferred.promise);
+        sandbox
+          .stub(modAckQueue, 'onDrain')
+          .returns(modAckDrainDeferred.promise);
+        ackQueue.numInFlightRequests = 1; // Ensure drain is waited for
+        modAckQueue.numInFlightRequests = 1;
+
+        let closed = false;
+        void subscriber
+          .close({
+            timeout: Duration.from({millis: 100}),
+          })
+          .then(() => {
+            closed = true;
+          });
+
+        // Advance time past the timeout
+        await clock.tickAsync(101);
+
+        // Promise should resolve even though drains haven't
+        assert.strictEqual(closed, true);
+
+        // Resolve drains afterwards to prevent hanging tests if logic fails
+        ackDrainDeferred.resolve();
+        modAckDrainDeferred.resolve();
+      });
+
+      it('should resolve early if drain completes before timeout', async () => {
+        const ackDrainDeferred = defer<void>();
+        const modAckDrainDeferred = defer<void>();
+        sandbox.stub(ackQueue, 'onDrain').returns(ackDrainDeferred.promise);
+        sandbox
+          .stub(modAckQueue, 'onDrain')
+          .returns(modAckDrainDeferred.promise);
+        ackQueue.numInFlightRequests = 1; // Ensure drain is waited for
+        modAckQueue.numInFlightRequests = 1;
+
+        let closed = false;
+        void subscriber
+          .close({
+            timeout: Duration.from({millis: 100}),
+          })
+          .then(() => {
+            closed = true;
+          });
+
+        // Resolve drains quickly
+        ackDrainDeferred.resolve();
+        modAckDrainDeferred.resolve();
+
+        // Advance time slightly, but less than the timeout
+        await clock.tickAsync(50);
+
+        // Promise should resolve.
+        assert.strictEqual(closed, true);
       });
     });
   });
