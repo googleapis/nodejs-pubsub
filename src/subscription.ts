@@ -41,7 +41,12 @@ import {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-import {Message, Subscriber, SubscriberOptions} from './subscriber';
+import {
+  Message,
+  Subscriber,
+  SubscriberOptions,
+  SubscriptionCloseOptions,
+} from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
 import {StatusError} from './message-stream';
@@ -361,26 +366,32 @@ export class Subscription extends EventEmitter {
    * message events unless you call {Subscription#open} or add new message
    * listeners.
    *
+   * @param {object} [options] Options for the close operation.
+   * @param {Duration} [options.timeout] Timeout for the close operation. This
+   *   specifies the maximum amount of time to wait for the subscriber to
+   *   drain/close. If not specified, the default is to wait indefinitely.
    * @param {function} [callback] The callback function.
    * @param {?error} callback.err An error returned while closing the
    *     Subscription.
    *
    * @example
    * ```
-   * subscription.close(err => {
-   *   if (err) {
-   *     // Error handling omitted.
-   *   }
-   * });
-   *
-   * // If the callback is omitted a Promise will be returned.
-   * subscription.close().then(() => {});
+   * await subscription.close({timeout: Duration.from({seconds: 60})});
    * ```
    */
-  close(): Promise<void>;
+  close(options?: SubscriptionCloseOptions): Promise<void>;
   close(callback: SubscriptionCloseCallback): void;
-  close(callback?: SubscriptionCloseCallback): void | Promise<void> {
-    this._subscriber.close().then(() => callback!(), callback);
+  close(
+    options: SubscriptionCloseOptions,
+    callback: SubscriptionCloseCallback,
+  ): void;
+  close(
+    optsOrCallback?: SubscriptionCloseOptions | SubscriptionCloseCallback,
+    callback?: SubscriptionCloseCallback,
+  ): void | Promise<void> {
+    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
+    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
+    this._subscriber.close(options).then(() => callback!(), callback);
   }
 
   /**
