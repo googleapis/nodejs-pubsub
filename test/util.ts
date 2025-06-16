@@ -91,6 +91,27 @@ describe('utils', () => {
       }
     });
 
+    it('handles non-timeout errors properly', async () => {
+      const fakeTimers = sandbox.useFakeTimers(0);
+      let reject = (...args: unknown[]) => {};
+      const testString = 'fooby';
+      const testPromise = new Promise<string>((res, rej) => {
+        reject = () => rej(testString);
+      });
+      fakeTimers.setTimeout(reject, 500);
+      const awaitPromise = awaitWithTimeout(
+        testPromise,
+        Duration.from({seconds: 1}),
+      );
+      fakeTimers.tick(500);
+      try {
+        const result = await awaitPromise;
+        assert.strictEqual(result, null, 'non-error was triggered, improperly');
+      } catch (e) {
+        assert.deepStrictEqual(e, [testString, false]);
+      }
+    });
+
     it('handles timeout properly', async () => {
       const fakeTimers = sandbox.useFakeTimers(0);
       let resolve = (...args: unknown[]) => {};
