@@ -65,6 +65,7 @@ class FakeMessage {
   length = 20;
   received: number;
   subSpans: FakeSubscriberTelemetry = new FakeSubscriberTelemetry();
+  _dispatched = false;
 
   constructor() {
     this.received = Date.now();
@@ -75,6 +76,15 @@ class FakeMessage {
   }
   ackFailed() {}
   endParentSpan() {}
+  dispatched() {
+    this._dispatched = true;
+  }
+  get isDispatched() {
+    return this._dispatched;
+  }
+  get handledPromise() {
+    return Promise.resolve();
+  }
 }
 
 interface LeaseManagerInternals {

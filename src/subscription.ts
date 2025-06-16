@@ -45,7 +45,7 @@ import {
   Message,
   Subscriber,
   SubscriberOptions,
-  SubscriptionCloseOptions,
+  SubscriberCloseOptions,
 } from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
@@ -66,6 +66,7 @@ export type SubscriptionMetadata = {
 
 export type SubscriptionOptions = SubscriberOptions & {topic?: Topic};
 export type SubscriptionCloseCallback = (err?: Error) => void;
+export type SubscriptionCloseOptions = SubscriberCloseOptions;
 
 type SubscriptionCallback = ResourceCallback<
   Subscription,
@@ -362,21 +363,36 @@ export class Subscription extends EventEmitter {
   }
 
   /**
-   * Closes the Subscription, once this is called you will no longer receive
+   * Closes the Subscription. Once this is called you will no longer receive
    * message events unless you call {Subscription#open} or add new message
    * listeners.
    *
-   * @param {object} [options] Options for the close operation.
-   * @param {Duration} [options.timeout] Timeout for the close operation. This
-   *   specifies the maximum amount of time to wait for the subscriber to
-   *   drain/close. If not specified, the default is to wait indefinitely.
-   * @param {function} [callback] The callback function.
-   * @param {?error} callback.err An error returned while closing the
-   *     Subscription.
+   * This stops the reception of new messages and shuts down the underlying stream.
+   * Any messages being held in buffers in the client library will be nacked. The
+   * behavior of the returned Promise will depend on the behavior option. (See below.)
+   * If no options are passed, it behaves like `ShutdownBehaviors.Wait`.
+   *
+   * @param {SubscriptionCloseOptions} [options] Determines the basic behavior of the
+   *   close() function.
+   * @param {SubscriptionCloseBehavior} [options.behavior] The behavior of the close operation.
+   *   - Wait: Works more or less like the original close(), waiting indefinitely.
+   *   - Timeout: Works like Wait, but with a timeout.
+   *   - Exit: Nacks all buffered and leased messages, but otherwise exits immediately
+   *       without waiting for anything.
+   *   Use {@link SubscriptionCloseBehaviors} for enum values.
+   * @param {Duration} [options.timeout] In the case of Timeout, the maximum duration
+   *   to wait for pending ack/nack requests to complete before resolving (or rejecting)
+   *   the promise.
+   * @param {function} [callback] The callback function, if not using the Promise-based
+   *   call signature.
+   * @param {?error} [callback.err] An error returned while closing the Subscription.
    *
    * @example
    * ```
-   * await subscription.close({timeout: Duration.from({seconds: 60})});
+   * await subscription.close({
+   *   behavior: SubscriptionCloseBehaviors.Timeout,
+   *   timeout: Duration.from({seconds: 60})
+   * });
    * ```
    */
   close(options?: SubscriptionCloseOptions): Promise<void>;
