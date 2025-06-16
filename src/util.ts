@@ -15,6 +15,7 @@
  */
 
 import {promisify, PromisifyOptions} from '@google-cloud/promisify';
+import {Duration} from './temporal';
 
 /**
  * This replaces usage of promisifyAll(), going forward. Instead of opting
@@ -82,4 +83,37 @@ export function addToBucket<T, U>(map: Map<T, U[]>, bucket: T, item: U) {
   const items = map.get(bucket) ?? [];
   items.push(item);
   map.set(bucket, items);
+}
+
+const timeoutToken: unique symbol = Symbol('pubsub promise timeout');
+
+/**
+ * Awaits on Promise with a timeout. Resolves on success, rejects on timeout.
+ *
+ * @param promise An existing Promise returning type T.
+ * @param timeout A timeout value as a Duration; if the timeout is exceeded while
+ *   waiting for the promise, the Promise this function returns will reject.
+ * @returns In any case, a tuple with the first item being the T value or an
+ *   error value, and the second item being true if the timeout was exceeded.
+ */
+export async function awaitWithTimeout<T>(
+  promise: Promise<T>,
+  timeout: Duration,
+): Promise<[T, boolean]> {
+  let timeoutId: NodeJS.Timeout | undefined;
+  const timeoutPromise = new Promise<T>((_, rej) => {
+    timeoutId = setTimeout(
+      () => rej(timeoutToken),
+      timeout.totalOf('millisecond'),
+    );
+  });
+  try {
+    const value = await Promise.race([timeoutPromise, promise]);
+    clearTimeout(timeoutId);
+    return [value, false];
+  } catch (e) {
+    // The timeout passed.
+    clearTimeout(timeoutId);
+    throw [e, e === timeoutToken];
+  }
 }

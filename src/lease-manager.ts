@@ -225,7 +225,7 @@ export class LeaseManager extends EventEmitter {
     if (this._subscriber.isOpen) {
       message.subSpans.flowEnd();
       process.nextTick(() => {
-        message.subSpans.processingStart(this._subscriber.name);
+        message.dispatched();
         this._subscriber.emit('message', message);
       });
     }

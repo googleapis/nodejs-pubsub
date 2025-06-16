@@ -13,8 +13,10 @@
 // limitations under the License.
 
 import {describe, it} from 'mocha';
-import {addToBucket, Throttler} from '../src/util';
+import {addToBucket, Throttler, awaitWithTimeout} from '../src/util';
 import * as assert from 'assert';
+import * as sinon from 'sinon';
+import { Duration } from '../src';
 
 describe('utils', () => {
   describe('Throttler', () => {
@@ -56,6 +58,63 @@ describe('utils', () => {
       map.set('a', ['c']);
       addToBucket(map, 'a', 'b');
       assert.deepStrictEqual(map.get('a'), ['c', 'b']);
+    });
+  });
+
+  describe('awaitWithTimeout', () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => {
+      sandbox = sinon.createSandbox();
+    });
+    afterEach(() => {
+      sandbox.restore();
+    });
+
+    it('handles non-timeout properly', async () => {
+      const fakeTimers = sandbox.useFakeTimers(0);
+      let resolve = (...args: unknown[]) => {};
+      const testString = 'fooby';
+      const testPromise = new Promise<string>(r => {
+        resolve = () => r(testString);
+      });
+      fakeTimers.setTimeout(resolve, 500);
+      const awaitPromise = awaitWithTimeout(
+        testPromise,
+        Duration.from({seconds: 1}),
+      );
+      fakeTimers.tick(500);
+      try {
+        const result = await awaitPromise;
+        assert.deepStrictEqual(result, [testString, false]);
+      } catch (e) {
+        assert.strictEqual(e, null, 'timeout was triggered, improperly');
+      }
+    });
+
+    it('handles timeout properly', async () => {
+      const fakeTimers = sandbox.useFakeTimers(0);
+      let resolve = (...args: unknown[]) => {};
+      const testString = 'fooby';
+      const testPromise = new Promise<string>(r => {
+        resolve = () => r(testString);
+      });
+      fakeTimers.setTimeout(resolve, 1500);
+      const awaitPromise = awaitWithTimeout(
+        testPromise,
+        Duration.from({seconds: 1}),
+      );
+      fakeTimers.tick(1500);
+      try {
+        const result = await awaitPromise;
+        assert.strictEqual(
+          result,
+          null,
+          'timeout was not triggered, improperly',
+        );
+      } catch (e) {
+        const err: unknown[] = e as unknown[];
+        assert.strictEqual(err[1], true);
+      }
     });
   });
 });
