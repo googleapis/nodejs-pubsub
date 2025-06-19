@@ -573,6 +573,10 @@ describe('Subscriber', () => {
       const inventory: FakeLeaseManager = stubs.get('inventory');
       const stub = sandbox.stub(inventory, 'clear').returns([message]);
 
+      // The leaser would've immediately called dispatched(). Pretend that
+      // we're user code.
+      message.ack();
+
       await subscriber.close();
       assert.strictEqual(stub.callCount, 1);
       assert.strictEqual(shutdownStub.callCount, 1);
@@ -622,7 +626,7 @@ describe('Subscriber', () => {
         assert.strictEqual(modAckFlush.callCount, 1);
       });
 
-      it('should resolve if no messages are pending', () => {
+      it('should resolve if no messages are pending', async () => {
         const ackQueue: FakeAckQueue = stubs.get('ackQueue');
 
         sandbox.stub(ackQueue, 'flush').rejects();
@@ -634,7 +638,7 @@ describe('Subscriber', () => {
         sandbox.stub(modAckQueue, 'flush').rejects();
         sandbox.stub(modAckQueue, 'onFlush').rejects();
 
-        return subscriber.close();
+        await subscriber.close();
       });
 
       it('should wait for in-flight messages to drain', async () => {
