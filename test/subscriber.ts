@@ -102,6 +102,11 @@ class FakeLeaseManager extends EventEmitter {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove(message: s.Message): void {}
+
+  _isEmpty = true;
+  get isEmpty() {
+    return this._isEmpty;
+  }
 }
 
 class FakeQueue {
@@ -664,7 +669,7 @@ describe('Subscriber', () => {
       let subInternals: SubInternals;
 
       beforeEach(() => {
-        clock = sinon.useFakeTimers();
+        clock = sandbox.useFakeTimers();
         inventory = stubs.get('inventory');
         ackQueue = stubs.get('ackQueue');
         modAckQueue = stubs.get('modAckQueue');
@@ -681,24 +686,51 @@ describe('Subscriber', () => {
         clock.restore();
       });
 
-      it('should call _waitForFlush without timeout if no options', async () => {
-        const waitForFlushSpy = sandbox.spy(subInternals, '_waitForFlush');
+      it('should do nothing if isOpen = false', async () => {
+        const destroySpy = sandbox.spy(subInternals._stream, 'destroy');
+        subscriber.isOpen = false;
         await subscriber.close();
-        assert(waitForFlushSpy.calledOnce);
-        assert.strictEqual(waitForFlushSpy.firstCall.args[0], undefined);
+        assert.strictEqual(destroySpy.callCount, 0);
       });
 
-      it('should not nack remaining messages if zero timeout', async () => {
-        const mockMessages = [
-          new Message(subscriber, RECEIVED_MESSAGE),
-          new Message(subscriber, RECEIVED_MESSAGE),
-        ];
-        sandbox.stub(inventory, 'clear').returns(mockMessages);
-        const nackSpy = sandbox.spy(subscriber, 'nack');
+      it('should clear inventory and bail for timeout = 0', async () => {
+        const clearSpy = sandbox.spy(inventory, 'clear');
+        const onSpy = sandbox.spy(inventory, 'on');
+        await subscriber.close({
+          timeout: Duration.from({milliseconds: 0}),
+        });
+        assert.strictEqual(clearSpy.callCount, 1);
+        assert.strictEqual(onSpy.callCount, 0);
+      });
 
-        await subscriber.close({timeout: Duration.from({seconds: 0})});
+      it('should not wait for an empty inventory in NackImmediately', async () => {
+        const onSpy = sandbox.spy(inventory, 'on');
+        await subscriber.close({
+          behavior: s.SubscriberCloseBehaviors.NackImmediately,
+          timeout: Duration.from({milliseconds: 100}),
+        });
+        assert.strictEqual(onSpy.callCount, 0);
+      });
 
-        assert(nackSpy.notCalled);
+      it('should not wait for an empty inventory in WaitForProcessing if empty', async () => {
+        const onSpy = sandbox.spy(inventory, 'on');
+        await subscriber.close({
+          behavior: s.SubscriberCloseBehaviors.WaitForProcessing,
+          timeout: Duration.from({milliseconds: 100}),
+        });
+        assert.strictEqual(onSpy.callCount, 0);
+      });
+
+      it('should wait for an empty inventory in WaitForProcessing if not empty', async () => {
+        inventory._isEmpty = false;
+        const onSpy = sandbox.spy(inventory, 'on');
+        const prom = subscriber.close({
+          behavior: s.SubscriberCloseBehaviors.WaitForProcessing,
+          timeout: Duration.from({seconds: 2}),
+        });
+        assert.strictEqual(onSpy.callCount, 1);
+        clock.tick(3000);
+        await prom;
       });
 
       it('should nack remaining messages if timeout is non-zero', async () => {
@@ -709,7 +741,9 @@ describe('Subscriber', () => {
         sandbox.stub(inventory, 'clear').returns(mockMessages);
         const nackSpy = sandbox.spy(subscriber, 'nack');
 
-        await subscriber.close({timeout: Duration.from({seconds: 5})});
+        const prom = subscriber.close({timeout: Duration.from({seconds: 5})});
+        clock.tick(6000);
+        await prom;
 
         assert.strictEqual(nackSpy.callCount, mockMessages.length);
         mockMessages.forEach((msg, i) => {
@@ -728,16 +762,18 @@ describe('Subscriber', () => {
         modAckQueue.numInFlightRequests = 1;
 
         let closed = false;
-        void subscriber
+        const prom = subscriber
           .close({
-            timeout: Duration.from({millis: 100}),
+            behavior: s.SubscriberCloseBehaviors.NackImmediately,
+            timeout: Duration.from({milliseconds: 100}),
           })
           .then(() => {
             closed = true;
           });
 
         // Advance time past the timeout
-        await clock.tickAsync(101);
+        clock.tick(200);
+        await prom;
 
         // Promise should resolve even though drains haven't
         assert.strictEqual(closed, true);
@@ -758,9 +794,9 @@ describe('Subscriber', () => {
         modAckQueue.numInFlightRequests = 1;
 
         let closed = false;
-        void subscriber
+        const prom = subscriber
           .close({
-            timeout: Duration.from({millis: 100}),
+            timeout: Duration.from({milliseconds: 100}),
           })
           .then(() => {
             closed = true;
@@ -771,7 +807,8 @@ describe('Subscriber', () => {
         modAckDrainDeferred.resolve();
 
         // Advance time slightly, but less than the timeout
-        await clock.tickAsync(50);
+        clock.tick(50);
+        await prom;
 
         // Promise should resolve.
         assert.strictEqual(closed, true);
@@ -931,6 +968,10 @@ describe('Subscriber', () => {
         delete addMsgAny.subSpans;
         delete msgAny.parentSpan;
         delete msgAny.subSpans;
+
+        // Delete baggage for discovering unprocessed messages.
+        delete addMsgAny._handledPromise;
+        delete msgAny._handledPromise;
 
         assert.deepStrictEqual(addMsg, message);
 

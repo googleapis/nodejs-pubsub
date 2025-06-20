@@ -46,6 +46,7 @@ import {
   Subscriber,
   SubscriberOptions,
   SubscriberCloseOptions,
+  SubscriberCloseBehaviors,
 } from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
@@ -67,6 +68,7 @@ export type SubscriptionMetadata = {
 export type SubscriptionOptions = SubscriberOptions & {topic?: Topic};
 export type SubscriptionCloseCallback = (err?: Error) => void;
 export type SubscriptionCloseOptions = SubscriberCloseOptions;
+export const SubscriptionCloseBehaviors = SubscriberCloseBehaviors;
 
 type SubscriptionCallback = ResourceCallback<
   Subscription,
@@ -372,14 +374,14 @@ export class Subscription extends EventEmitter {
    * behavior of the returned Promise will depend on the behavior option. (See below.)
    * If no options are passed, it behaves like `ShutdownBehaviors.Wait`.
    *
-   * @param {SubscriptionCloseOptions} [options] Determines the basic behavior of the
+   * @param {SubscriberCloseOptions} [options] Determines the basic behavior of the
    *   close() function.
-   * @param {SubscriptionCloseBehavior} [options.behavior] The behavior of the close operation.
-   *   - Wait: Works more or less like the original close(), waiting indefinitely.
-   *   - Timeout: Works like Wait, but with a timeout.
-   *   - Exit: Nacks all buffered and leased messages, but otherwise exits immediately
-   *       without waiting for anything.
-   *   Use {@link SubscriptionCloseBehaviors} for enum values.
+   * @param {SubscriberCloseBehavior} [options.behavior] The behavior of the close operation.
+   *   - NackImmediately: Sends nacks for all messages held by the client library, and
+   *     wait for them to send.
+   *   - WaitForProcessing: Continues normal ack/nack and leasing processes until close
+   *     to the timeout, then switches to NackImmediately behavior to close down.
+   *   Use {@link SubscriberCloseBehaviors} for enum values.
    * @param {Duration} [options.timeout] In the case of Timeout, the maximum duration
    *   to wait for pending ack/nack requests to complete before resolving (or rejecting)
    *   the promise.
@@ -390,7 +392,7 @@ export class Subscription extends EventEmitter {
    * @example
    * ```
    * await subscription.close({
-   *   behavior: SubscriptionCloseBehaviors.Timeout,
+   *   behavior: SubscriptionCloseBehaviors.WaitForProcessing,
    *   timeout: Duration.from({seconds: 60})
    * });
    * ```

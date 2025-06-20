@@ -29,7 +29,7 @@ import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import * as tracing from './telemetry-tracing';
-import {Duration} from './temporal';
+import {Duration, atMost as durationAtMost} from './temporal';
 import {EventEmitter} from 'events';
 import {awaitWithTimeout} from './util';
 
@@ -55,9 +55,8 @@ export type AckResponse = ValueOf<typeof AckResponses>;
  * Enum values for behaviors of the Subscriber.close() method.
  */
 export const SubscriberCloseBehaviors = {
-  Wait: 0 as const,
-  Exit: 1 as const,
-  Timeout: 2 as const,
+  NackImmediately: 'NACK' as const,
+  WaitForProcessing: 'WAIT' as const,
 };
 export type SubscriberCloseBehavior = ValueOf<typeof SubscriberCloseBehaviors>;
 
@@ -69,6 +68,12 @@ export interface SubscriberCloseOptions {
   behavior?: SubscriberCloseBehavior;
   timeout?: Duration;
 }
+
+/**
+ * Specifies how long before the final close timeout, in WaitForProcessing mode,
+ * that we should give up and start shutting down cleanly.
+ */
+const finalNackTimeout = Duration.from({seconds: 1});
 
 /**
  * Thrown when an error is detected in an ack/nack/modack call, when
@@ -879,12 +884,12 @@ export class Subscriber extends EventEmitter {
    *
    * @param {SubscriberCloseOptions} [options] Determines the basic behavior of the
    *   close() function.
-   * @param {ShutdownBehavior} [options.behavior] The behavior of the close operation.
-   *   - Wait: Works more or less like the original close(), waiting indefinitely.
-   *   - Timeout: Works like Wait, but with a timeout.
-   *   - Exit: Nacks all buffered and leased messages, but otherwise exits immediately
-   *       without waiting for anything.
-   *   Use {@link ShutdownBehaviors} for enum values.
+   * @param {SubscriberCloseBehavior} [options.behavior] The behavior of the close operation.
+   *   - NackImmediately: Sends nacks for all messages held by the client library, and
+   *     wait for them to send.
+   *   - WaitForProcessing: Continues normal ack/nack and leasing processes until close
+   *     to the timeout, then switches to NackImmediately behavior to close down.
+   *   Use {@link SubscriberCloseBehaviors} for enum values.
    * @param {Duration} [options.timeout] In the case of Timeout, the maximum duration
    *   to wait for pending ack/nack requests to complete before resolving (or rejecting)
    *   the promise.
@@ -894,13 +899,6 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async close(options?: SubscriberCloseOptions): Promise<void> {
-    const behavior = options?.behavior;
-    let timeout = options?.timeout;
-    if (behavior === SubscriberCloseBehaviors.Wait) {
-      // Convert this case to "timeout === undefined, for infinite wait".
-      timeout = undefined;
-    }
-
     if (!this.isOpen) {
       return;
     }
@@ -909,72 +907,84 @@ export class Subscriber extends EventEmitter {
     this.isOpen = false;
     this._stream.destroy();
 
-    // Grab everything left in inventory so we can nack them if needed.
-    const remaining = this._inventory.clear();
+    // If no behavior is specified, default to Wait.
+    const behavior =
+      options?.behavior ?? SubscriberCloseBehaviors.WaitForProcessing;
 
-    // Wait for any dispatched messages to become handled (ack/nack called).
-    const dispatched = remaining.filter(m => m.isDispatched);
+    // The timeout can't realistically be longer than the longest time we're willing
+    // to lease messages.
+    let timeout = durationAtMost(
+      options?.timeout ?? this.maxExtensionTime,
+      this.maxExtensionTime,
+    );
 
-    // For any that haven't been dispatched, nack them immediately.
-    const nonDispatched = remaining.filter(m => !m.isDispatched);
-    nonDispatched.forEach(m => m.nack());
+    // If the user specified a zero timeout, just bail immediately.
+    if (Math.floor(timeout.milliseconds) === 0) {
+      this._inventory.clear();
+      return;
+    }
 
-    // Wait until all of those nacks are flushed, or the timeout is reached.
-    if (behavior !== SubscriberCloseBehaviors.Exit) {
-      // Track when we started to make sure we don't go over time with the two
-      // separate operations.
-      const waitStart = Date.now();
-      let timeoutMs = timeout?.totalOf('millisecond');
-
-      // Wait for user callbacks to complete.
-      const dispatchesCompleted = Promise.all(
-        dispatched.map(m => m.handledPromise),
+    // Warn the user if the timeout is too short for NackImmediately.
+    if (Duration.compare(timeout, finalNackTimeout) < 0) {
+      logDebug.warn(
+        'Subscriber.close() timeout is less than the final shutdown time (%i ms). This may result in lost nacks.',
+        timeout.milliseconds,
       );
-      if (timeoutMs === undefined) {
-        await dispatchesCompleted;
-      } else {
-        try {
-          await awaitWithTimeout(
-            dispatchesCompleted,
-            Duration.from({millis: timeoutMs}),
-          );
-          timeoutMs -= waitStart - Date.now();
-        } catch (e) {
-          const err = e as [unknown, boolean];
-          if (err[1] === false) {
-            // This wasn't a timeout. Pass it on.
-            throw err[0];
-          } else {
-            // The timeout passed.
-            timeoutMs = 0;
-          }
-        }
-      }
+    }
 
-      // Wait for all acks and nacks to go through.
-      const flushCompleted = this._waitForFlush();
-      if (timeoutMs === undefined) {
-        await flushCompleted;
-      } else if (timeoutMs > 0) {
-        try {
-          await awaitWithTimeout(
-            flushCompleted,
-            Duration.from({millis: timeoutMs}),
-          );
-        } catch (e) {
-          const err = e as [unknown, boolean];
-          if (err[1] === false) {
-            // This wasn't a timeout. Pass it on.
-            throw err[0];
-          } else {
-            // The timeout passed.
-          }
+    // If we're in WaitForProcessing mode, then we first need to derive a NackImmediately
+    // timeout point. If everything finishes before then, we also want to go ahead and bail cleanly.
+    const shutdownStart = Date.now();
+    if (
+      behavior === SubscriberCloseBehaviors.WaitForProcessing &&
+      !this._inventory.isEmpty
+    ) {
+      const waitTimeout = timeout.subtract(finalNackTimeout);
+
+      const emptyPromise = new Promise(r => {
+        this._inventory.on('empty', r);
+      });
+
+      try {
+        await awaitWithTimeout(emptyPromise, waitTimeout);
+      } catch (e) {
+        // Don't try to deal with errors at this point, just warn-log.
+        const err = e as [unknown, boolean];
+        if (err[1] === false) {
+          // This wasn't a timeout.
+          logDebug.warn('Error during Subscriber.close(): %j', err[0]);
         }
       }
     }
 
-    // Clean up OTel spans for any remaining messages that weren't nacked due
-    // to timeout.
+    // Now we head into immediate shutdown mode with what time is left.
+    timeout = timeout.subtract({
+      milliseconds: Date.now() - shutdownStart,
+    });
+    if (timeout.milliseconds <= 0) {
+      // This probably won't work out, but go through the motions.
+      timeout = Duration.from({milliseconds: 0});
+    }
+
+    // Grab everything left in inventory. This includes messages that have already
+    // been dispatched to user callbacks.
+    const remaining = this._inventory.clear();
+    remaining.forEach(m => m.nack());
+
+    // Wait for user callbacks to complete.
+    const flushCompleted = this._waitForFlush();
+    try {
+      await awaitWithTimeout(flushCompleted, timeout);
+    } catch (e) {
+      // Don't try to deal with errors at this point, just warn-log.
+      const err = e as [unknown, boolean];
+      if (err[1] === false) {
+        // This wasn't a timeout.
+        logDebug.warn('Error during Subscriber.close(): %j', err[0]);
+      }
+    }
+
+    // Clean up OTel spans for any remaining messages.
     remaining.forEach(m => {
       m.subSpans.shutdown();
       m.endParentSpan();
