@@ -696,38 +696,50 @@ describe('Subscriber', () => {
       it('should clear inventory and bail for timeout = 0', async () => {
         const clearSpy = sandbox.spy(inventory, 'clear');
         const onSpy = sandbox.spy(inventory, 'on');
-        await subscriber.close({
-          timeout: Duration.from({milliseconds: 0}),
+        subscriber.setOptions({
+          closeOptions: {
+            timeout: Duration.from({milliseconds: 0}),
+          },
         });
+        await subscriber.close();
         assert.strictEqual(clearSpy.callCount, 1);
         assert.strictEqual(onSpy.callCount, 0);
       });
 
       it('should not wait for an empty inventory in NackImmediately', async () => {
         const onSpy = sandbox.spy(inventory, 'on');
-        await subscriber.close({
-          behavior: s.SubscriberCloseBehaviors.NackImmediately,
-          timeout: Duration.from({milliseconds: 100}),
+        subscriber.setOptions({
+          closeOptions: {
+            behavior: s.SubscriberCloseBehaviors.NackImmediately,
+            timeout: Duration.from({milliseconds: 100}),
+          },
         });
+        await subscriber.close();
         assert.strictEqual(onSpy.callCount, 0);
       });
 
       it('should not wait for an empty inventory in WaitForProcessing if empty', async () => {
         const onSpy = sandbox.spy(inventory, 'on');
-        await subscriber.close({
-          behavior: s.SubscriberCloseBehaviors.WaitForProcessing,
-          timeout: Duration.from({milliseconds: 100}),
+        subscriber.setOptions({
+          closeOptions: {
+            behavior: s.SubscriberCloseBehaviors.WaitForProcessing,
+            timeout: Duration.from({milliseconds: 100}),
+          },
         });
+        await subscriber.close();
         assert.strictEqual(onSpy.callCount, 0);
       });
 
       it('should wait for an empty inventory in WaitForProcessing if not empty', async () => {
         inventory._isEmpty = false;
         const onSpy = sandbox.spy(inventory, 'on');
-        const prom = subscriber.close({
-          behavior: s.SubscriberCloseBehaviors.WaitForProcessing,
-          timeout: Duration.from({seconds: 2}),
+        subscriber.setOptions({
+          closeOptions: {
+            behavior: s.SubscriberCloseBehaviors.WaitForProcessing,
+            timeout: Duration.from({seconds: 2}),
+          },
         });
+        const prom = subscriber.close();
         assert.strictEqual(onSpy.callCount, 1);
         clock.tick(3000);
         await prom;
@@ -741,7 +753,12 @@ describe('Subscriber', () => {
         sandbox.stub(inventory, 'clear').returns(mockMessages);
         const nackSpy = sandbox.spy(subscriber, 'nack');
 
-        const prom = subscriber.close({timeout: Duration.from({seconds: 5})});
+        subscriber.setOptions({
+          closeOptions: {
+            timeout: Duration.from({seconds: 5}),
+          },
+        });
+        const prom = subscriber.close();
         clock.tick(6000);
         await prom;
 
@@ -762,14 +779,15 @@ describe('Subscriber', () => {
         modAckQueue.numInFlightRequests = 1;
 
         let closed = false;
-        const prom = subscriber
-          .close({
+        subscriber.setOptions({
+          closeOptions: {
             behavior: s.SubscriberCloseBehaviors.NackImmediately,
             timeout: Duration.from({milliseconds: 100}),
-          })
-          .then(() => {
-            closed = true;
-          });
+          },
+        });
+        const prom = subscriber.close().then(() => {
+          closed = true;
+        });
 
         // Advance time past the timeout
         clock.tick(200);
@@ -794,13 +812,14 @@ describe('Subscriber', () => {
         modAckQueue.numInFlightRequests = 1;
 
         let closed = false;
-        const prom = subscriber
-          .close({
+        subscriber.setOptions({
+          closeOptions: {
             timeout: Duration.from({milliseconds: 100}),
-          })
-          .then(() => {
-            closed = true;
-          });
+          },
+        });
+        const prom = subscriber.close().then(() => {
+          closed = true;
+        });
 
         // Resolve drains quickly
         ackDrainDeferred.resolve();

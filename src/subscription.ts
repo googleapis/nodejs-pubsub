@@ -369,47 +369,19 @@ export class Subscription extends EventEmitter {
    * message events unless you call {Subscription#open} or add new message
    * listeners.
    *
-   * This stops the reception of new messages and shuts down the underlying stream.
-   * Any messages being held in buffers in the client library will be nacked. The
-   * behavior of the returned Promise will depend on the behavior option. (See below.)
-   * If no options are passed, it behaves like `ShutdownBehaviors.Wait`.
-   *
-   * @param {SubscriberCloseOptions} [options] Determines the basic behavior of the
-   *   close() function.
-   * @param {SubscriberCloseBehavior} [options.behavior] The behavior of the close operation.
-   *   - NackImmediately: Sends nacks for all messages held by the client library, and
-   *     wait for them to send.
-   *   - WaitForProcessing: Continues normal ack/nack and leasing processes until close
-   *     to the timeout, then switches to NackImmediately behavior to close down.
-   *   Use {@link SubscriberCloseBehaviors} for enum values.
-   * @param {Duration} [options.timeout] In the case of Timeout, the maximum duration
-   *   to wait for pending ack/nack requests to complete before resolving (or rejecting)
-   *   the promise.
    * @param {function} [callback] The callback function, if not using the Promise-based
    *   call signature.
    * @param {?error} [callback.err] An error returned while closing the Subscription.
    *
    * @example
    * ```
-   * await subscription.close({
-   *   behavior: SubscriptionCloseBehaviors.WaitForProcessing,
-   *   timeout: Duration.from({seconds: 60})
-   * });
+   * await subscription.close();
    * ```
    */
-  close(options?: SubscriptionCloseOptions): Promise<void>;
+  close(): Promise<void>;
   close(callback: SubscriptionCloseCallback): void;
-  close(
-    options: SubscriptionCloseOptions,
-    callback: SubscriptionCloseCallback,
-  ): void;
-  close(
-    optsOrCallback?: SubscriptionCloseOptions | SubscriptionCloseCallback,
-    callback?: SubscriptionCloseCallback,
-  ): void | Promise<void> {
-    const options = typeof optsOrCallback === 'object' ? optsOrCallback : {};
-    callback = typeof optsOrCallback === 'function' ? optsOrCallback : callback;
-    this._subscriber.close(options).then(() => callback!(), callback);
+  close(callback?: SubscriptionCloseCallback): void | Promise<void> {
+    this._subscriber.close().then(() => callback!(), callback);
   }
 
   /**

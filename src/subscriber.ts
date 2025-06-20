@@ -640,6 +640,18 @@ export class Message implements tracing.MessageWithAttributes {
  *     settings at the Cloud PubSub server and uses the less accurate method
  *     of only enforcing flow control at the client side.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
+ *     If no options are passed, it behaves like `SubscriberCloseBehaviors.Wait`.
+ * @property {SubscriberCloseOptions} [options] Determines the basic behavior of the
+ *     close() function.
+ * @property {SubscriberCloseBehavior} [options.behavior] The behavior of the close operation.
+ *     - NackImmediately: Sends nacks for all messages held by the client library, and
+ *       wait for them to send.
+ *     - WaitForProcessing: Continues normal ack/nack and leasing processes until close
+ *       to the timeout, then switches to NackImmediately behavior to close down.
+ *     Use {@link SubscriberCloseBehaviors} for enum values.
+ * @property {Duration} [options.timeout] In the case of Timeout, the maximum duration
+ *     to wait for pending ack/nack requests to complete before resolving (or rejecting)
+ *     the promise.
  */
 export interface SubscriberOptions {
   minAckDeadline?: Duration;
@@ -649,6 +661,7 @@ export interface SubscriberOptions {
   flowControl?: FlowControlOptions;
   useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
+  closeOptions?: SubscriberCloseOptions;
 }
 
 const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
@@ -876,29 +889,15 @@ export class Subscriber extends EventEmitter {
 
   /**
    * Closes the subscriber, stopping the reception of new messages and shutting
-   * down the underlying stream. Any messages being held in buffers in the client
-   * library will be nacked. The behavior of the returned Promise will depend
-   * on the behavior option. (See below.)
+   * down the underlying stream. The behavior of the returned Promise will depend
+   * on the closeOptions in the subscriber options.
    *
-   * If no options are passed, it behaves like `ShutdownBehaviors.Wait`.
-   *
-   * @param {SubscriberCloseOptions} [options] Determines the basic behavior of the
-   *   close() function.
-   * @param {SubscriberCloseBehavior} [options.behavior] The behavior of the close operation.
-   *   - NackImmediately: Sends nacks for all messages held by the client library, and
-   *     wait for them to send.
-   *   - WaitForProcessing: Continues normal ack/nack and leasing processes until close
-   *     to the timeout, then switches to NackImmediately behavior to close down.
-   *   Use {@link SubscriberCloseBehaviors} for enum values.
-   * @param {Duration} [options.timeout] In the case of Timeout, the maximum duration
-   *   to wait for pending ack/nack requests to complete before resolving (or rejecting)
-   *   the promise.
    * @returns {Promise<void>} A promise that resolves when the subscriber is closed
    *   and pending operations are flushed or the timeout is reached.
    *
    * @private
    */
-  async close(options?: SubscriberCloseOptions): Promise<void> {
+  async close(): Promise<void> {
     if (!this.isOpen) {
       return;
     }
@@ -906,6 +905,8 @@ export class Subscriber extends EventEmitter {
     // Always close the stream right away so we don't receive more messages.
     this.isOpen = false;
     this._stream.destroy();
+
+    const options = this._options.closeOptions;
 
     // If no behavior is specified, default to Wait.
     const behavior =
