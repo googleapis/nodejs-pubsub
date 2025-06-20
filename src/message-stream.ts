@@ -63,7 +63,7 @@ const DEFAULT_OPTIONS: MessageStreamOptions = {
   highWaterMark: 0,
   maxStreams: defaultOptions.subscription.maxStreams,
   timeout: 300000,
-  retryMinBackoff: Duration.from({millis: 100}),
+  retryMinBackoff: Duration.from({milliseconds: 100}),
   retryMaxBackoff: Duration.from({seconds: 60}),
 };
 

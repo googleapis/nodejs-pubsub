@@ -77,8 +77,8 @@ export class ExponentialRetry<T> {
   private _timer?: NodeJS.Timeout;
 
   constructor(backoff: Duration, maxBackoff: Duration) {
-    this._backoffMs = backoff.totalOf('millisecond');
-    this._maxBackoffMs = maxBackoff.totalOf('millisecond');
+    this._backoffMs = backoff.milliseconds;
+    this._maxBackoffMs = maxBackoff.milliseconds;
   }
 
   /**
@@ -170,7 +170,7 @@ export class ExponentialRetry<T> {
 
         next.retryInfo!.callback(
           next as unknown as T,
-          Duration.from({millis: now - next.retryInfo!.firstRetry}),
+          Duration.from({milliseconds: now - next.retryInfo!.firstRetry}),
         );
       } else {
         break;

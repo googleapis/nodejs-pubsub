@@ -102,10 +102,7 @@ export async function awaitWithTimeout<T>(
 ): Promise<[T, boolean]> {
   let timeoutId: NodeJS.Timeout | undefined;
   const timeoutPromise = new Promise<T>((_, rej) => {
-    timeoutId = setTimeout(
-      () => rej(timeoutToken),
-      timeout.totalOf('millisecond'),
-    );
+    timeoutId = setTimeout(() => rej(timeoutToken), timeout.milliseconds);
   });
   try {
     const value = await Promise.race([timeoutPromise, promise]);
