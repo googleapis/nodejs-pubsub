@@ -147,6 +147,9 @@ export class SchemaServiceClient {
       (typeof window !== 'undefined' && typeof window?.fetch === 'function');
     opts = Object.assign({servicePath, port, clientConfig, fallback}, opts);
 
+    // Request numeric enum values if REST transport is used.
+    opts.numericEnums = true;
+
     // If scopes are unset in options and we're connecting to a non-default endpoint, set scopes just in case.
     if (servicePath !== this._servicePath && !('scopes' in opts)) {
       opts['scopes'] = staticMembers.scopes;
@@ -439,8 +442,6 @@ export class SchemaServiceClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.create_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_CreateSchema_async
    */
   createSchema(
     request?: protos.google.pubsub.v1.ICreateSchemaRequest,
@@ -551,8 +552,6 @@ export class SchemaServiceClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.get_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_GetSchema_async
    */
   getSchema(
     request?: protos.google.pubsub.v1.IGetSchemaRequest,
@@ -662,8 +661,6 @@ export class SchemaServiceClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.commit_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_CommitSchema_async
    */
   commitSchema(
     request?: protos.google.pubsub.v1.ICommitSchemaRequest,
@@ -775,8 +772,6 @@ export class SchemaServiceClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.rollback_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_RollbackSchema_async
    */
   rollbackSchema(
     request?: protos.google.pubsub.v1.IRollbackSchemaRequest,
@@ -890,8 +885,6 @@ export class SchemaServiceClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Schema|Schema}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.delete_schema_revision.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_DeleteSchemaRevision_async
    */
   deleteSchemaRevision(
     request?: protos.google.pubsub.v1.IDeleteSchemaRevisionRequest,
@@ -1003,8 +996,6 @@ export class SchemaServiceClient {
    *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.delete_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_DeleteSchema_async
    */
   deleteSchema(
     request?: protos.google.pubsub.v1.IDeleteSchemaRequest,
@@ -1114,8 +1105,6 @@ export class SchemaServiceClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.ValidateSchemaResponse|ValidateSchemaResponse}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.validate_schema.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_ValidateSchema_async
    */
   validateSchema(
     request?: protos.google.pubsub.v1.IValidateSchemaRequest,
@@ -1233,8 +1222,6 @@ export class SchemaServiceClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.ValidateMessageResponse|ValidateMessageResponse}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.validate_message.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_ValidateMessage_async
    */
   validateMessage(
     request?: protos.google.pubsub.v1.IValidateMessageRequest,
@@ -1533,8 +1520,6 @@ export class SchemaServiceClient {
    *   so you can stop the iteration when you don't need more results.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.list_schemas.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_ListSchemas_async
    */
   listSchemasAsync(
     request?: protos.google.pubsub.v1.IListSchemasRequest,
@@ -1762,8 +1747,6 @@ export class SchemaServiceClient {
    *   so you can stop the iteration when you don't need more results.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/schema_service.list_schema_revisions.js</caption>
-   * region_tag:pubsub_v1_generated_SchemaService_ListSchemaRevisions_async
    */
   listSchemaRevisionsAsync(
     request?: protos.google.pubsub.v1.IListSchemaRevisionsRequest,
@@ -2114,7 +2097,9 @@ export class SchemaServiceClient {
         this._log.info('ending gRPC channel');
         this._terminated = true;
         stub.close();
-        void this.iamClient.close();
+        this.iamClient.close().catch(err => {
+          throw err;
+        });
       });
     }
     return Promise.resolve();

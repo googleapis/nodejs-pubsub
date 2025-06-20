@@ -19,7 +19,6 @@ import {
   Span,
   context,
   trace,
-  propagation,
   SpanKind,
   TextMapGetter,
   TextMapSetter,
@@ -27,6 +26,7 @@ import {
   Context,
   Link,
 } from '@opentelemetry/api';
+import {W3CTraceContextPropagator} from '@opentelemetry/core';
 import {Attributes, PubsubMessage} from './publisher/pubsub-message';
 import {Duration} from './temporal';
 
@@ -69,6 +69,14 @@ export enum OpenTelemetryLevel {
    */
   Modern = 2,
 }
+
+/**
+ * The W3C trace context propagator, used for injecting/extracting trace context.
+ *
+ * @private
+ * @internal
+ */
+const w3cTraceContextPropagator = new W3CTraceContextPropagator();
 
 // True if user code elsewhere wants to enable OpenTelemetry support.
 let globallyEnabled = false;
@@ -297,6 +305,7 @@ export class PubsubSpans {
     params: AttributeParams,
     message?: PubsubMessage,
     caller?: string,
+    operation?: string,
   ): SpanAttributes {
     const destinationName = params.topicName ?? params.subName;
     const destinationId = params.topicId ?? params.subId;
@@ -343,6 +352,9 @@ export class PubsubSpans {
       if (message.ackId) {
         spanAttributes['messaging.gcp_pubsub.message.ack_id'] = message.ackId;
       }
+      if (operation) {
+        spanAttributes['messaging.operation'] = operation;
+      }
     }
 
     return spanAttributes;
@@ -360,11 +372,15 @@ export class PubsubSpans {
     const topicInfo = getTopicInfo(topicName);
     const span: Span = getTracer().startSpan(`${topicName} create`, {
       kind: SpanKind.PRODUCER,
-      attributes: PubsubSpans.createAttributes(topicInfo, message, caller),
+      attributes: PubsubSpans.createAttributes(
+        topicInfo,
+        message,
+        caller,
+        'create',
+      ),
     });
     if (topicInfo.topicId) {
       span.updateName(`${topicInfo.topicId} create`);
-      span.setAttribute('messaging.operation', 'create');
       span.setAttribute('messaging.destination.name', topicInfo.topicId);
     }
 
@@ -396,10 +412,14 @@ export class PubsubSpans {
 
     const subInfo = getSubscriptionInfo(subName);
     const name = `${subInfo.subId ?? subName} subscribe`;
-    const attributes = this.createAttributes(subInfo, message, caller);
+    const attributes = this.createAttributes(
+      subInfo,
+      message,
+      caller,
+      'receive',
+    );
     if (subInfo.subId) {
       attributes['messaging.destination.name'] = subInfo.subId;
-      attributes['messaging.operation'] = 'receive';
     }
 
     if (context) {
@@ -465,6 +485,7 @@ export class PubsubSpans {
       getTopicInfo(topicName),
       undefined,
       caller,
+      'create',
     );
     const links: Link[] = messages
       .filter(m => m.parentSpan && isSampled(m.parentSpan))
@@ -507,6 +528,7 @@ export class PubsubSpans {
       subInfo,
       undefined,
       caller,
+      'receive',
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))
@@ -523,7 +545,6 @@ export class PubsubSpans {
     );
 
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
-    span?.setAttribute('messaging.operation', 'receive');
 
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
@@ -555,6 +576,7 @@ export class PubsubSpans {
       subInfo,
       undefined,
       caller,
+      'receive',
     );
     const links: Link[] = messageSpans
       .filter(m => m && isSampled(m))
@@ -571,7 +593,6 @@ export class PubsubSpans {
     );
 
     span?.setAttribute('messaging.batch.message_count', messageSpans.length);
-    span?.setAttribute('messaging.operation', 'receive');
 
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
@@ -749,7 +770,7 @@ export function injectSpan(span: Span, message: MessageWithAttributes): void {
 
   // Always do propagation injection with the trace context.
   const context = trace.setSpanContext(ROOT_CONTEXT, span.spanContext());
-  propagation.inject(context, message, pubsubSetter);
+  w3cTraceContextPropagator.inject(context, message, pubsubSetter);
 
   // Also put the direct reference to the Span object for while we're
   // passing it around in the client library.
@@ -802,7 +823,11 @@ export function extractSpan(
   let context: Context | undefined;
 
   if (keys.includes(modernAttributeName)) {
-    context = propagation.extract(ROOT_CONTEXT, message, pubsubGetter);
+    context = w3cTraceContextPropagator.extract(
+      ROOT_CONTEXT,
+      message,
+      pubsubGetter,
+    );
   }
 
   const span = PubsubSpans.createReceiveSpan(
