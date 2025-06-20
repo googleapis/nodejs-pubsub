@@ -13,7 +13,11 @@
 // limitations under the License.
 
 import {describe, it} from 'mocha';
-import {Duration, atLeast as durationAtLeast, atMost as durationAtMost} from '../src/temporal';
+import {
+  Duration,
+  atLeast as durationAtLeast,
+  atMost as durationAtMost,
+} from '../src/temporal';
 import * as assert from 'assert';
 
 describe('temporal', () => {
