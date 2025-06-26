@@ -180,6 +180,14 @@ describe('Message Queues', () => {
         assert.deepStrictEqual(reqOpts, {topic: topic.name, messages});
       });
 
+      it('should make a log message about the publish', () => {
+        sandbox.stub(topic, 'request');
+        const stub = sandbox.stub(q.logs.publishBatch, 'info');
+        void queue._publish(messages, callbacks, 'test', 0);
+        assert.strictEqual(stub.calledOnce, true);
+        assert.strictEqual(stub.lastCall.args[1] as string, 'test');
+      });
+
       it('should pass along any gax options', () => {
         const stub = sandbox.stub(topic, 'request');
         const callOptions = {};
