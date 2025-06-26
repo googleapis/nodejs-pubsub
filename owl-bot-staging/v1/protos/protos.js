@@ -5122,6 +5122,183 @@
                         return SchemaViolationReason;
                     })();
     
+                    IngestionFailureEvent.MessageTransformationFailureReason = (function() {
+    
+                        /**
+                         * Properties of a MessageTransformationFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @interface IMessageTransformationFailureReason
+                         */
+    
+                        /**
+                         * Constructs a new MessageTransformationFailureReason.
+                         * @memberof google.pubsub.v1.IngestionFailureEvent
+                         * @classdesc Represents a MessageTransformationFailureReason.
+                         * @implements IMessageTransformationFailureReason
+                         * @constructor
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason=} [properties] Properties to set
+                         */
+                        function MessageTransformationFailureReason(properties) {
+                            if (properties)
+                                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                                    if (properties[keys[i]] != null)
+                                        this[keys[i]] = properties[keys[i]];
+                        }
+    
+                        /**
+                         * Creates a new MessageTransformationFailureReason instance using the specified properties.
+                         * @function create
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason=} [properties] Properties to set
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason} MessageTransformationFailureReason instance
+                         */
+                        MessageTransformationFailureReason.create = function create(properties) {
+                            return new MessageTransformationFailureReason(properties);
+                        };
+    
+                        /**
+                         * Encodes the specified MessageTransformationFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify|verify} messages.
+                         * @function encode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason} message MessageTransformationFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        MessageTransformationFailureReason.encode = function encode(message, writer) {
+                            if (!writer)
+                                writer = $Writer.create();
+                            return writer;
+                        };
+    
+                        /**
+                         * Encodes the specified MessageTransformationFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify|verify} messages.
+                         * @function encodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason} message MessageTransformationFailureReason message or plain object to encode
+                         * @param {$protobuf.Writer} [writer] Writer to encode to
+                         * @returns {$protobuf.Writer} Writer
+                         */
+                        MessageTransformationFailureReason.encodeDelimited = function encodeDelimited(message, writer) {
+                            return this.encode(message, writer).ldelim();
+                        };
+    
+                        /**
+                         * Decodes a MessageTransformationFailureReason message from the specified reader or buffer.
+                         * @function decode
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @param {number} [length] Message length if known beforehand
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason} MessageTransformationFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        MessageTransformationFailureReason.decode = function decode(reader, length, error) {
+                            if (!(reader instanceof $Reader))
+                                reader = $Reader.create(reader);
+                            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason();
+                            while (reader.pos < end) {
+                                var tag = reader.uint32();
+                                if (tag === error)
+                                    break;
+                                switch (tag >>> 3) {
+                                default:
+                                    reader.skipType(tag & 7);
+                                    break;
+                                }
+                            }
+                            return message;
+                        };
+    
+                        /**
+                         * Decodes a MessageTransformationFailureReason message from the specified reader or buffer, length delimited.
+                         * @function decodeDelimited
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason} MessageTransformationFailureReason
+                         * @throws {Error} If the payload is not a reader or valid buffer
+                         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                         */
+                        MessageTransformationFailureReason.decodeDelimited = function decodeDelimited(reader) {
+                            if (!(reader instanceof $Reader))
+                                reader = new $Reader(reader);
+                            return this.decode(reader, reader.uint32());
+                        };
+    
+                        /**
+                         * Verifies a MessageTransformationFailureReason message.
+                         * @function verify
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {Object.<string,*>} message Plain object to verify
+                         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                         */
+                        MessageTransformationFailureReason.verify = function verify(message) {
+                            if (typeof message !== "object" || message === null)
+                                return "object expected";
+                            return null;
+                        };
+    
+                        /**
+                         * Creates a MessageTransformationFailureReason message from a plain object. Also converts values to their respective internal types.
+                         * @function fromObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {Object.<string,*>} object Plain object
+                         * @returns {google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason} MessageTransformationFailureReason
+                         */
+                        MessageTransformationFailureReason.fromObject = function fromObject(object) {
+                            if (object instanceof $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason)
+                                return object;
+                            return new $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason();
+                        };
+    
+                        /**
+                         * Creates a plain object from a MessageTransformationFailureReason message. Also converts values to other types if specified.
+                         * @function toObject
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason} message MessageTransformationFailureReason
+                         * @param {$protobuf.IConversionOptions} [options] Conversion options
+                         * @returns {Object.<string,*>} Plain object
+                         */
+                        MessageTransformationFailureReason.toObject = function toObject() {
+                            return {};
+                        };
+    
+                        /**
+                         * Converts this MessageTransformationFailureReason to JSON.
+                         * @function toJSON
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @instance
+                         * @returns {Object.<string,*>} JSON object
+                         */
+                        MessageTransformationFailureReason.prototype.toJSON = function toJSON() {
+                            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                        };
+    
+                        /**
+                         * Gets the default type url for MessageTransformationFailureReason
+                         * @function getTypeUrl
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason
+                         * @static
+                         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                         * @returns {string} The default type url
+                         */
+                        MessageTransformationFailureReason.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                            if (typeUrlPrefix === undefined) {
+                                typeUrlPrefix = "type.googleapis.com";
+                            }
+                            return typeUrlPrefix + "/google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason";
+                        };
+    
+                        return MessageTransformationFailureReason;
+                    })();
+    
                     IngestionFailureEvent.CloudStorageFailure = (function() {
     
                         /**
@@ -5134,6 +5311,7 @@
                          * @property {google.pubsub.v1.IngestionFailureEvent.IAvroFailureReason|null} [avroFailureReason] CloudStorageFailure avroFailureReason
                          * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] CloudStorageFailure apiViolationReason
                          * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] CloudStorageFailure schemaViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null} [messageTransformationFailureReason] CloudStorageFailure messageTransformationFailureReason
                          */
     
                         /**
@@ -5199,17 +5377,25 @@
                          */
                         CloudStorageFailure.prototype.schemaViolationReason = null;
     
+                        /**
+                         * CloudStorageFailure messageTransformationFailureReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null|undefined} messageTransformationFailureReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
+                         * @instance
+                         */
+                        CloudStorageFailure.prototype.messageTransformationFailureReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * CloudStorageFailure reason.
-                         * @member {"avroFailureReason"|"apiViolationReason"|"schemaViolationReason"|undefined} reason
+                         * @member {"avroFailureReason"|"apiViolationReason"|"schemaViolationReason"|"messageTransformationFailureReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure
                          * @instance
                          */
                         Object.defineProperty(CloudStorageFailure.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["avroFailureReason", "apiViolationReason", "schemaViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["avroFailureReason", "apiViolationReason", "schemaViolationReason", "messageTransformationFailureReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -5249,6 +5435,8 @@
                                 $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                             if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+                            if (message.messageTransformationFailureReason != null && Object.hasOwnProperty.call(message, "messageTransformationFailureReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.encode(message.messageTransformationFailureReason, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
                             return writer;
                         };
     
@@ -5307,6 +5495,10 @@
                                     }
                                 case 7: {
                                         message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 8: {
+                                        message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -5382,6 +5574,16 @@
                                         return "schemaViolationReason." + error;
                                 }
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify(message.messageTransformationFailureReason);
+                                    if (error)
+                                        return "messageTransformationFailureReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -5424,6 +5626,11 @@
                                 if (typeof object.schemaViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.schemaViolationReason: object expected");
                                 message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
+                            }
+                            if (object.messageTransformationFailureReason != null) {
+                                if (typeof object.messageTransformationFailureReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.CloudStorageFailure.messageTransformationFailureReason: object expected");
+                                message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.fromObject(object.messageTransformationFailureReason);
                             }
                             return message;
                         };
@@ -5474,6 +5681,11 @@
                                 if (options.oneofs)
                                     object.reason = "schemaViolationReason";
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                object.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.toObject(message.messageTransformationFailureReason, options);
+                                if (options.oneofs)
+                                    object.reason = "messageTransformationFailureReason";
+                            }
                             return object;
                         };
     
@@ -5518,6 +5730,7 @@
                          * @property {number|Long|null} [offset] AwsMskFailureReason offset
                          * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AwsMskFailureReason apiViolationReason
                          * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] AwsMskFailureReason schemaViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null} [messageTransformationFailureReason] AwsMskFailureReason messageTransformationFailureReason
                          */
     
                         /**
@@ -5583,17 +5796,25 @@
                          */
                         AwsMskFailureReason.prototype.schemaViolationReason = null;
     
+                        /**
+                         * AwsMskFailureReason messageTransformationFailureReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null|undefined} messageTransformationFailureReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
+                         * @instance
+                         */
+                        AwsMskFailureReason.prototype.messageTransformationFailureReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * AwsMskFailureReason reason.
-                         * @member {"apiViolationReason"|"schemaViolationReason"|undefined} reason
+                         * @member {"apiViolationReason"|"schemaViolationReason"|"messageTransformationFailureReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason
                          * @instance
                          */
                         Object.defineProperty(AwsMskFailureReason.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason", "messageTransformationFailureReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -5633,6 +5854,8 @@
                                 $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                             if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                            if (message.messageTransformationFailureReason != null && Object.hasOwnProperty.call(message, "messageTransformationFailureReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.encode(message.messageTransformationFailureReason, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
                             return writer;
                         };
     
@@ -5691,6 +5914,10 @@
                                     }
                                 case 6: {
                                         message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 7: {
+                                        message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -5759,6 +5986,16 @@
                                         return "schemaViolationReason." + error;
                                 }
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify(message.messageTransformationFailureReason);
+                                    if (error)
+                                        return "messageTransformationFailureReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -5805,6 +6042,11 @@
                                 if (typeof object.schemaViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.schemaViolationReason: object expected");
                                 message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
+                            }
+                            if (object.messageTransformationFailureReason != null) {
+                                if (typeof object.messageTransformationFailureReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsMskFailureReason.messageTransformationFailureReason: object expected");
+                                message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.fromObject(object.messageTransformationFailureReason);
                             }
                             return message;
                         };
@@ -5860,6 +6102,11 @@
                                 if (options.oneofs)
                                     object.reason = "schemaViolationReason";
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                object.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.toObject(message.messageTransformationFailureReason, options);
+                                if (options.oneofs)
+                                    object.reason = "messageTransformationFailureReason";
+                            }
                             return object;
                         };
     
@@ -5904,6 +6151,7 @@
                          * @property {number|Long|null} [offset] AzureEventHubsFailureReason offset
                          * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AzureEventHubsFailureReason apiViolationReason
                          * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] AzureEventHubsFailureReason schemaViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null} [messageTransformationFailureReason] AzureEventHubsFailureReason messageTransformationFailureReason
                          */
     
                         /**
@@ -5969,17 +6217,25 @@
                          */
                         AzureEventHubsFailureReason.prototype.schemaViolationReason = null;
     
+                        /**
+                         * AzureEventHubsFailureReason messageTransformationFailureReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null|undefined} messageTransformationFailureReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
+                         * @instance
+                         */
+                        AzureEventHubsFailureReason.prototype.messageTransformationFailureReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * AzureEventHubsFailureReason reason.
-                         * @member {"apiViolationReason"|"schemaViolationReason"|undefined} reason
+                         * @member {"apiViolationReason"|"schemaViolationReason"|"messageTransformationFailureReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason
                          * @instance
                          */
                         Object.defineProperty(AzureEventHubsFailureReason.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason", "messageTransformationFailureReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -6019,6 +6275,8 @@
                                 $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                             if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                            if (message.messageTransformationFailureReason != null && Object.hasOwnProperty.call(message, "messageTransformationFailureReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.encode(message.messageTransformationFailureReason, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
                             return writer;
                         };
     
@@ -6077,6 +6335,10 @@
                                     }
                                 case 6: {
                                         message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 7: {
+                                        message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -6145,6 +6407,16 @@
                                         return "schemaViolationReason." + error;
                                 }
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify(message.messageTransformationFailureReason);
+                                    if (error)
+                                        return "messageTransformationFailureReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -6191,6 +6463,11 @@
                                 if (typeof object.schemaViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.schemaViolationReason: object expected");
                                 message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
+                            }
+                            if (object.messageTransformationFailureReason != null) {
+                                if (typeof object.messageTransformationFailureReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AzureEventHubsFailureReason.messageTransformationFailureReason: object expected");
+                                message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.fromObject(object.messageTransformationFailureReason);
                             }
                             return message;
                         };
@@ -6246,6 +6523,11 @@
                                 if (options.oneofs)
                                     object.reason = "schemaViolationReason";
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                object.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.toObject(message.messageTransformationFailureReason, options);
+                                if (options.oneofs)
+                                    object.reason = "messageTransformationFailureReason";
+                            }
                             return object;
                         };
     
@@ -6290,6 +6572,7 @@
                          * @property {number|Long|null} [offset] ConfluentCloudFailureReason offset
                          * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] ConfluentCloudFailureReason apiViolationReason
                          * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] ConfluentCloudFailureReason schemaViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null} [messageTransformationFailureReason] ConfluentCloudFailureReason messageTransformationFailureReason
                          */
     
                         /**
@@ -6355,17 +6638,25 @@
                          */
                         ConfluentCloudFailureReason.prototype.schemaViolationReason = null;
     
+                        /**
+                         * ConfluentCloudFailureReason messageTransformationFailureReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null|undefined} messageTransformationFailureReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
+                         * @instance
+                         */
+                        ConfluentCloudFailureReason.prototype.messageTransformationFailureReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * ConfluentCloudFailureReason reason.
-                         * @member {"apiViolationReason"|"schemaViolationReason"|undefined} reason
+                         * @member {"apiViolationReason"|"schemaViolationReason"|"messageTransformationFailureReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason
                          * @instance
                          */
                         Object.defineProperty(ConfluentCloudFailureReason.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["apiViolationReason", "schemaViolationReason", "messageTransformationFailureReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -6405,6 +6696,8 @@
                                 $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                             if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                            if (message.messageTransformationFailureReason != null && Object.hasOwnProperty.call(message, "messageTransformationFailureReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.encode(message.messageTransformationFailureReason, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
                             return writer;
                         };
     
@@ -6463,6 +6756,10 @@
                                     }
                                 case 6: {
                                         message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 7: {
+                                        message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -6531,6 +6828,16 @@
                                         return "schemaViolationReason." + error;
                                 }
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify(message.messageTransformationFailureReason);
+                                    if (error)
+                                        return "messageTransformationFailureReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -6577,6 +6884,11 @@
                                 if (typeof object.schemaViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.schemaViolationReason: object expected");
                                 message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
+                            }
+                            if (object.messageTransformationFailureReason != null) {
+                                if (typeof object.messageTransformationFailureReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.ConfluentCloudFailureReason.messageTransformationFailureReason: object expected");
+                                message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.fromObject(object.messageTransformationFailureReason);
                             }
                             return message;
                         };
@@ -6632,6 +6944,11 @@
                                 if (options.oneofs)
                                     object.reason = "schemaViolationReason";
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                object.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.toObject(message.messageTransformationFailureReason, options);
+                                if (options.oneofs)
+                                    object.reason = "messageTransformationFailureReason";
+                            }
                             return object;
                         };
     
@@ -6674,6 +6991,7 @@
                          * @property {string|null} [partitionKey] AwsKinesisFailureReason partitionKey
                          * @property {string|null} [sequenceNumber] AwsKinesisFailureReason sequenceNumber
                          * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] AwsKinesisFailureReason schemaViolationReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null} [messageTransformationFailureReason] AwsKinesisFailureReason messageTransformationFailureReason
                          */
     
                         /**
@@ -6723,17 +7041,25 @@
                          */
                         AwsKinesisFailureReason.prototype.schemaViolationReason = null;
     
+                        /**
+                         * AwsKinesisFailureReason messageTransformationFailureReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null|undefined} messageTransformationFailureReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @instance
+                         */
+                        AwsKinesisFailureReason.prototype.messageTransformationFailureReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * AwsKinesisFailureReason reason.
-                         * @member {"schemaViolationReason"|undefined} reason
+                         * @member {"schemaViolationReason"|"messageTransformationFailureReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
                          * @instance
                          */
                         Object.defineProperty(AwsKinesisFailureReason.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["schemaViolationReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["schemaViolationReason", "messageTransformationFailureReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -6769,6 +7095,8 @@
                                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.sequenceNumber);
                             if (message.schemaViolationReason != null && Object.hasOwnProperty.call(message, "schemaViolationReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                            if (message.messageTransformationFailureReason != null && Object.hasOwnProperty.call(message, "messageTransformationFailureReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.encode(message.messageTransformationFailureReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
                             return writer;
                         };
     
@@ -6819,6 +7147,10 @@
                                     }
                                 case 4: {
                                         message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 5: {
+                                        message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -6874,6 +7206,16 @@
                                         return "schemaViolationReason." + error;
                                 }
                             }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify(message.messageTransformationFailureReason);
+                                    if (error)
+                                        return "messageTransformationFailureReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -6899,6 +7241,11 @@
                                 if (typeof object.schemaViolationReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.schemaViolationReason: object expected");
                                 message.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.fromObject(object.schemaViolationReason);
+                            }
+                            if (object.messageTransformationFailureReason != null) {
+                                if (typeof object.messageTransformationFailureReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.messageTransformationFailureReason: object expected");
+                                message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.fromObject(object.messageTransformationFailureReason);
                             }
                             return message;
                         };
@@ -6931,6 +7278,11 @@
                                 object.schemaViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.toObject(message.schemaViolationReason, options);
                                 if (options.oneofs)
                                     object.reason = "schemaViolationReason";
+                            }
+                            if (message.messageTransformationFailureReason != null && message.hasOwnProperty("messageTransformationFailureReason")) {
+                                object.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.toObject(message.messageTransformationFailureReason, options);
+                                if (options.oneofs)
+                                    object.reason = "messageTransformationFailureReason";
                             }
                             return object;
                         };

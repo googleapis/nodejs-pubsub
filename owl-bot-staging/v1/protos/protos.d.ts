@@ -2099,6 +2099,97 @@ export namespace google {
                     public static getTypeUrl(typeUrlPrefix?: string): string;
                 }
 
+                /** Properties of a MessageTransformationFailureReason. */
+                interface IMessageTransformationFailureReason {
+                }
+
+                /** Represents a MessageTransformationFailureReason. */
+                class MessageTransformationFailureReason implements IMessageTransformationFailureReason {
+
+                    /**
+                     * Constructs a new MessageTransformationFailureReason.
+                     * @param [properties] Properties to set
+                     */
+                    constructor(properties?: google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason);
+
+                    /**
+                     * Creates a new MessageTransformationFailureReason instance using the specified properties.
+                     * @param [properties] Properties to set
+                     * @returns MessageTransformationFailureReason instance
+                     */
+                    public static create(properties?: google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason): google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason;
+
+                    /**
+                     * Encodes the specified MessageTransformationFailureReason message. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify|verify} messages.
+                     * @param message MessageTransformationFailureReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encode(message: google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Encodes the specified MessageTransformationFailureReason message, length delimited. Does not implicitly {@link google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.verify|verify} messages.
+                     * @param message MessageTransformationFailureReason message or plain object to encode
+                     * @param [writer] Writer to encode to
+                     * @returns Writer
+                     */
+                    public static encodeDelimited(message: google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                    /**
+                     * Decodes a MessageTransformationFailureReason message from the specified reader or buffer.
+                     * @param reader Reader or buffer to decode from
+                     * @param [length] Message length if known beforehand
+                     * @returns MessageTransformationFailureReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason;
+
+                    /**
+                     * Decodes a MessageTransformationFailureReason message from the specified reader or buffer, length delimited.
+                     * @param reader Reader or buffer to decode from
+                     * @returns MessageTransformationFailureReason
+                     * @throws {Error} If the payload is not a reader or valid buffer
+                     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                     */
+                    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason;
+
+                    /**
+                     * Verifies a MessageTransformationFailureReason message.
+                     * @param message Plain object to verify
+                     * @returns `null` if valid, otherwise the reason why it is not
+                     */
+                    public static verify(message: { [k: string]: any }): (string|null);
+
+                    /**
+                     * Creates a MessageTransformationFailureReason message from a plain object. Also converts values to their respective internal types.
+                     * @param object Plain object
+                     * @returns MessageTransformationFailureReason
+                     */
+                    public static fromObject(object: { [k: string]: any }): google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason;
+
+                    /**
+                     * Creates a plain object from a MessageTransformationFailureReason message. Also converts values to other types if specified.
+                     * @param message MessageTransformationFailureReason
+                     * @param [options] Conversion options
+                     * @returns Plain object
+                     */
+                    public static toObject(message: google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                    /**
+                     * Converts this MessageTransformationFailureReason to JSON.
+                     * @returns JSON object
+                     */
+                    public toJSON(): { [k: string]: any };
+
+                    /**
+                     * Gets the default type url for MessageTransformationFailureReason
+                     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                     * @returns The default type url
+                     */
+                    public static getTypeUrl(typeUrlPrefix?: string): string;
+                }
+
                 /** Properties of a CloudStorageFailure. */
                 interface ICloudStorageFailure {
 
@@ -2119,6 +2210,9 @@ export namespace google {
 
                     /** CloudStorageFailure schemaViolationReason */
                     schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
+                    /** CloudStorageFailure messageTransformationFailureReason */
+                    messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
                 }
 
                 /** Represents a CloudStorageFailure. */
@@ -2148,8 +2242,11 @@ export namespace google {
                     /** CloudStorageFailure schemaViolationReason. */
                     public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
 
+                    /** CloudStorageFailure messageTransformationFailureReason. */
+                    public messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
+
                     /** CloudStorageFailure reason. */
-                    public reason?: ("avroFailureReason"|"apiViolationReason"|"schemaViolationReason");
+                    public reason?: ("avroFailureReason"|"apiViolationReason"|"schemaViolationReason"|"messageTransformationFailureReason");
 
                     /**
                      * Creates a new CloudStorageFailure instance using the specified properties.
@@ -2249,6 +2346,9 @@ export namespace google {
 
                     /** AwsMskFailureReason schemaViolationReason */
                     schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
+                    /** AwsMskFailureReason messageTransformationFailureReason */
+                    messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
                 }
 
                 /** Represents an AwsMskFailureReason. */
@@ -2278,8 +2378,11 @@ export namespace google {
                     /** AwsMskFailureReason schemaViolationReason. */
                     public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
 
+                    /** AwsMskFailureReason messageTransformationFailureReason. */
+                    public messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
+
                     /** AwsMskFailureReason reason. */
-                    public reason?: ("apiViolationReason"|"schemaViolationReason");
+                    public reason?: ("apiViolationReason"|"schemaViolationReason"|"messageTransformationFailureReason");
 
                     /**
                      * Creates a new AwsMskFailureReason instance using the specified properties.
@@ -2379,6 +2482,9 @@ export namespace google {
 
                     /** AzureEventHubsFailureReason schemaViolationReason */
                     schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
+                    /** AzureEventHubsFailureReason messageTransformationFailureReason */
+                    messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
                 }
 
                 /** Represents an AzureEventHubsFailureReason. */
@@ -2408,8 +2514,11 @@ export namespace google {
                     /** AzureEventHubsFailureReason schemaViolationReason. */
                     public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
 
+                    /** AzureEventHubsFailureReason messageTransformationFailureReason. */
+                    public messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
+
                     /** AzureEventHubsFailureReason reason. */
-                    public reason?: ("apiViolationReason"|"schemaViolationReason");
+                    public reason?: ("apiViolationReason"|"schemaViolationReason"|"messageTransformationFailureReason");
 
                     /**
                      * Creates a new AzureEventHubsFailureReason instance using the specified properties.
@@ -2509,6 +2618,9 @@ export namespace google {
 
                     /** ConfluentCloudFailureReason schemaViolationReason */
                     schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
+                    /** ConfluentCloudFailureReason messageTransformationFailureReason */
+                    messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
                 }
 
                 /** Represents a ConfluentCloudFailureReason. */
@@ -2538,8 +2650,11 @@ export namespace google {
                     /** ConfluentCloudFailureReason schemaViolationReason. */
                     public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
 
+                    /** ConfluentCloudFailureReason messageTransformationFailureReason. */
+                    public messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
+
                     /** ConfluentCloudFailureReason reason. */
-                    public reason?: ("apiViolationReason"|"schemaViolationReason");
+                    public reason?: ("apiViolationReason"|"schemaViolationReason"|"messageTransformationFailureReason");
 
                     /**
                      * Creates a new ConfluentCloudFailureReason instance using the specified properties.
@@ -2633,6 +2748,9 @@ export namespace google {
 
                     /** AwsKinesisFailureReason schemaViolationReason */
                     schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
+
+                    /** AwsKinesisFailureReason messageTransformationFailureReason */
+                    messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
                 }
 
                 /** Represents an AwsKinesisFailureReason. */
@@ -2656,8 +2774,11 @@ export namespace google {
                     /** AwsKinesisFailureReason schemaViolationReason. */
                     public schemaViolationReason?: (google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null);
 
+                    /** AwsKinesisFailureReason messageTransformationFailureReason. */
+                    public messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
+
                     /** AwsKinesisFailureReason reason. */
-                    public reason?: "schemaViolationReason";
+                    public reason?: ("schemaViolationReason"|"messageTransformationFailureReason");
 
                     /**
                      * Creates a new AwsKinesisFailureReason instance using the specified properties.

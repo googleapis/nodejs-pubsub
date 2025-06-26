@@ -728,13 +728,17 @@
                     "SchemaViolationReason": {
                       "fields": {}
                     },
+                    "MessageTransformationFailureReason": {
+                      "fields": {}
+                    },
                     "CloudStorageFailure": {
                       "oneofs": {
                         "reason": {
                           "oneof": [
                             "avroFailureReason",
                             "apiViolationReason",
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -780,6 +784,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 8,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -788,7 +799,8 @@
                         "reason": {
                           "oneof": [
                             "apiViolationReason",
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -834,6 +846,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 7,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -842,7 +861,8 @@
                         "reason": {
                           "oneof": [
                             "apiViolationReason",
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -888,6 +908,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 7,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -896,7 +923,8 @@
                         "reason": {
                           "oneof": [
                             "apiViolationReason",
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -942,6 +970,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 7,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -949,7 +984,8 @@
                       "oneofs": {
                         "reason": {
                           "oneof": [
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -978,6 +1014,13 @@
                         "schemaViolationReason": {
                           "type": "SchemaViolationReason",
                           "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 5,
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
