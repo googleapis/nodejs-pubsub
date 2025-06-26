@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import {CallOptions, GoogleError, grpc, RetryOptions} from 'google-gax';
+import {
+  CallOptions,
+  GoogleError,
+  grpc,
+  RetryOptions,
+  loggingUtils,
+} from 'google-gax';
 import defer = require('p-defer');
 import {
   AckErrorInfo,
@@ -34,6 +40,15 @@ import {Duration} from './temporal';
 import {addToBucket} from './util';
 import {DebugMessage} from './debug';
 import * as tracing from './telemetry-tracing';
+
+/**
+ * Loggers. Exported for unit tests.
+ *
+ * @private
+ */
+export const logs = {
+  ackBatch: loggingUtils.log('ack-batch'),
+};
 
 export interface ReducedMessage {
   ackId: string;
@@ -188,6 +203,19 @@ export abstract class MessageQueue {
     return this._options!.maxMilliseconds!;
   }
 
+  /*!
+   * Logs about a batch being sent, and why.
+   * @private
+   */
+  private logBatch(reason: string) {
+    logs.ackBatch.info(
+      '%s triggered an ack/nack batch of %i messages, a total of %i bytes',
+      reason,
+      this._requests.length,
+      this.bytes,
+    );
+  }
+
   /**
    * Adds a message to the queue.
    *
@@ -213,7 +241,11 @@ export abstract class MessageQueue {
       this._requests.length + 1 >= maxMessages! ||
       this.bytes + size >= MAX_BATCH_BYTES
     ) {
-      await this.flush();
+      const reason =
+        this._requests.length + 1 >= maxMessages!
+          ? 'going over count'
+          : 'going over size';
+      await this.flush(reason);
     }
 
     // Add the message to the current batch.
@@ -233,7 +265,10 @@ export abstract class MessageQueue {
 
     // Ensure that we are counting toward maxMilliseconds by timer.
     if (!this._timer) {
-      this._timer = setTimeout(() => this.flush(), maxMilliseconds!);
+      this._timer = setTimeout(
+        () => this.flush('batch timer'),
+        maxMilliseconds!,
+      );
     }
 
     return responsePromise.promise;
@@ -263,7 +298,7 @@ export abstract class MessageQueue {
     // Make sure we actually do have another batch scheduled.
     if (!this._timer) {
       this._timer = setTimeout(
-        () => this.flush(),
+        () => this.flush('retry timer'),
         this._options.maxMilliseconds!,
       );
     }
@@ -283,7 +318,11 @@ export abstract class MessageQueue {
    * Sends a batch of messages.
    * @private
    */
-  async flush(): Promise<void> {
+  async flush(reason: string): Promise<void> {
+    if (reason) {
+      this.logBatch(reason);
+    }
+
     if (this._timer) {
       clearTimeout(this._timer);
       delete this._timer;

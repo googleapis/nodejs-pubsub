@@ -15,9 +15,23 @@
  */
 
 import {EventEmitter} from 'events';
+import {loggingUtils} from 'google-gax';
+
 import {AckError, Message, Subscriber} from './subscriber';
 import {defaultOptions} from './default-options';
 import {Duration} from './temporal';
+import {DebugMessage} from './debug';
+
+/**
+ * Loggers. Exported for unit tests.
+ *
+ * @private
+ */
+export const logs = {
+  callbackDelivery: loggingUtils.log('callback-delivery'),
+  callbackExceptions: loggingUtils.log('callback-exceptions'),
+  expiry: loggingUtils.log('expiry'),
+};
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
@@ -225,8 +239,26 @@ export class LeaseManager extends EventEmitter {
     if (this._subscriber.isOpen) {
       message.subSpans.flowEnd();
       process.nextTick(() => {
+        logs.callbackDelivery.info(
+          'message (ID %s, ackID %s) delivery to user callbacks',
+          message.id,
+          message.ackId,
+        );
         message.subSpans.processingStart(this._subscriber.name);
-        this._subscriber.emit('message', message);
+        try {
+          this._subscriber.emit('message', message);
+        } catch (e: unknown) {
+          logs.callbackExceptions.error(
+            'message (ID %s, ackID %s) caused a user callback exception: %o',
+            message.id,
+            message.ackId,
+            e,
+          );
+          this._subscriber.emit(
+            'debug',
+            new DebugMessage('error during user callback', e as Error),
+          );
+        }
       });
     }
   }
@@ -265,6 +297,11 @@ export class LeaseManager extends EventEmitter {
           message.subSpans.modAckStart(deadline, false);
         }
       } else {
+        logs.expiry.info(
+          'message (ID %s, ackID %s) has been dropped from leasing due to a timeout',
+          message.id,
+          message.ackId,
+        );
         this.remove(message);
       }
     }

@@ -17,6 +17,7 @@
 import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
+import {loggingUtils} from 'google-gax';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -31,6 +32,15 @@ import {Duration} from './temporal';
 import {EventEmitter} from 'events';
 
 export {StatusError} from './message-stream';
+
+/**
+ * Loggers. Exported for unit tests.
+ *
+ * @private
+ */
+const logs = {
+  ackNack: loggingUtils.log('ack-nack'),
+};
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
@@ -608,6 +618,10 @@ export class Subscriber extends EventEmitter {
   private _stream!: MessageStream;
   private _subscription: Subscription;
 
+  // We keep this separate from ackDeadline, because ackDeadline could
+  // end up being bound by min/max deadline configs.
+  private _99th: number;
+
   subscriptionProperties?: SubscriptionProperties;
 
   constructor(subscription: Subscription, options = {}) {
@@ -615,6 +629,7 @@ export class Subscriber extends EventEmitter {
 
     this.ackDeadline =
       defaultOptions.subscription.startingAckDeadline.totalOf('second');
+    this._99th = this.ackDeadline;
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.maxExtensionTime = defaultOptions.subscription.maxExtensionTime;
@@ -647,7 +662,7 @@ export class Subscriber extends EventEmitter {
     // If we got an ack time reading, update the histogram (and ackDeadline).
     if (ackTimeSeconds) {
       this._histogram.add(ackTimeSeconds);
-      ackDeadline = this._histogram.percentile(99);
+      this._99th = ackDeadline = this._histogram.percentile(99);
     }
 
     // Grab our current min/max deadline values, based on whether exactly-once
@@ -762,6 +777,13 @@ export class Subscriber extends EventEmitter {
   async ack(message: Message): Promise<void> {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
+    if (ackTimeSeconds > this._99th) {
+      logs.ackNack.info(
+        'message (ID %s, ackID %s) ack took longer than the 99th percentile',
+        message.id,
+        message.ackId,
+      );
+    }
 
     tracing.PubsubEvents.ackStart(message);
 
@@ -789,6 +811,14 @@ export class Subscriber extends EventEmitter {
   async ackWithResponse(message: Message): Promise<AckResponse> {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
+
+    if (ackTimeSeconds > this._99th) {
+      logs.ackNack.info(
+        'message (ID %s, ackID %s) ack took longer than the 99th percentile',
+        message.id,
+        message.ackId,
+      );
+    }
 
     tracing.PubsubEvents.ackStart(message);
 
@@ -900,6 +930,15 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
+    const nackTimeSeconds = (Date.now() - message.received) / 1000;
+    if (nackTimeSeconds > this._99th) {
+      logs.ackNack.info(
+        'message (ID %s, ackID %s) nack took longer than the 99th percentile',
+        message.id,
+        message.ackId,
+      );
+    }
+
     message.subSpans.nackStart();
     await this.modAck(message, 0);
     message.subSpans.nackEnd();
@@ -917,6 +956,15 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
+    const nackTimeSeconds = (Date.now() - message.received) / 1000;
+    if (nackTimeSeconds > this._99th) {
+      logs.ackNack.info(
+        'message (ID %s, ackID %s) nack took longer than the 99th percentile',
+        message.id,
+        message.ackId,
+      );
+    }
+
     message.subSpans.nackStart();
     const response = await this.modAckWithResponse(message, 0);
     message.subSpans.nackEnd();
@@ -1102,12 +1150,12 @@ export class Subscriber extends EventEmitter {
 
     if (this._acks.numPendingRequests) {
       promises.push(this._acks.onFlush());
-      await this._acks.flush();
+      await this._acks.flush('message count');
     }
 
     if (this._modAcks.numPendingRequests) {
       promises.push(this._modAcks.onFlush());
-      await this._modAcks.flush();
+      await this._modAcks.flush('message count');
     }
 
     if (this._acks.numInFlightRequests) {
