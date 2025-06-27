@@ -17,7 +17,7 @@
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
-import {CallOptions, GoogleError, Status} from 'google-gax';
+import {CallOptions, GoogleError, loggingUtils, Status} from 'google-gax';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
 import defer = require('p-defer');
@@ -26,7 +26,7 @@ import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
 import {Message, Subscriber} from '../src/subscriber';
 import {DebugMessage} from '../src/debug';
-import {TestUtils} from './test-utils';
+import {FakeLog, TestUtils} from './test-utils';
 
 class FakeClient {
   async acknowledge(
@@ -403,6 +403,23 @@ describe('MessageQueues', () => {
       assert.deepStrictEqual(reqOpts, expectedReqOpts);
     });
 
+    it('should make a log message about batch sends', async () => {
+      const messages = [new FakeMessage()];
+
+      sandbox.stub(fakeSubscriber.client, 'acknowledge').resolves();
+      const fakeLog = new FakeLog(messageTypes.logs.ackBatch);
+
+      messages.forEach(message => ackQueue.add(message as Message));
+      await ackQueue.flush('logtest');
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1] as string, 'logtest');
+    });
+
     it('should send call options', async () => {
       const fakeCallOptions = {timeout: 10000};
       const stub = sandbox
@@ -643,6 +660,23 @@ describe('MessageQueues', () => {
 
       const [reqOpts] = stub.lastCall.args;
       assert.deepStrictEqual(reqOpts, expectedReqOpts);
+    });
+
+    it('should make a log message about batch sends', async () => {
+      const messages = [new FakeMessage()];
+
+      sandbox.stub(fakeSubscriber.client, 'modifyAckDeadline').resolves();
+      const fakeLog = new FakeLog(messageTypes.logs.ackBatch);
+
+      messages.forEach(message => modAckQueue.add(message as Message));
+      await modAckQueue.flush('logtest');
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1] as string, 'logtest');
     });
 
     it('should group ackIds by deadline', async () => {

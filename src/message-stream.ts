@@ -15,7 +15,7 @@
  */
 
 import {promisify} from '@google-cloud/promisify';
-import {ClientStub, grpc} from 'google-gax';
+import {ClientStub, grpc, loggingUtils} from 'google-gax';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
@@ -26,6 +26,15 @@ import {defaultOptions} from './default-options';
 import {Duration} from './temporal';
 import {ExponentialRetry} from './exponential-retry';
 import {DebugMessage} from './debug';
+
+/**
+ * Loggers. Exported for unit tests.
+ *
+ * @private
+ */
+export const logs = {
+  subscriberStreams: loggingUtils.log('subscriber-streams'),
+};
 
 /*!
  * Frequency to ping streams.
@@ -218,7 +227,7 @@ export class MessageStream extends PassThrough {
     for (let i = 0; i < this._streams.length; i++) {
       const tracker = this._streams[i];
       if (tracker.stream) {
-        this._removeStream(i);
+        this._removeStream(i, 'overall message stream destroyed', 'n/a');
       }
     }
 
@@ -232,8 +241,8 @@ export class MessageStream extends PassThrough {
    *
    * @param {stream} stream The StreamingPull stream.
    */
-  private _replaceStream(index: number, stream: PullStream): void {
-    this._removeStream(index);
+  private _replaceStream(index: number, stream: PullStream, why: string): void {
+    this._removeStream(index, why, 'stream replacement');
 
     this._setHighWaterMark(stream);
     const tracker = this._streams[index];
@@ -280,7 +289,7 @@ export class MessageStream extends PassThrough {
 
     const all: Promise<void>[] = [];
     for (let i = 0; i < this._streams.length; i++) {
-      all.push(this._fillOne(i, client));
+      all.push(this._fillOne(i, 'initial fill', client));
     }
     await Promise.all(all);
 
@@ -292,8 +301,14 @@ export class MessageStream extends PassThrough {
     }
   }
 
-  private async _fillOne(index: number, client?: ClientStub) {
+  private async _fillOne(index: number, why: string, client?: ClientStub) {
     if (this.destroyed) {
+      logs.subscriberStreams.info(
+        'not filling stream %i for reason "%s" because already shut down',
+        index,
+        why,
+      );
+
       return;
     }
 
@@ -306,6 +321,11 @@ export class MessageStream extends PassThrough {
       try {
         client = await this._getClient();
       } catch (e) {
+        logs.subscriberStreams.error(
+          'unable to create stream %i: %o',
+          index,
+          e,
+        );
         const err = e as Error;
         this.destroy(err);
         return;
@@ -330,7 +350,7 @@ export class MessageStream extends PassThrough {
     };
 
     const stream: PullStream = client.streamingPull({deadline, otherArgs});
-    this._replaceStream(index, stream);
+    this._replaceStream(index, stream, why);
     stream.write(request);
   }
 
@@ -357,6 +377,10 @@ export class MessageStream extends PassThrough {
    * @private
    */
   private _keepAlive(): void {
+    logs.subscriberStreams.info(
+      'sending keepAlive to %i streams',
+      this._streams.length,
+    );
     this._streams.forEach(tracker => {
       // It's possible that a status event fires off (signaling the rpc being
       // closed) but the stream hasn't drained yet. Writing to such a stream will
@@ -382,32 +406,28 @@ export class MessageStream extends PassThrough {
    * @param {object} status The stream status.
    */
   private _onEnd(index: number, status: grpc.StatusObject): void {
-    this._removeStream(index);
+    const willRetry = PullRetry.retry(status);
+    this._removeStream(
+      index,
+      'stream was closed',
+      willRetry ? 'will be retried' : 'will not be retried',
+    );
 
     const statusError = new StatusError(status);
-
-    if (PullRetry.retry(status)) {
-      this.emit(
-        'debug',
-        new DebugMessage(
-          `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`,
-          statusError,
-        ),
-      );
+    if (willRetry) {
+      const message = `Subscriber stream ${index} has ended with status ${status.code}; will be retried.`;
+      logs.subscriberStreams.info('%s', message);
+      this.emit('debug', new DebugMessage(message, statusError));
       if (PullRetry.resetFailures(status)) {
         this._retrier.reset(this._streams[index]);
       }
       this._retrier.retryLater(this._streams[index], () =>
-        this._fillOne(index),
+        this._fillOne(index, 'retry'),
       );
     } else if (this._activeStreams() === 0) {
-      this.emit(
-        'debug',
-        new DebugMessage(
-          `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`,
-          statusError,
-        ),
-      );
+      const message = `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`;
+      logs.subscriberStreams.info('%s', message);
+      this.emit('debug', new DebugMessage(message, statusError));
 
       // No streams left, and nothing to retry.
       this.destroy(new StatusError(status));
@@ -431,6 +451,7 @@ export class MessageStream extends PassThrough {
     const tracker = this._streams[index];
     const receivedStatus =
       !tracker.stream || (tracker.stream && !tracker.receivedStatus);
+    logs.subscriberStreams.error('error on stream %i: %o', index, err);
 
     if (typeof code !== 'number' || !receivedStatus) {
       this.emit('error', err);
@@ -474,9 +495,15 @@ export class MessageStream extends PassThrough {
    *
    * @param {number} index The stream to remove.
    */
-  private _removeStream(index: number): void {
+  private _removeStream(index: number, why: string, whatNext: string): void {
     const tracker = this._streams[index];
     if (tracker.stream) {
+      logs.subscriberStreams.info(
+        'closing stream %i; why: %s; next: %s',
+        index,
+        why,
+        whatNext,
+      );
       tracker.stream.unpipe(this);
       tracker.stream.cancel();
       tracker.stream = undefined;

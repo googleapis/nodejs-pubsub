@@ -38,7 +38,8 @@ export {StatusError} from './message-stream';
  *
  * @private
  */
-const logs = {
+export const logs = {
+  slowAck: loggingUtils.log('slow-ack'),
   ackNack: loggingUtils.log('ack-nack'),
 };
 
@@ -777,11 +778,19 @@ export class Subscriber extends EventEmitter {
   async ack(message: Message): Promise<void> {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
+
+    logs.ackNack.info(
+      'message (ID %s, ackID %s) ack',
+      message.id,
+      message.ackId,
+    );
+
     if (ackTimeSeconds > this._99th) {
-      logs.ackNack.info(
-        'message (ID %s, ackID %s) ack took longer than the 99th percentile',
+      logs.slowAck.info(
+        'message (ID %s, ackID %s) ack took longer than the 99th percentile (%s s)',
         message.id,
         message.ackId,
+        ackTimeSeconds,
       );
     }
 
@@ -812,11 +821,18 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
+    logs.ackNack.info(
+      'message (ID %s, ackID %s) ack with response',
+      message.id,
+      message.ackId,
+    );
+
     if (ackTimeSeconds > this._99th) {
-      logs.ackNack.info(
-        'message (ID %s, ackID %s) ack took longer than the 99th percentile',
+      logs.slowAck.info(
+        'message (ID %s, ackID %s) ack took longer than the 99th percentile (%s s)',
         message.id,
         message.ackId,
+        ackTimeSeconds,
       );
     }
 
@@ -930,12 +946,19 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
+    logs.ackNack.info(
+      'message (ID %s, ackID %s) nack',
+      message.id,
+      message.ackId,
+    );
+
     const nackTimeSeconds = (Date.now() - message.received) / 1000;
     if (nackTimeSeconds > this._99th) {
-      logs.ackNack.info(
-        'message (ID %s, ackID %s) nack took longer than the 99th percentile',
+      logs.slowAck.info(
+        'message (ID %s, ackID %s) nack took longer than the 99th percentile (%s s)',
         message.id,
         message.ackId,
+        nackTimeSeconds,
       );
     }
 
@@ -956,12 +979,19 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
+    logs.ackNack.info(
+      'message (ID %s, ackID %s) nack with response',
+      message.id,
+      message.ackId,
+    );
+
     const nackTimeSeconds = (Date.now() - message.received) / 1000;
     if (nackTimeSeconds > this._99th) {
-      logs.ackNack.info(
-        'message (ID %s, ackID %s) nack took longer than the 99th percentile',
+      logs.slowAck.info(
+        'message (ID %s, ackID %s) nack took longer than the 99th percentile (%s s)',
         message.id,
         message.ackId,
+        nackTimeSeconds,
       );
     }
 

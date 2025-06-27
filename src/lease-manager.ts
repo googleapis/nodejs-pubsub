@@ -297,7 +297,7 @@ export class LeaseManager extends EventEmitter {
           message.subSpans.modAckStart(deadline, false);
         }
       } else {
-        logs.expiry.info(
+        logs.expiry.warn(
           'message (ID %s, ackID %s) has been dropped from leasing due to a timeout',
           message.id,
           message.ackId,

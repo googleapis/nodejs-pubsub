@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ServiceError} from 'google-gax';
+import {loggingUtils, ServiceError} from 'google-gax';
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
@@ -26,7 +26,7 @@ import * as p from '../../src/publisher';
 import * as b from '../../src/publisher/message-batch';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
-import {TestUtils} from '../test-utils';
+import {FakeLog, TestUtils} from '../test-utils';
 
 class FakeTopic {
   name = 'projects/foo/topics/fake-topic';
@@ -182,10 +182,14 @@ describe('Message Queues', () => {
 
       it('should make a log message about the publish', () => {
         sandbox.stub(topic, 'request');
-        const stub = sandbox.stub(q.logs.publishBatch, 'info');
+        const fakeLog = new FakeLog(q.logs.publishBatch);
         void queue._publish(messages, callbacks, 'test', 0);
-        assert.strictEqual(stub.calledOnce, true);
-        assert.strictEqual(stub.lastCall.args[1] as string, 'test');
+        assert.strictEqual(fakeLog.called, true);
+        assert.strictEqual(
+          fakeLog.fields!.severity,
+          loggingUtils.LogSeverity.INFO,
+        );
+        assert.strictEqual(fakeLog.args![1] as string, 'test');
       });
 
       it('should pass along any gax options', () => {
