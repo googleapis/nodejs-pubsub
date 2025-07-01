@@ -43,7 +43,7 @@ const packageJson = require('../../package.json');
  * @internal
  */
 let cachedTracer: Tracer | undefined;
-export function getTracer(): Tracer {
+function getTracer(): Tracer {
   const tracer =
     cachedTracer ??
     trace.getTracer('@google-cloud/pubsub', packageJson.version);
@@ -379,7 +379,6 @@ export class PubsubSpans {
         'create',
       ),
     });
-
     if (topicInfo.topicId) {
       span.updateName(`${topicInfo.topicId} create`);
       span.setAttribute('messaging.destination.name', topicInfo.topicId);
