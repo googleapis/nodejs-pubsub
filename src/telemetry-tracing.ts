@@ -43,7 +43,7 @@ const packageJson = require('../../package.json');
  * @internal
  */
 let cachedTracer: Tracer | undefined;
-function getTracer(): Tracer {
+export function getTracer(): Tracer {
   const tracer =
     cachedTracer ??
     trace.getTracer('@google-cloud/pubsub', packageJson.version);
@@ -379,6 +379,7 @@ export class PubsubSpans {
         'create',
       ),
     });
+
     if (topicInfo.topicId) {
       span.updateName(`${topicInfo.topicId} create`);
       span.setAttribute('messaging.destination.name', topicInfo.topicId);
@@ -505,7 +506,7 @@ export class PubsubSpans {
       // Also attempt to link from message spans back to the publish RPC span.
       messages.forEach(m => {
         if (m.parentSpan && isSampled(m.parentSpan)) {
-          m.parentSpan.addLink({context: span.spanContext()});
+          m.parentSpan?.addLink({context: span.spanContext()});
         }
       });
     }
@@ -550,7 +551,7 @@ export class PubsubSpans {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
       messageSpans.forEach(m => {
         if (m && isSampled(m)) {
-          m.addLink({context: span.spanContext()});
+          m?.addLink({context: span.spanContext()});
         }
       });
     }
@@ -598,7 +599,7 @@ export class PubsubSpans {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
       messageSpans.forEach(m => {
         if (m && isSampled(m)) {
-          m.addLink({context: span.spanContext()});
+          m?.addLink({context: span.spanContext()});
         }
       });
     }
