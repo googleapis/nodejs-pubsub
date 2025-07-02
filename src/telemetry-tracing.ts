@@ -504,8 +504,12 @@ export class PubsubSpans {
     if (span) {
       // Also attempt to link from message spans back to the publish RPC span.
       messages.forEach(m => {
-        if (m.parentSpan && isSampled(m.parentSpan)) {
-          m.parentSpan?.addLink({context: span.spanContext()});
+        if (
+          m.parentSpan &&
+          isSampled(m.parentSpan) &&
+          typeof m.parentSpan?.addLink === 'function'
+        ) {
+          m.parentSpan.addLink({context: span.spanContext()});
         }
       });
     }
@@ -549,8 +553,8 @@ export class PubsubSpans {
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
       messageSpans.forEach(m => {
-        if (m && isSampled(m)) {
-          m?.addLink({context: span.spanContext()});
+        if (m && isSampled(m) && typeof m?.addLink === 'function') {
+          m.addLink({context: span.spanContext()});
         }
       });
     }
@@ -597,8 +601,8 @@ export class PubsubSpans {
     if (span) {
       // Also attempt to link from the subscribe span(s) back to the publish RPC span.
       messageSpans.forEach(m => {
-        if (m && isSampled(m)) {
-          m?.addLink({context: span.spanContext()});
+        if (m && isSampled(m) && typeof m?.addLink === 'function') {
+          m.addLink({context: span.spanContext()});
         }
       });
     }
