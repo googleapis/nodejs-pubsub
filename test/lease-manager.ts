@@ -465,7 +465,7 @@ describe('LeaseManager', () => {
 
     it('should log if it was full and is now empty', () => {
       const fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
-      const pendingStub = sandbox.stub(leaseManager, 'pending')
+      const pendingStub = sandbox.stub(leaseManager, 'pending');
       pendingStub.get(() => 0);
       leaseManager.add(new FakeMessage() as {} as Message);
       leaseManager.clear();
