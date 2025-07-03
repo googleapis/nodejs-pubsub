@@ -15,7 +15,7 @@
  */
 
 import {promisify} from '@google-cloud/promisify';
-import {ClientStub, grpc, loggingUtils} from 'google-gax';
+import {ClientStub, grpc} from 'google-gax';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
@@ -26,6 +26,7 @@ import {defaultOptions} from './default-options';
 import {Duration} from './temporal';
 import {ExponentialRetry} from './exponential-retry';
 import {DebugMessage} from './debug';
+import {logs as baseLogs} from './logs';
 
 /**
  * Loggers. Exported for unit tests.
@@ -33,7 +34,7 @@ import {DebugMessage} from './debug';
  * @private
  */
 export const logs = {
-  subscriberStreams: loggingUtils.log('subscriber-streams'),
+  subscriberStreams: baseLogs.pubsub.sublog('subscriber-streams'),
 };
 
 /*!

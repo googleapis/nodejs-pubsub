@@ -17,7 +17,6 @@
 import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
-import {loggingUtils} from 'google-gax';
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -30,6 +29,7 @@ import {SubscriberClient} from './v1';
 import * as tracing from './telemetry-tracing';
 import {Duration} from './temporal';
 import {EventEmitter} from 'events';
+import {logs as baseLogs} from './logs';
 
 export {StatusError} from './message-stream';
 
@@ -39,8 +39,8 @@ export {StatusError} from './message-stream';
  * @private
  */
 export const logs = {
-  slowAck: loggingUtils.log('slow-ack'),
-  ackNack: loggingUtils.log('ack-nack'),
+  slowAck: baseLogs.pubsub.sublog('slow-ack'),
+  ackNack: baseLogs.pubsub.sublog('ack-nack'),
 };
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;

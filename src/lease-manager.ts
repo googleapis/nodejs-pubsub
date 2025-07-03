@@ -15,12 +15,12 @@
  */
 
 import {EventEmitter} from 'events';
-import {loggingUtils} from 'google-gax';
 
 import {AckError, Message, Subscriber} from './subscriber';
 import {defaultOptions} from './default-options';
 import {Duration} from './temporal';
 import {DebugMessage} from './debug';
+import {logs as baseLogs} from './logs';
 
 /**
  * Loggers. Exported for unit tests.
@@ -28,10 +28,10 @@ import {DebugMessage} from './debug';
  * @private
  */
 export const logs = {
-  callbackDelivery: loggingUtils.log('callback-delivery'),
-  callbackExceptions: loggingUtils.log('callback-exceptions'),
-  expiry: loggingUtils.log('expiry'),
-  subscriberFlowControl: loggingUtils.log('subscriber-flow-control'),
+  callbackDelivery: baseLogs.pubsub.sublog('callback-delivery'),
+  callbackExceptions: baseLogs.pubsub.sublog('callback-exceptions'),
+  expiry: baseLogs.pubsub.sublog('expiry'),
+  subscriberFlowControl: baseLogs.pubsub.sublog('subscriber-flow-control'),
 };
 
 export interface FlowControlOptions {

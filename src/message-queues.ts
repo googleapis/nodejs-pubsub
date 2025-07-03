@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  CallOptions,
-  GoogleError,
-  grpc,
-  RetryOptions,
-  loggingUtils,
-} from 'google-gax';
+import {CallOptions, GoogleError, grpc, RetryOptions} from 'google-gax';
 import defer = require('p-defer');
 import {
   AckErrorInfo,
@@ -40,6 +34,7 @@ import {Duration} from './temporal';
 import {addToBucket} from './util';
 import {DebugMessage} from './debug';
 import * as tracing from './telemetry-tracing';
+import {logs as baseLogs} from './logs';
 
 /**
  * Loggers. Exported for unit tests.
@@ -47,7 +42,7 @@ import * as tracing from './telemetry-tracing';
  * @private
  */
 export const logs = {
-  ackBatch: loggingUtils.log('ack-batch'),
+  ackBatch: baseLogs.pubsub.sublog('ack-batch'),
 };
 
 export interface ReducedMessage {

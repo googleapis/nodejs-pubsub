@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ServiceError, loggingUtils} from 'google-gax';
+import {ServiceError} from 'google-gax';
 import {EventEmitter} from 'events';
 
 import {BatchPublishOptions, MessageBatch} from './message-batch';
@@ -24,6 +24,7 @@ import {google} from '../../protos/protos';
 import * as tracing from '../telemetry-tracing';
 import {filterMessage} from './pubsub-message';
 import {promisify} from 'util';
+import {logs as baseLogs} from '../logs';
 
 /**
  * Loggers. Exported for unit tests.
@@ -31,7 +32,7 @@ import {promisify} from 'util';
  * @private
  */
 export const logs = {
-  publishBatch: loggingUtils.log('publish-batch'),
+  publishBatch: baseLogs.pubsub.sublog('publish-batch'),
 };
 
 /**
