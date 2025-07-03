@@ -80,6 +80,9 @@ function fakeMessage() {
 
 class MessageQueue extends messageTypes.MessageQueue {
   batches: messageTypes.QueuedMessages[] = [];
+  protected getType(): string {
+    return 'test';
+  }
   async _sendBatch(
     batch: messageTypes.QueuedMessages,
   ): Promise<messageTypes.QueuedMessages> {

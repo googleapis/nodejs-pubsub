@@ -157,6 +157,8 @@ export abstract class MessageQueue {
     this.setOptions(options);
   }
 
+  protected abstract getType(): string;
+
   /**
    * Shuts down this message queue gracefully. Any acks/modAcks pending in
    * the queue or waiting for retry will be removed. If exactly-once delivery
@@ -204,8 +206,9 @@ export abstract class MessageQueue {
    */
   private logBatch(reason: string) {
     logs.ackBatch.info(
-      '%s triggered an ack/nack batch of %i messages, a total of %i bytes',
+      '%s triggered %s batch of %i messages, a total of %i bytes',
       reason,
+      this.getType(),
       this._requests.length,
       this.bytes,
     );
@@ -528,6 +531,14 @@ export abstract class MessageQueue {
  */
 export class AckQueue extends MessageQueue {
   /**
+   * @private
+   * @returns The name of the items in this queue.
+   */
+  protected getType(): string {
+    return 'ack';
+  }
+
+  /**
    * Sends a batch of ack requests.
    *
    * @private
@@ -589,6 +600,14 @@ export class AckQueue extends MessageQueue {
  * @class
  */
 export class ModAckQueue extends MessageQueue {
+  /**
+   * @private
+   * @returns The name of the items in this queue.
+   */
+  protected getType(): string {
+    return 'modack/nack';
+  }
+
   /**
    * Sends a batch of modAck requests. Each deadline requires its own request,
    * so we have to group all the ackIds by deadline and send multiple requests.
