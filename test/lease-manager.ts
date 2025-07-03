@@ -268,6 +268,24 @@ describe('LeaseManager', () => {
       setImmediate(done);
     });
 
+    it('should log if blocked by client-side flow control', () => {
+      const fakeMessage = new FakeMessage() as {} as Message;
+
+      sandbox.stub(leaseManager, 'isFull').returns(true);
+      const pendingStub = sandbox.stub(leaseManager, 'pending');
+      pendingStub.get(() => 0);
+      leaseManager.setOptions({allowExcessMessages: false});
+      const fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
+
+      leaseManager.add(fakeMessage);
+      assert.strictEqual(fakeLog.called, true);
+
+      fakeLog.called = false;
+      pendingStub.get(() => 1);
+      leaseManager.add(fakeMessage);
+      assert.strictEqual(fakeLog.called, false);
+    });
+
     it('should not dispatch the message if the sub closes', done => {
       const fakeMessage = new FakeMessage() as {} as Message;
 
@@ -445,6 +463,20 @@ describe('LeaseManager', () => {
       setImmediate(() => leaseManager.clear());
     });
 
+    it('should log if it was full and is now empty', () => {
+      const fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
+      const pendingStub = sandbox.stub(leaseManager, 'pending')
+      pendingStub.get(() => 0);
+      leaseManager.add(new FakeMessage() as {} as Message);
+      leaseManager.clear();
+      assert.strictEqual(fakeLog.called, false);
+
+      pendingStub.get(() => 1);
+      leaseManager.add(new FakeMessage() as {} as Message);
+      leaseManager.clear();
+      assert.strictEqual(fakeLog.called, true);
+    });
+
     it('should cancel any lease extensions', () => {
       const clock = TestUtils.useFakeTimers(sandbox);
       const stub = sandbox.stub(subscriber, 'modAck').resolves();
@@ -545,7 +577,7 @@ describe('LeaseManager', () => {
       setImmediate(done);
     });
 
-    it('should dispense a pending messages', done => {
+    it('should dispense a pending message', done => {
       const temp = new FakeMessage() as {} as Message;
       const pending = new FakeMessage() as {} as Message;
 
@@ -564,6 +596,19 @@ describe('LeaseManager', () => {
       leaseManager.add(temp);
       leaseManager.add(pending);
       leaseManager.remove(temp);
+    });
+
+    it('log when dispensing a pending message', () => {
+      const temp = new FakeMessage() as {} as Message;
+      const pending = new FakeMessage() as {} as Message;
+
+      leaseManager.setOptions({allowExcessMessages: false, maxMessages: 1});
+      const fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
+
+      leaseManager.add(temp);
+      leaseManager.add(pending);
+      leaseManager.remove(temp);
+      assert.strictEqual(fakeLog.called, true);
     });
 
     it('should cancel any extensions if no messages are left', () => {

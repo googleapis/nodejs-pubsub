@@ -31,6 +31,7 @@ export const logs = {
   callbackDelivery: loggingUtils.log('callback-delivery'),
   callbackExceptions: loggingUtils.log('callback-exceptions'),
   expiry: loggingUtils.log('expiry'),
+  subscriberFlowControl: loggingUtils.log('subscriber-flow-control'),
 };
 
 export interface FlowControlOptions {
@@ -120,6 +121,12 @@ export class LeaseManager extends EventEmitter {
     if (allowExcessMessages! || !wasFull) {
       this._dispense(message);
     } else {
+      if (this.pending === 0) {
+        logs.subscriberFlowControl.info(
+          'subscriber for %s is client-side flow blocked',
+          this._subscriber.name,
+        );
+      }
       this._pending.push(message);
     }
 
@@ -138,6 +145,13 @@ export class LeaseManager extends EventEmitter {
    */
   clear(): Message[] {
     const wasFull = this.isFull();
+
+    if (this.pending > 0) {
+      logs.subscriberFlowControl.info(
+        'subscriber for %s is unblocking client-side flow due to clear()',
+        this._subscriber.name,
+      );
+    }
 
     this._pending = [];
     const remaining = Array.from(this._messages);
@@ -187,6 +201,18 @@ export class LeaseManager extends EventEmitter {
       const index = this._pending.indexOf(message);
       this._pending.splice(index, 1);
     } else if (this.pending > 0) {
+      if (this.pending > 1) {
+        logs.subscriberFlowControl.info(
+          'subscriber for %s dispensing one blocked message',
+          this._subscriber.name,
+        );
+      } else {
+        logs.subscriberFlowControl.info(
+          'subscriber for %s fully unblocked on client-side flow control',
+          this._subscriber.name,
+        );
+      }
+
       this._dispense(this._pending.shift()!);
     }
 
