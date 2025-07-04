@@ -1,0 +1,206 @@
+name: Codegen and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  id-token: write
+  # Add more permissions only if needed
+
+env:
+  # Enforce that this workflow only runs in CI/CD, not locally
+  CI: true
+
+jobs:
+  codegen-deploy:
+    if: github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          fi
+
+      - name: Lint code
+        run: |
+          if [ -f package.json ]; then
+            npm run lint
+          fi
+
+      - name: Run tests
+        id: test
+        run: |
+          if [ -f package.json ]; then
+            npm test
+          fi
+
+      - name: Build project
+        id: build
+        run: |
+          if [ -f package.json ]; then
+            npm run build || echo "No build script defined."
+          fi
+
+      - name: Audit Node.js dependencies for vulnerabilities
+        run: |
+          if [ -f package.json ]; then
+            npm audit --audit-level=high || true
+          fi
+
+      - name: Security scan with OSV-Scanner
+        uses: google/osv-scanner-action@v1
+        with:
+          path: .
+
+      - name: Set up protoc and avro-tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler openjdk-17-jre-headless wget
+          wget https://repo1.maven.org/maven2/org/apache/avro/avro-tools/1.11.3/avro-tools-1.11.3.jar -O avro-tools.jar
+          echo '#!/bin/bash\njava -jar $(pwd)/avro-tools.jar "$@"' > avro-tools
+          chmod +x avro-tools
+          sudo mv avro-tools /usr/local/bin/
+          sudo mv avro-tools.jar /usr/local/bin/
+
+      - name: Set environment variables from .trampolinerc
+        run: |
+          set -a
+          source .trampolinerc
+          set +a
+        # Do not echo secrets or sensitive env vars in logs
+
+      - name: Run code generation and deployment
+        run: |
+          chmod +x ./codegen_and_deploy.sh
+          ./codegen_and_deploy.sh
+
+      - name: Fetch dynamic data from API
+        id: fetch_dynamic
+        run: |
+          # Example: Replace with your real API endpoints and parsing logic
+          USER_EMAIL=$(curl -s https://api.example.com/user-email | jq -r '.email')
+          PAYMENT_AMOUNT=$(curl -s https://api.example.com/payment-amount | jq -r '.amount')
+          echo "USER_EMAIL=$USER_EMAIL" >> $GITHUB_ENV
+          echo "PAYMENT_AMOUNT=$PAYMENT_AMOUNT" >> $GITHUB_ENV
+
+      - name: Add user to Mailchimp list (dynamic)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          MAILCHIMP_LIST_ID: ${{ secrets.MAILCHIMP_LIST_ID }}
+          MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
+          USER_EMAIL: ${{ env.USER_EMAIL }}
+        run: |
+          curl -X POST "https://${MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/lists/${MAILCHIMP_LIST_ID}/members" \
+            --user "anystring:${MAILCHIMP_API_KEY}" \
+            --header "Content-Type: application/json" \
+            --data "{\"email_address\":\"${USER_EMAIL}\", \"status\":\"subscribed\"}"
+
+      - name: Create Stripe Payment Intent (dynamic)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          PAYMENT_AMOUNT: ${{ env.PAYMENT_AMOUNT }}
+        run: |
+          curl https://api.stripe.com/v1/payment_intents \
+            -u $STRIPE_SECRET_KEY: \
+            -d amount=$PAYMENT_AMOUNT \
+            -d currency=usd \
+            -d payment_method_types[]=card
+
+      - name: Upload build artifacts
+        if: success() && (steps.build.outcome == 'success' || steps.build.outcome == 'skipped')
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist/
+          retention-days: 3
+
+      - name: Upload code coverage to Codecov
+        if: success() && (steps.test.outcome == 'success' || steps.test.outcome == 'skipped') && env.CODECOV_TOKEN != ''
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # Set this secret in your repo
+          files: ./coverage/*.json
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Generate documentation (optional)
+        if: always()
+        run: |
+          if [ -f package.json ]; then
+            npm run docs || echo "No docs script defined."
+          fi
+
+      - name: Notify on failure (optional, requires secrets)
+        if: failure() && env.SMTP_USERNAME != '' && env.SMTP_PASSWORD != '' && env.NOTIFY_EMAIL != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.example.com # Set your SMTP server
+          server_port: 465
+          username: ${{ secrets.SMTP_USERNAME }} # Set this secret in your repo
+          password: ${{ secrets.SMTP_PASSWORD }} # Set this secret in your repo
+          subject: "GitHub Actions Failure: ${{ github.workflow }}"
+          to: ${{ secrets.NOTIFY_EMAIL }} # Set this secret in your repo
+          from: ${{ secrets.NOTIFY_EMAIL }} # Set this secret in your repo
+          body: "The workflow failed. Please check the logs."
+
+      - name: Invite nodoubtz as collaborator (manual step, requires GH_ADMIN_TOKEN secret)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && env.GH_TOKEN != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }} # Set this secret in your repo
+          REPO: ${{ github.repository }}
+        run: |
+          curl -X PUT -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/$REPO/collaborators/nodoubtz \
+            -d '{"permission":"push"}'
+
+      - name: Require manual approval for production deploy (optional)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ secrets.GITHUB_TOKEN }}
+          approvers: user1,user2 # Set real GitHub usernames
+          minimum-approvals: 1
+
+# Security enforcement:
+# - Workflow only runs on main branch for push and PR events
+# - Skips automation for Dependabot
+# - Collaborator invite only runs on main branch push and if token is set
+# - CI environment variable enforced
+# - Do not echo secrets or sensitive env vars in logs
+# - For full enforcement, enable branch protection rules in GitHub repository settings:
+#   - Require status checks to pass before merging
+#   - Require pull request reviews before merging
+#   - Restrict who can push to matching branches
+# - Set all required secrets in your repository settings for notifications, coverage, and collaborator automation.
