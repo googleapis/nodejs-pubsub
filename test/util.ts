@@ -16,7 +16,7 @@ import {describe, it} from 'mocha';
 import {addToBucket, Throttler, awaitWithTimeout} from '../src/util';
 import * as assert from 'assert';
 import * as sinon from 'sinon';
-import { Duration } from '../src';
+import {Duration} from '../src';
 
 describe('utils', () => {
   describe('Throttler', () => {
@@ -72,7 +72,7 @@ describe('utils', () => {
 
     it('handles non-timeout properly', async () => {
       const fakeTimers = sandbox.useFakeTimers(0);
-      let resolve = (...args: unknown[]) => {};
+      let resolve = () => {};
       const testString = 'fooby';
       const testPromise = new Promise<string>(r => {
         resolve = () => r(testString);
@@ -93,7 +93,7 @@ describe('utils', () => {
 
     it('handles non-timeout errors properly', async () => {
       const fakeTimers = sandbox.useFakeTimers(0);
-      let reject = (...args: unknown[]) => {};
+      let reject = () => {};
       const testString = 'fooby';
       const testPromise = new Promise<string>((res, rej) => {
         reject = () => rej(testString);
@@ -114,7 +114,7 @@ describe('utils', () => {
 
     it('handles timeout properly', async () => {
       const fakeTimers = sandbox.useFakeTimers(0);
-      let resolve = (...args: unknown[]) => {};
+      let resolve = () => {};
       const testString = 'fooby';
       const testPromise = new Promise<string>(r => {
         resolve = () => r(testString);
