@@ -1,3 +1,4 @@
+# Copyright nodoubtz
 # Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +23,31 @@ required_envvars+=(
 pass_down_envvars+=(
     "AUTORELEASE_PR"
     "VERSION"
+    "SCHEMA=projects/gtm-kqqwvx2-zgi2z/schemas/subby"
+    "REVISION_ID_1=3eebe731"
+    "REVISION_ID_2=6687c4ed"
+    "SCHEMA_2=projects/smart-ga4/schemas/subby_ted"
+    "REVISION_ID_3=9bcb78e2"
 )
+
+# Protocol Buffer definition
+export PROTO_DEFINITION='syntax = "proto3";
+message ProtocolBuffer {
+    string string_field = 1;
+    float float_field = 2;
+    bool boolean_field = 3;
+}'
+
+# Avro definition
+export AVRO_DEFINITION='{
+  "type": "record",
+  "name": "Avro",
+  "fields": [
+    { "name": "StringField", "type": "string" },
+    { "name": "FloatField", "type": "float" },
+    { "name": "BooleanField", "type": "boolean" }
+  ]
+}'
 
 # Prevent unintentional override on the default image.
 if [[ "${TRAMPOLINE_IMAGE_UPLOAD:-false}" == "true" ]] && \

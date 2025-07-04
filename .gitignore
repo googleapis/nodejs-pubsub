@@ -12,3 +12,31 @@ system-test/*key.json
 .DS_Store
 package-lock.json
 __pycache__
+
+# Additional ignores
+logs/
+*.log
+.DS_Store
+Thumbs.db
+/dist/
+/lib/
+*.tsbuildinfo
+.env
+.env.*
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.out
+*.pid
+# Protobuf/Avro generated files
+*.pb.js
+*.pb.d.ts
+*.avro.js
+protocol_buffer.proto
+avro_schema.avsc
+coverage/
+*.tgz
+codegen_and_deploy.sh
