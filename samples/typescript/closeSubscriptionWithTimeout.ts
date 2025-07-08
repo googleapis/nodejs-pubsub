@@ -30,7 +30,11 @@
 // -START pubsub_close_subscription_with_timeout]
 
 // Imports the Google Cloud client library
-import {PubSub, Duration} from '@google-cloud/pubsub';
+import {
+  PubSub,
+  Duration,
+  SubscriptionCloseBehaviors,
+} from '@google-cloud/pubsub';
 
 // Creates a client; cache this for further use
 const pubsub = new PubSub();
@@ -41,17 +45,34 @@ async function closeSubscriptionWithTimeout(
 ) {
   const topic = pubsub.topic(topicNameOrId);
 
-  const timeout = Duration.from({seconds: 10});
-  const zeroTimeout = Duration.from({seconds: 0});
-
   // Closes the subscription immediately, not waiting for anything.
-  let subscription = topic.subscription(subscriptionNameOrId);
-  await subscription.close({timeout: zeroTimeout});
+  let subscription = topic.subscription(subscriptionNameOrId, {
+    closeOptions: {
+      timeout: Duration.from({seconds: 0}),
+    },
+  });
+  await subscription.close();
 
-  // Shuts down the gRPC connection, sends nacks for buffered messages,
-  // and closes the subscription after a set timeout.
-  subscription = topic.subscription(subscriptionNameOrId);
-  await subscription.close({timeout});
+  // Shuts down the gRPC connection, and waits for just before the timeout
+  // to send nacks for buffered messages. If `timeout` were missing, this
+  // would wait for the maximum leasing timeout.
+  subscription = topic.subscription(subscriptionNameOrId, {
+    closeOptions: {
+      behavior: SubscriptionCloseBehaviors.WaitForProcessing,
+      timeout: Duration.from({seconds: 10}),
+    },
+  });
+  await subscription.close();
+
+  // Shuts down the gRPC connection, sends nacks for buffered messages, and waits
+  // through the timeout for nacks to send.
+  subscription = topic.subscription(subscriptionNameOrId, {
+    closeOptions: {
+      behavior: SubscriptionCloseBehaviors.NackImmediately,
+      timeout: Duration.from({seconds: 10}),
+    },
+  });
+  await subscription.close();
 }
 // -END pubsub_close_subscription_with_timeout]
 
