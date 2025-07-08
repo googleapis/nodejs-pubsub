@@ -15,7 +15,7 @@
  */
 
 import {promisify} from '@google-cloud/promisify';
-import {ClientStub, grpc} from 'google-gax';
+import {ClientStub, GoogleError, grpc} from 'google-gax';
 import * as isStreamEnded from 'is-stream-ended';
 import {PassThrough} from 'stream';
 
@@ -452,7 +452,12 @@ export class MessageStream extends PassThrough {
     const tracker = this._streams[index];
     const receivedStatus =
       !tracker.stream || (tracker.stream && !tracker.receivedStatus);
-    logs.subscriberStreams.error('error on stream %i: %o', index, err);
+
+    // For the user-cancelled errors, we don't need to show those, we're handling
+    // notifying of us closing the stream elsewhere.
+    if ((err as GoogleError).code !== 1) {
+      logs.subscriberStreams.error('error on stream %i: %o', index, err);
+    }
 
     if (typeof code !== 'number' || !receivedStatus) {
       this.emit('error', err);
