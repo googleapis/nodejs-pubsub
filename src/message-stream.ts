@@ -455,7 +455,7 @@ export class MessageStream extends PassThrough {
 
     // For the user-cancelled errors, we don't need to show those, we're handling
     // notifying of us closing the stream elsewhere.
-    if ((err as GoogleError).code !== 1) {
+    if ((err as GoogleError).code !== grpc.status.CANCELLED) {
       logs.subscriberStreams.error('error on stream %i: %o', index, err);
     }
 
