@@ -787,7 +787,7 @@ export class Subscriber extends EventEmitter {
 
     if (ackTimeSeconds > this._99th) {
       logs.slowAck.info(
-        'message (ID %s, ackID %s) ack took longer than the 99th percentile (%s s)',
+        'message (ID %s, ackID %s) ack took longer than the 99th percentile of ack/nack time (%s s)',
         message.id,
         message.ackId,
         ackTimeSeconds,
