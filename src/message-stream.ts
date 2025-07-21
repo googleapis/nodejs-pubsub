@@ -242,8 +242,12 @@ export class MessageStream extends PassThrough {
    *
    * @param {stream} stream The StreamingPull stream.
    */
-  private _replaceStream(index: number, stream: PullStream, why: string): void {
-    this._removeStream(index, why, 'stream replacement');
+  private _replaceStream(
+    index: number,
+    stream: PullStream,
+    reason?: string,
+  ): void {
+    this._removeStream(index, reason, 'stream replacement');
 
     this._setHighWaterMark(stream);
     const tracker = this._streams[index];
@@ -290,7 +294,7 @@ export class MessageStream extends PassThrough {
 
     const all: Promise<void>[] = [];
     for (let i = 0; i < this._streams.length; i++) {
-      all.push(this._fillOne(i, 'initial fill', client));
+      all.push(this._fillOne(i, client, 'initial fill'));
     }
     await Promise.all(all);
 
@@ -302,12 +306,12 @@ export class MessageStream extends PassThrough {
     }
   }
 
-  private async _fillOne(index: number, why: string, client?: ClientStub) {
+  private async _fillOne(index: number, client?: ClientStub, reason?: string) {
     if (this.destroyed) {
       logs.subscriberStreams.info(
         'not filling stream %i for reason "%s" because already shut down',
         index,
-        why,
+        reason,
       );
 
       return;
@@ -351,7 +355,7 @@ export class MessageStream extends PassThrough {
     };
 
     const stream: PullStream = client.streamingPull({deadline, otherArgs});
-    this._replaceStream(index, stream, why);
+    this._replaceStream(index, stream, reason);
     stream.write(request);
   }
 
@@ -423,7 +427,7 @@ export class MessageStream extends PassThrough {
         this._retrier.reset(this._streams[index]);
       }
       this._retrier.retryLater(this._streams[index], () =>
-        this._fillOne(index, 'retry'),
+        this._fillOne(index, undefined, 'retry'),
       );
     } else if (this._activeStreams() === 0) {
       const message = `Subscriber stream ${index} has ended with status ${status.code}; will not be retried.`;
@@ -501,13 +505,17 @@ export class MessageStream extends PassThrough {
    *
    * @param {number} index The stream to remove.
    */
-  private _removeStream(index: number, why: string, whatNext: string): void {
+  private _removeStream(
+    index: number,
+    reason?: string,
+    whatNext?: string,
+  ): void {
     const tracker = this._streams[index];
     if (tracker.stream) {
       logs.subscriberStreams.info(
         'closing stream %i; why: %s; next: %s',
         index,
-        why,
+        reason,
         whatNext,
       );
       tracker.stream.unpipe(this);

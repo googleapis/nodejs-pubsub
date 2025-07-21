@@ -316,7 +316,7 @@ export abstract class MessageQueue {
    * Sends a batch of messages.
    * @private
    */
-  async flush(reason: string): Promise<void> {
+  async flush(reason?: string): Promise<void> {
     if (reason) {
       this.logBatch(reason);
     }

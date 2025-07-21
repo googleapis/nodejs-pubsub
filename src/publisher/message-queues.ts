@@ -111,12 +111,13 @@ export abstract class MessageQueue extends EventEmitter {
    *
    * @param {object[]} messages The messages to publish.
    * @param {PublishCallback[]} callbacks The corresponding callback functions.
+   * @private
    */
   async _publish(
     messages: PubsubMessage[],
     callbacks: PublishCallback[],
-    reason: string,
     bytes: number,
+    reason?: string,
   ): Promise<void> {
     const {topic, settings} = this.publisher;
     const reqOpts = {
@@ -147,7 +148,9 @@ export abstract class MessageQueue extends EventEmitter {
       'MessageQueue._publish',
     );
 
-    this.logBatch(reason, messages.length, bytes);
+    if (reason) {
+      this.logBatch(reason, messages.length, bytes);
+    }
 
     const requestCallback = topic.request<google.pubsub.v1.IPublishResponse>;
     const request = promisify(requestCallback.bind(topic));
@@ -250,8 +253,9 @@ export class Queue extends MessageQueue {
    * Cancels any pending publishes and calls _publish immediately.
    *
    * Does _not_ attempt to further drain after one batch is sent.
+   * @private
    */
-  async publish(reason: string): Promise<void> {
+  async publish(reason?: string): Promise<void> {
     await this._publishInternal(false, reason);
   }
 
@@ -259,8 +263,9 @@ export class Queue extends MessageQueue {
    * Cancels any pending publishes and calls _publish immediately.
    *
    * @emits Queue#drain when all messages are sent.
+   * @private
    */
-  async _publishInternal(fullyDrain: boolean, reason: string): Promise<void> {
+  async _publishInternal(fullyDrain: boolean, reason?: string): Promise<void> {
     const {messages, callbacks} = this.batch.end();
     const bytes = this.batch.bytes;
 
@@ -271,7 +276,7 @@ export class Queue extends MessageQueue {
       delete this.pending;
     }
 
-    await this._publish(messages, callbacks, reason, bytes);
+    await this._publish(messages, callbacks, bytes, reason);
     if (this.batch.messages.length) {
       // We only do the indefinite go-arounds when we're trying to do a
       // final drain for flush(). In all other cases, we want to leave
@@ -440,7 +445,7 @@ export class OrderedQueue extends MessageQueue {
     const {messages, callbacks, bytes} = this.batches.pop()!.end();
 
     try {
-      await this._publish(messages, callbacks, reason, bytes);
+      await this._publish(messages, callbacks, bytes, reason);
     } catch (e) {
       const err = e as ServiceError;
       this.inFlight = false;

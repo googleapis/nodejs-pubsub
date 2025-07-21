@@ -172,7 +172,7 @@ describe('Message Queues', () => {
       it('should make the correct request', () => {
         const stub = sandbox.stub(topic, 'request');
 
-        void queue._publish(messages, callbacks, 'test', 0);
+        void queue._publish(messages, callbacks, 0, 'test');
 
         const [{client, method, reqOpts}] = stub.lastCall.args;
         assert.strictEqual(client, 'PublisherClient');
@@ -183,7 +183,7 @@ describe('Message Queues', () => {
       it('should make a log message about the publish', () => {
         sandbox.stub(topic, 'request');
         const fakeLog = new FakeLog(q.logs.publishBatch);
-        void queue._publish(messages, callbacks, 'test', 0);
+        void queue._publish(messages, callbacks, 0, 'test');
         assert.strictEqual(fakeLog.called, true);
         assert.strictEqual(
           fakeLog.fields!.severity,
@@ -197,7 +197,7 @@ describe('Message Queues', () => {
         const callOptions = {};
 
         publisher.settings.gaxOpts = callOptions;
-        void queue._publish(messages, callbacks, 'test', 0);
+        void queue._publish(messages, callbacks, 0, 'test');
 
         const [{gaxOpts}] = stub.lastCall.args;
         assert.strictEqual(gaxOpts, callOptions);
@@ -211,7 +211,7 @@ describe('Message Queues', () => {
         });
 
         try {
-          await queue._publish(messages, callbacks, 'test', 0);
+          await queue._publish(messages, callbacks, 0, 'test');
           assert.strictEqual(null, error, '_publish did not throw');
         } catch (e) {
           const err = e as ServiceError;
@@ -232,7 +232,7 @@ describe('Message Queues', () => {
           callback(null, {messageIds});
         });
 
-        await queue._publish(messages, callbacks, 'test', 0);
+        await queue._publish(messages, callbacks, 0, 'test');
 
         callbacks.forEach((callback, i) => {
           const [, messageId] = callback.lastCall.args;
