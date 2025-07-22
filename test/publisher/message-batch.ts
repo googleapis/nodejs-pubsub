@@ -108,17 +108,23 @@ describe('MessageBatch', () => {
       batch.options.maxMessages = 0;
       const canFit = batch.canFit(message);
       assert.strictEqual(canFit, false);
+      assert.strictEqual(batch.canFitCount(), false);
+      assert.strictEqual(batch.canFitSize(message), true);
     });
 
     it('should return false if too many bytes', () => {
       batch.options.maxBytes = messageSize - 1;
       const canFit = batch.canFit(message);
       assert.strictEqual(canFit, false);
+      assert.strictEqual(batch.canFitCount(), true);
+      assert.strictEqual(batch.canFitSize(message), false);
     });
 
     it('should return true if it can fit', () => {
       const canFit = batch.canFit(message);
       assert.strictEqual(canFit, true);
+      assert.strictEqual(batch.canFitCount(), true);
+      assert.strictEqual(batch.canFitSize(message), true);
     });
   });
 
@@ -175,6 +181,8 @@ describe('MessageBatch', () => {
       batch.add(message, sandbox.spy());
       const isFull = batch.isFull();
       assert.strictEqual(isFull, true);
+      assert.strictEqual(batch.isFullMessages(), true);
+      assert.strictEqual(batch.isFullSize(), false);
     });
 
     it('should return true if at max byte limit', () => {
@@ -182,12 +190,16 @@ describe('MessageBatch', () => {
       batch.add(message, sandbox.spy());
       const isFull = batch.isFull();
       assert.strictEqual(isFull, true);
+      assert.strictEqual(batch.isFullMessages(), false);
+      assert.strictEqual(batch.isFullSize(), true);
     });
 
     it('should return false if it is not full', () => {
       batch.add(message, sandbox.spy());
       const isFull = batch.isFull();
       assert.strictEqual(isFull, false);
+      assert.strictEqual(batch.isFullMessages(), false);
+      assert.strictEqual(batch.isFullSize(), false);
     });
   });
 

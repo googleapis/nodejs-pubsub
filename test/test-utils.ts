@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import {SinonSandbox, SinonFakeTimers} from 'sinon';
+import {loggingUtils} from 'google-gax';
 
 type FakeTimersParam = Parameters<SinonSandbox['useFakeTimers']>[0];
 interface FakeTimerConfig {
@@ -49,5 +50,25 @@ export class TestUtils {
 
     // The types are screwy in useFakeTimers(). I'm just going to pick one.
     return sandbox.useFakeTimers(config as FakeTimersParam);
+  }
+}
+
+/**
+ * Wrapper to hook the output of ad-hoc loggers (loggingUtils.AdhocDebugLogFunction),
+ * because the sandbox will patch the wrong instance of the methods.
+ *
+ * @private
+ */
+export class FakeLog {
+  fields?: loggingUtils.LogFields;
+  args?: unknown[];
+  called = false;
+
+  constructor(log: loggingUtils.AdhocDebugLogFunction) {
+    log.on('log', (lf, a) => {
+      this.fields = lf;
+      this.args = a;
+      this.called = true;
+    });
   }
 }
