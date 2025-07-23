@@ -254,9 +254,14 @@ describe('v1.PublisherClient', () => {
         throw err;
       });
       assert(client.publisherStub);
-      void client.close().then(() => {
-        done();
-      });
+      client
+        .close()
+        .then(() => {
+          done();
+        })
+        .catch(err => {
+          throw err;
+        });
     });
 
     it('has close method for the non-initialized client', done => {
@@ -265,9 +270,14 @@ describe('v1.PublisherClient', () => {
         projectId: 'bogus',
       });
       assert.strictEqual(client.publisherStub, undefined);
-      void client.close().then(() => {
-        done();
-      });
+      client
+        .close()
+        .then(() => {
+          done();
+        })
+        .catch(err => {
+          throw err;
+        });
     });
 
     it('has getProjectId method', async () => {
@@ -426,7 +436,9 @@ describe('v1.PublisherClient', () => {
       ]);
       request.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.createTopic(request), expectedError);
     });
   });
@@ -560,7 +572,9 @@ describe('v1.PublisherClient', () => {
       );
       request.topic.name = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.updateTopic(request), expectedError);
     });
   });
@@ -687,7 +701,9 @@ describe('v1.PublisherClient', () => {
       );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.publish(request), expectedError);
     });
   });
@@ -814,7 +830,9 @@ describe('v1.PublisherClient', () => {
       );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.getTopic(request), expectedError);
     });
   });
@@ -944,7 +962,9 @@ describe('v1.PublisherClient', () => {
       );
       request.topic = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.deleteTopic(request), expectedError);
     });
   });
@@ -1075,7 +1095,9 @@ describe('v1.PublisherClient', () => {
       );
       request.subscription = defaultValue1;
       const expectedError = new Error('The client has already been closed.');
-      void client.close();
+      client.close().catch(err => {
+        throw err;
+      });
       await assert.rejects(client.detachSubscription(request), expectedError);
     });
   });
@@ -2011,20 +2033,24 @@ describe('v1.PublisherClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        void client.getIamPolicy(
-          request,
-          expectedOptions,
-          (
-            err?: Error | null,
-            result?: IamProtos.google.iam.v1.Policy | null,
-          ) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          },
-        );
+        client
+          .getIamPolicy(
+            request,
+            expectedOptions,
+            (
+              err?: Error | null,
+              result?: IamProtos.google.iam.v1.Policy | null,
+            ) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result);
+              }
+            },
+          )
+          .catch(err => {
+            throw err;
+          });
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
@@ -2117,20 +2143,24 @@ describe('v1.PublisherClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        void client.setIamPolicy(
-          request,
-          expectedOptions,
-          (
-            err?: Error | null,
-            result?: IamProtos.google.iam.v1.Policy | null,
-          ) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          },
-        );
+        client
+          .setIamPolicy(
+            request,
+            expectedOptions,
+            (
+              err?: Error | null,
+              result?: IamProtos.google.iam.v1.Policy | null,
+            ) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result);
+              }
+            },
+          )
+          .catch(err => {
+            throw err;
+          });
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
@@ -2226,20 +2256,24 @@ describe('v1.PublisherClient', () => {
         .stub()
         .callsArgWith(2, null, expectedResponse);
       const promise = new Promise((resolve, reject) => {
-        void client.testIamPermissions(
-          request,
-          expectedOptions,
-          (
-            err?: Error | null,
-            result?: IamProtos.google.iam.v1.TestIamPermissionsResponse | null,
-          ) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          },
-        );
+        client
+          .testIamPermissions(
+            request,
+            expectedOptions,
+            (
+              err?: Error | null,
+              result?: IamProtos.google.iam.v1.TestIamPermissionsResponse | null,
+            ) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result);
+              }
+            },
+          )
+          .catch(err => {
+            throw err;
+          });
       });
       const response = await promise;
       assert.deepStrictEqual(response, expectedResponse);
