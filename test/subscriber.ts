@@ -36,6 +36,8 @@ import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
 import {Duration} from '../src';
 import * as tracing from '../src/telemetry-tracing';
+import {FakeLog, TestUtils} from './test-utils';
+import {loggingUtils} from 'google-gax';
 
 type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 
@@ -432,6 +434,37 @@ describe('Subscriber', () => {
       assert.strictEqual(subscriber.ackDeadline, fakeDeadline);
     });
 
+    it('should log on ack completion', async () => {
+      const fakeLog = new FakeLog(s.logs.ackNack);
+
+      await subscriber.ack(message);
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1], message.id);
+    });
+
+    it('should log if the ack time is longer than the 99th percentile', async () => {
+      const histogram: FakeHistogram = stubs.get('histogram');
+      TestUtils.useFakeTimers(sandbox, Date.now());
+
+      message.received = 0;
+      sandbox.stub(histogram, 'percentile').withArgs(99).returns(10);
+      const fakeLog = new FakeLog(s.logs.slowAck);
+
+      await subscriber.ack(message);
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1], message.id);
+    });
+
     it('should bound ack deadlines if min/max are specified', async () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const now = Date.now();
@@ -729,6 +762,19 @@ describe('Subscriber', () => {
 
       assert.strictEqual(msg, message);
       assert.strictEqual(deadline, 0);
+    });
+
+    it('should log on ack completion', async () => {
+      const fakeLog = new FakeLog(s.logs.ackNack);
+
+      await subscriber.nack(message);
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1], message.id);
     });
 
     it('should remove the message from the inventory', async () => {
