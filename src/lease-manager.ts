@@ -179,7 +179,6 @@ export class LeaseManager extends EventEmitter {
     }
 
     const wasFull = this.isFull();
-    const wasEmpty = this.isEmpty();
 
     this._messages.delete(message);
     this.bytes -= message.length;
@@ -193,7 +192,7 @@ export class LeaseManager extends EventEmitter {
       this._dispense(this._pending.shift()!);
     }
 
-    if (!wasEmpty && this.isEmpty()) {
+    if (this.isEmpty()) {
       this.emit('empty');
     }
 
