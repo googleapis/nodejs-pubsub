@@ -15,9 +15,24 @@
  */
 
 import {EventEmitter} from 'events';
+
 import {AckError, Message, Subscriber} from './subscriber';
 import {defaultOptions} from './default-options';
 import {Duration} from './temporal';
+import {DebugMessage} from './debug';
+import {logs as baseLogs} from './logs';
+
+/**
+ * Loggers. Exported for unit tests.
+ *
+ * @private
+ */
+export const logs = {
+  callbackDelivery: baseLogs.pubsub.sublog('callback-delivery'),
+  callbackExceptions: baseLogs.pubsub.sublog('callback-exceptions'),
+  expiry: baseLogs.pubsub.sublog('expiry'),
+  subscriberFlowControl: baseLogs.pubsub.sublog('subscriber-flow-control'),
+};
 
 export interface FlowControlOptions {
   allowExcessMessages?: boolean;
@@ -106,6 +121,12 @@ export class LeaseManager extends EventEmitter {
     if (allowExcessMessages! || !wasFull) {
       this._dispense(message);
     } else {
+      if (this.pending === 0) {
+        logs.subscriberFlowControl.info(
+          'subscriber for %s is client-side flow blocked',
+          this._subscriber.name,
+        );
+      }
       this._pending.push(message);
     }
 
@@ -125,6 +146,13 @@ export class LeaseManager extends EventEmitter {
   clear(): Message[] {
     const wasFull = this.isFull();
     const wasEmpty = this.isEmpty();
+
+    if (this.pending > 0) {
+      logs.subscriberFlowControl.info(
+        'subscriber for %s is unblocking client-side flow due to clear()',
+        this._subscriber.name,
+      );
+    }
 
     this._pending = [];
     const remaining = Array.from(this._messages);
@@ -189,6 +217,18 @@ export class LeaseManager extends EventEmitter {
       const index = this._pending.indexOf(message);
       this._pending.splice(index, 1);
     } else if (this.pending > 0) {
+      if (this.pending > 1) {
+        logs.subscriberFlowControl.info(
+          'subscriber for %s dispensing one blocked message',
+          this._subscriber.name,
+        );
+      } else {
+        logs.subscriberFlowControl.info(
+          'subscriber for %s fully unblocked on client-side flow control',
+          this._subscriber.name,
+        );
+      }
+
       this._dispense(this._pending.shift()!);
     }
 
@@ -246,7 +286,26 @@ export class LeaseManager extends EventEmitter {
       message.subSpans.flowEnd();
       process.nextTick(() => {
         message.dispatched();
-        this._subscriber.emit('message', message);
+        logs.callbackDelivery.info(
+          'message (ID %s, ackID %s) delivery to user callbacks',
+          message.id,
+          message.ackId,
+        );
+        message.subSpans.processingStart(this._subscriber.name);
+        try {
+          this._subscriber.emit('message', message);
+        } catch (e: unknown) {
+          logs.callbackExceptions.error(
+            'message (ID %s, ackID %s) caused a user callback exception: %o',
+            message.id,
+            message.ackId,
+            e,
+          );
+          this._subscriber.emit(
+            'debug',
+            new DebugMessage('error during user callback', e as Error),
+          );
+        }
       });
     }
   }
@@ -285,6 +344,11 @@ export class LeaseManager extends EventEmitter {
           message.subSpans.modAckStart(deadline, false);
         }
       } else {
+        logs.expiry.warn(
+          'message (ID %s, ackID %s) has been dropped from leasing due to a timeout',
+          message.id,
+          message.ackId,
+        );
         this.remove(message);
       }
     }

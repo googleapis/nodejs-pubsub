@@ -17,7 +17,6 @@
 import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
-import {loggingUtils as logging} from 'google-gax';
 import defer = require('p-defer');
 
 import {google} from '../protos/protos';
@@ -31,11 +30,22 @@ import {SubscriberClient} from './v1';
 import * as tracing from './telemetry-tracing';
 import {Duration, atMost as durationAtMost} from './temporal';
 import {EventEmitter} from 'events';
+
 import {awaitWithTimeout} from './util';
+import {logs as baseLogs} from './logs';
 
 export {StatusError} from './message-stream';
 
-const logDebug = logging.log('pubsub').sublog('debug');
+/**
+ * Loggers. Exported for unit tests.
+ *
+ * @private
+ */
+export const logs = {
+  slowAck: baseLogs.pubsub.sublog('slow-ack'),
+  ackNack: baseLogs.pubsub.sublog('ack-nack'),
+  debug: baseLogs.pubsub.sublog('debug'),
+};
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 export type SubscriptionProperties =
@@ -692,6 +702,10 @@ export class Subscriber extends EventEmitter {
   private _stream!: MessageStream;
   private _subscription: Subscription;
 
+  // We keep this separate from ackDeadline, because ackDeadline could
+  // end up being bound by min/max deadline configs.
+  private _99th: number;
+
   subscriptionProperties?: SubscriptionProperties;
 
   constructor(subscription: Subscription, options = {}) {
@@ -699,6 +713,7 @@ export class Subscriber extends EventEmitter {
 
     this.ackDeadline =
       defaultOptions.subscription.startingAckDeadline.totalOf('second');
+    this._99th = this.ackDeadline;
     this.maxMessages = defaultOptions.subscription.maxOutstandingMessages;
     this.maxBytes = defaultOptions.subscription.maxOutstandingBytes;
     this.maxExtensionTime = defaultOptions.subscription.maxExtensionTime;
@@ -731,7 +746,7 @@ export class Subscriber extends EventEmitter {
     // If we got an ack time reading, update the histogram (and ackDeadline).
     if (ackTimeSeconds) {
       this._histogram.add(ackTimeSeconds);
-      ackDeadline = this._histogram.percentile(99);
+      this._99th = ackDeadline = this._histogram.percentile(99);
     }
 
     // Grab our current min/max deadline values, based on whether exactly-once
@@ -847,6 +862,21 @@ export class Subscriber extends EventEmitter {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
 
+    logs.ackNack.info(
+      'message (ID %s, ackID %s) ack',
+      message.id,
+      message.ackId,
+    );
+
+    if (ackTimeSeconds > this._99th) {
+      logs.slowAck.info(
+        'message (ID %s, ackID %s) ack took longer than the 99th percentile of message processing time (%s s)',
+        message.id,
+        message.ackId,
+        ackTimeSeconds,
+      );
+    }
+
     tracing.PubsubEvents.ackStart(message);
 
     // Ignore this in this version of the method (but hook catch
@@ -873,6 +903,21 @@ export class Subscriber extends EventEmitter {
   async ackWithResponse(message: Message): Promise<AckResponse> {
     const ackTimeSeconds = (Date.now() - message.received) / 1000;
     this.updateAckDeadline(ackTimeSeconds);
+
+    logs.ackNack.info(
+      'message (ID %s, ackID %s) ack with response',
+      message.id,
+      message.ackId,
+    );
+
+    if (ackTimeSeconds > this._99th) {
+      logs.slowAck.info(
+        'message (ID %s, ackID %s) ack took longer than the 99th percentile (%s s)',
+        message.id,
+        message.ackId,
+        ackTimeSeconds,
+      );
+    }
 
     tracing.PubsubEvents.ackStart(message);
 
@@ -927,7 +972,7 @@ export class Subscriber extends EventEmitter {
 
     // Warn the user if the timeout is too short for NackImmediately.
     if (Duration.compare(timeout, finalNackTimeout) < 0) {
-      logDebug.warn(
+      logs.debug.warn(
         'Subscriber.close() timeout is less than the final shutdown time (%i ms). This may result in lost nacks.',
         timeout.milliseconds,
       );
@@ -953,7 +998,7 @@ export class Subscriber extends EventEmitter {
         const err = e as [unknown, boolean];
         if (err[1] === false) {
           // This wasn't a timeout.
-          logDebug.warn('Error during Subscriber.close(): %j', err[0]);
+          logs.debug.warn('Error during Subscriber.close(): %j', err[0]);
         }
       }
     }
@@ -981,7 +1026,7 @@ export class Subscriber extends EventEmitter {
       const err = e as [unknown, boolean];
       if (err[1] === false) {
         // This wasn't a timeout.
-        logDebug.warn('Error during Subscriber.close(): %j', err[0]);
+        logs.debug.warn('Error during Subscriber.close(): %j', err[0]);
       }
     }
 
@@ -1065,6 +1110,22 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nack(message: Message): Promise<void> {
+    logs.ackNack.info(
+      'message (ID %s, ackID %s) nack',
+      message.id,
+      message.ackId,
+    );
+
+    const nackTimeSeconds = (Date.now() - message.received) / 1000;
+    if (nackTimeSeconds > this._99th) {
+      logs.slowAck.info(
+        'message (ID %s, ackID %s) nack took longer than the 99th percentile (%s s)',
+        message.id,
+        message.ackId,
+        nackTimeSeconds,
+      );
+    }
+
     message.subSpans.nackStart();
     await this.modAck(message, 0);
     message.subSpans.nackEnd();
@@ -1082,6 +1143,22 @@ export class Subscriber extends EventEmitter {
    * @private
    */
   async nackWithResponse(message: Message): Promise<AckResponse> {
+    logs.ackNack.info(
+      'message (ID %s, ackID %s) nack with response',
+      message.id,
+      message.ackId,
+    );
+
+    const nackTimeSeconds = (Date.now() - message.received) / 1000;
+    if (nackTimeSeconds > this._99th) {
+      logs.slowAck.info(
+        'message (ID %s, ackID %s) nack took longer than the 99th percentile (%s s)',
+        message.id,
+        message.ackId,
+        nackTimeSeconds,
+      );
+    }
+
     message.subSpans.nackStart();
     const response = await this.modAckWithResponse(message, 0);
     message.subSpans.nackEnd();
@@ -1268,12 +1345,12 @@ export class Subscriber extends EventEmitter {
     // Flush any batched requests immediately.
     if (this._acks.numPendingRequests) {
       promises.push(this._acks.onFlush());
-      this._acks.flush().catch(() => {});
+      this._acks.flush('message count').catch(() => {});
     }
 
     if (this._modAcks.numPendingRequests) {
       promises.push(this._modAcks.onFlush());
-      this._modAcks.flush().catch(() => {});
+      this._modAcks.flush('message count').catch(() => {});
     }
 
     // Now, prepare the drain promises.
