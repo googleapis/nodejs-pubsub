@@ -88,18 +88,30 @@ export function addToBucket<T, U>(map: Map<T, U[]>, bucket: T, item: U) {
 const timeoutToken: unique symbol = Symbol('pubsub promise timeout');
 
 /**
- * Awaits on Promise with a timeout. Resolves on success, rejects on timeout.
+ * Return value from `awaitWithTimeout`. There are several variations on what
+ * might happen here, so this bundles it all up into a "report".
+ */
+export interface TimeoutReturn<T> {
+  returnedValue?: T;
+  exception?: Error;
+  timedOut: boolean;
+}
+
+/**
+ * Awaits on Promise with a timeout. Resolves on the passed promise resolving or
+ * rejecting, or on timeout.
  *
  * @param promise An existing Promise returning type T.
  * @param timeout A timeout value as a Duration; if the timeout is exceeded while
- *   waiting for the promise, the Promise this function returns will reject.
- * @returns In any case, a tuple with the first item being the T value or an
- *   error value, and the second item being true if the timeout was exceeded.
+ *   waiting for the promise, the Promise this function returns will resolve, but
+ *   with `timedOut` set.
+ * @returns A TimeoutReturn with the returned value, if applicable, an exception if
+ *   the promise rejected, or the timedOut set to true if it timed out.
  */
 export async function awaitWithTimeout<T>(
   promise: Promise<T>,
   timeout: Duration,
-): Promise<[T, boolean]> {
+): Promise<TimeoutReturn<T>> {
   let timeoutId: NodeJS.Timeout | undefined;
   const timeoutPromise = new Promise<T>((_, rej) => {
     timeoutId = setTimeout(() => rej(timeoutToken), timeout.milliseconds);
@@ -107,10 +119,17 @@ export async function awaitWithTimeout<T>(
   try {
     const value = await Promise.race([timeoutPromise, promise]);
     clearTimeout(timeoutId);
-    return [value, false];
+    return {
+      returnedValue: value,
+      timedOut: false,
+    };
   } catch (e) {
-    // The timeout passed.
+    const err: Error | symbol = e as unknown as Error | symbol;
+    // The timeout passed or the promise rejected.
     clearTimeout(timeoutId);
-    throw [e, e === timeoutToken];
+    return {
+      exception: (err !== timeoutToken ? err : undefined) as Error | undefined,
+      timedOut: err === timeoutToken,
+    };
   }
 }

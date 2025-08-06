@@ -83,12 +83,15 @@ describe('utils', () => {
         Duration.from({seconds: 1}),
       );
       fakeTimers.tick(500);
-      try {
-        const result = await awaitPromise;
-        assert.deepStrictEqual(result, [testString, false]);
-      } catch (e) {
-        assert.strictEqual(e, null, 'timeout was triggered, improperly');
-      }
+
+      const result = await awaitPromise;
+      assert.strictEqual(result.returnedValue, testString);
+      assert.strictEqual(result.exception, undefined);
+      assert.strictEqual(
+        result.timedOut,
+        false,
+        'timeout was triggered, improperly',
+      );
     });
 
     it('handles non-timeout errors properly', async () => {
@@ -104,12 +107,14 @@ describe('utils', () => {
         Duration.from({seconds: 1}),
       );
       fakeTimers.tick(500);
-      try {
-        const result = await awaitPromise;
-        assert.strictEqual(result, null, 'non-error was triggered, improperly');
-      } catch (e) {
-        assert.deepStrictEqual(e, [testString, false]);
-      }
+
+      const result = await awaitPromise;
+      assert.strictEqual(
+        result.exception,
+        testString,
+        'non-error was triggered, improperly',
+      );
+      assert.strictEqual(result.timedOut, false);
     });
 
     it('handles timeout properly', async () => {
@@ -125,17 +130,15 @@ describe('utils', () => {
         Duration.from({seconds: 1}),
       );
       fakeTimers.tick(1500);
-      try {
-        const result = await awaitPromise;
-        assert.strictEqual(
-          result,
-          null,
-          'timeout was not triggered, improperly',
-        );
-      } catch (e) {
-        const err: unknown[] = e as unknown[];
-        assert.strictEqual(err[1], true);
-      }
+
+      const result = await awaitPromise;
+      assert.strictEqual(
+        result.timedOut,
+        true,
+        'timeout was not triggered, improperly',
+      );
+
+      assert.strictEqual(result.timedOut, true);
     });
   });
 });

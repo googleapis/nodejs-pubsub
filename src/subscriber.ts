@@ -991,14 +991,18 @@ export class Subscriber extends EventEmitter {
         this._inventory.on('empty', r);
       });
 
-      try {
-        await awaitWithTimeout(emptyPromise, waitTimeout);
-      } catch (e) {
+      const resultCompletion = await awaitWithTimeout(
+        emptyPromise,
+        waitTimeout,
+      );
+      if (resultCompletion.exception || resultCompletion.timedOut) {
         // Don't try to deal with errors at this point, just warn-log.
-        const err = e as [unknown, boolean];
-        if (err[1] === false) {
+        if (resultCompletion.timedOut === false) {
           // This wasn't a timeout.
-          logs.debug.warn('Error during Subscriber.close(): %j', err[0]);
+          logs.debug.warn(
+            'Error during Subscriber.close(): %j',
+            resultCompletion.exception,
+          );
         }
       }
     }
@@ -1019,14 +1023,15 @@ export class Subscriber extends EventEmitter {
 
     // Wait for user callbacks to complete.
     const flushCompleted = this._waitForFlush();
-    try {
-      await awaitWithTimeout(flushCompleted, timeout);
-    } catch (e) {
+    const flushResult = await awaitWithTimeout(flushCompleted, timeout);
+    if (flushResult.exception || flushResult.timedOut) {
       // Don't try to deal with errors at this point, just warn-log.
-      const err = e as [unknown, boolean];
-      if (err[1] === false) {
+      if (flushResult.timedOut === false) {
         // This wasn't a timeout.
-        logs.debug.warn('Error during Subscriber.close(): %j', err[0]);
+        logs.debug.warn(
+          'Error during Subscriber.close(): %j',
+          flushResult.exception,
+        );
       }
     }
 
