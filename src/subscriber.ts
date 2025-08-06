@@ -932,6 +932,23 @@ export class Subscriber extends EventEmitter {
     return AckResponses.Success;
   }
 
+  async #awaitTimeoutAndCheck(
+    promise: Promise<void>,
+    timeout: Duration,
+  ): Promise<void> {
+    const result = await awaitWithTimeout(promise, timeout);
+    if (result.exception || result.timedOut) {
+      // Don't try to deal with errors at this point, just warn-log.
+      if (result.timedOut === false) {
+        // This wasn't a timeout.
+        logs.debug.warn(
+          'Error during Subscriber.close(): %j',
+          result.exception,
+        );
+      }
+    }
+  }
+
   /**
    * Closes the subscriber, stopping the reception of new messages and shutting
    * down the underlying stream. The behavior of the returned Promise will depend
@@ -987,24 +1004,11 @@ export class Subscriber extends EventEmitter {
     ) {
       const waitTimeout = timeout.subtract(finalNackTimeout);
 
-      const emptyPromise = new Promise(r => {
+      const emptyPromise = new Promise<void>(r => {
         this._inventory.on('empty', r);
       });
 
-      const resultCompletion = await awaitWithTimeout(
-        emptyPromise,
-        waitTimeout,
-      );
-      if (resultCompletion.exception || resultCompletion.timedOut) {
-        // Don't try to deal with errors at this point, just warn-log.
-        if (resultCompletion.timedOut === false) {
-          // This wasn't a timeout.
-          logs.debug.warn(
-            'Error during Subscriber.close(): %j',
-            resultCompletion.exception,
-          );
-        }
-      }
+      await this.#awaitTimeoutAndCheck(emptyPromise, waitTimeout);
     }
 
     // Now we head into immediate shutdown mode with what time is left.
@@ -1023,17 +1027,7 @@ export class Subscriber extends EventEmitter {
 
     // Wait for user callbacks to complete.
     const flushCompleted = this._waitForFlush();
-    const flushResult = await awaitWithTimeout(flushCompleted, timeout);
-    if (flushResult.exception || flushResult.timedOut) {
-      // Don't try to deal with errors at this point, just warn-log.
-      if (flushResult.timedOut === false) {
-        // This wasn't a timeout.
-        logs.debug.warn(
-          'Error during Subscriber.close(): %j',
-          flushResult.exception,
-        );
-      }
-    }
+    await this.#awaitTimeoutAndCheck(flushCompleted, timeout);
 
     // Clean up OTel spans for any remaining messages.
     remaining.forEach(m => {
