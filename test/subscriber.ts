@@ -206,6 +206,8 @@ describe('Subscriber', () => {
   let Subscriber: typeof s.Subscriber;
   let subscriber: s.Subscriber;
 
+  let fakeLog: FakeLog | undefined;
+
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     fakeProjectify = {
@@ -243,6 +245,8 @@ describe('Subscriber', () => {
   });
 
   afterEach(async () => {
+    fakeLog?.remove();
+    fakeLog = undefined;
     sandbox.restore();
     await subscriber.close();
     tracing.setGloballyEnabled(false);
@@ -441,7 +445,7 @@ describe('Subscriber', () => {
     });
 
     it('should log on ack completion', async () => {
-      const fakeLog = new FakeLog(s.logs.ackNack);
+      fakeLog = new FakeLog(s.logs.ackNack);
 
       await subscriber.ack(message);
 
@@ -459,7 +463,7 @@ describe('Subscriber', () => {
 
       message.received = 0;
       sandbox.stub(histogram, 'percentile').withArgs(99).returns(10);
-      const fakeLog = new FakeLog(s.logs.slowAck);
+      fakeLog = new FakeLog(s.logs.slowAck);
 
       await subscriber.ack(message);
 
@@ -926,7 +930,7 @@ describe('Subscriber', () => {
     });
 
     it('should log on ack completion', async () => {
-      const fakeLog = new FakeLog(s.logs.ackNack);
+      fakeLog = new FakeLog(s.logs.ackNack);
 
       await subscriber.nack(message);
 

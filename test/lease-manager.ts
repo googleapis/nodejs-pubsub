@@ -108,6 +108,8 @@ describe('LeaseManager', () => {
   let LeaseManager: typeof leaseTypes.LeaseManager;
   let leaseManager: leaseTypes.LeaseManager;
 
+  let fakeLog: FakeLog | undefined;
+
   before(() => {
     LeaseManager = proxyquire('../src/lease-manager.js', {
       os: fakeos,
@@ -121,6 +123,7 @@ describe('LeaseManager', () => {
   });
 
   afterEach(() => {
+    fakeLog?.remove();
     leaseManager.clear();
     sandbox.restore();
   });
@@ -197,20 +200,20 @@ describe('LeaseManager', () => {
       fakeMessage.id = 'a';
       fakeMessage.ackId = 'b';
 
-      const fakeLog = new FakeLog(leaseTypes.logs.callbackDelivery);
+      fakeLog = new FakeLog(leaseTypes.logs.callbackDelivery);
 
       leaseManager.setOptions({
         allowExcessMessages: true,
       });
 
       subscriber.on('message', () => {
-        assert.strictEqual(fakeLog.called, true);
+        assert.strictEqual(fakeLog!.called, true);
         assert.strictEqual(
-          fakeLog.fields!.severity,
+          fakeLog!.fields!.severity,
           loggingUtils.LogSeverity.INFO,
         );
-        assert.strictEqual(fakeLog.args![1] as string, 'a');
-        assert.strictEqual(fakeLog.args![2] as string, 'b');
+        assert.strictEqual(fakeLog!.args![1] as string, 'a');
+        assert.strictEqual(fakeLog!.args![2] as string, 'b');
         done();
       });
 
@@ -222,7 +225,7 @@ describe('LeaseManager', () => {
       fakeMessage.id = 'a';
       fakeMessage.ackId = 'b';
 
-      const fakeLog = new FakeLog(leaseTypes.logs.callbackExceptions);
+      fakeLog = new FakeLog(leaseTypes.logs.callbackExceptions);
 
       leaseManager.setOptions({
         allowExcessMessages: true,
@@ -285,7 +288,7 @@ describe('LeaseManager', () => {
       const pendingStub = sandbox.stub(leaseManager, 'pending');
       pendingStub.get(() => 0);
       leaseManager.setOptions({allowExcessMessages: false});
-      const fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
+      fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
 
       leaseManager.add(fakeMessage);
       assert.strictEqual(fakeLog.called, true);
@@ -392,7 +395,7 @@ describe('LeaseManager', () => {
         const removeStub = sandbox.stub(leaseManager, 'remove');
         const modAckStub = sandbox.stub(goodMessage, 'modAck');
 
-        const fakeLog = new FakeLog(leaseTypes.logs.expiry);
+        fakeLog = new FakeLog(leaseTypes.logs.expiry);
 
         leaseManager.add(goodMessage as {} as Message);
         clock.tick(halfway);
@@ -474,7 +477,7 @@ describe('LeaseManager', () => {
     });
 
     it('should log if it was full and is now empty', () => {
-      const fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
+      fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
       const pendingStub = sandbox.stub(leaseManager, 'pending');
       pendingStub.get(() => 0);
       leaseManager.add(new FakeMessage() as {} as Message);
@@ -613,7 +616,7 @@ describe('LeaseManager', () => {
       const pending = new FakeMessage() as {} as Message;
 
       leaseManager.setOptions({allowExcessMessages: false, maxMessages: 1});
-      const fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
+      fakeLog = new FakeLog(leaseTypes.logs.subscriberFlowControl);
 
       leaseManager.add(temp);
       leaseManager.add(pending);
