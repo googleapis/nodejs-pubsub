@@ -1362,11 +1362,6 @@ export class Subscriber extends EventEmitter {
       promises.push(this._modAcks.onDrain());
     }
 
-    if (!promises.length) {
-      // Nothing to wait for.
-      return;
-    }
-
     // Wait for the flush promises.
     await Promise.all(promises);
   }
