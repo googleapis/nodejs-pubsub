@@ -83,7 +83,7 @@ export interface SubscriberCloseOptions {
  * Specifies how long before the final close timeout, in WaitForProcessing mode,
  * that we should give up and start shutting down cleanly.
  */
-const finalNackTimeout = Duration.from({seconds: 1});
+const FINAL_NACK_TIMEOUT = Duration.from({seconds: 1});
 
 /**
  * Thrown when an error is detected in an ack/nack/modack call, when
@@ -982,13 +982,13 @@ export class Subscriber extends EventEmitter {
     );
 
     // If the user specified a zero timeout, just bail immediately.
-    if (Math.floor(timeout.milliseconds) === 0) {
+    if (!timeout.milliseconds) {
       this._inventory.clear();
       return;
     }
 
     // Warn the user if the timeout is too short for NackImmediately.
-    if (Duration.compare(timeout, finalNackTimeout) < 0) {
+    if (Duration.compare(timeout, FINAL_NACK_TIMEOUT) < 0) {
       logs.debug.warn(
         'Subscriber.close() timeout is less than the final shutdown time (%i ms). This may result in lost nacks.',
         timeout.milliseconds,
@@ -1002,7 +1002,7 @@ export class Subscriber extends EventEmitter {
       behavior === SubscriberCloseBehaviors.WaitForProcessing &&
       !this._inventory.isEmpty
     ) {
-      const waitTimeout = timeout.subtract(finalNackTimeout);
+      const waitTimeout = timeout.subtract(FINAL_NACK_TIMEOUT);
 
       const emptyPromise = new Promise<void>(r => {
         this._inventory.on('empty', r);
