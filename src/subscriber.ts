@@ -17,6 +17,7 @@
 import {DateStruct, PreciseDate} from '@google-cloud/precise-date';
 import {replaceProjectIdToken} from '@google-cloud/projectify';
 import {promisify} from '@google-cloud/promisify';
+import defer = require('p-defer');
 
 import {google} from '../protos/protos';
 import {Histogram} from './histogram';
@@ -27,8 +28,10 @@ import {Subscription} from './subscription';
 import {defaultOptions} from './default-options';
 import {SubscriberClient} from './v1';
 import * as tracing from './telemetry-tracing';
-import {Duration} from './temporal';
+import {Duration, atMost as durationAtMost} from './temporal';
 import {EventEmitter} from 'events';
+
+import {awaitWithTimeout} from './util';
 import {logs as baseLogs} from './logs';
 
 export {StatusError} from './message-stream';
@@ -41,6 +44,7 @@ export {StatusError} from './message-stream';
 export const logs = {
   slowAck: baseLogs.pubsub.sublog('slow-ack'),
   ackNack: baseLogs.pubsub.sublog('ack-nack'),
+  debug: baseLogs.pubsub.sublog('debug'),
 };
 
 export type PullResponse = google.pubsub.v1.IStreamingPullResponse;
@@ -56,6 +60,30 @@ export const AckResponses = {
   Other: 'OTHER' as const,
 };
 export type AckResponse = ValueOf<typeof AckResponses>;
+
+/**
+ * Enum values for behaviors of the Subscriber.close() method.
+ */
+export const SubscriberCloseBehaviors = {
+  NackImmediately: 'NACK' as const,
+  WaitForProcessing: 'WAIT' as const,
+};
+export type SubscriberCloseBehavior = ValueOf<typeof SubscriberCloseBehaviors>;
+
+/**
+ * Options to modify the behavior of the Subscriber.close() method. If
+ * none is passed, the default is SubscriberCloseBehaviors.Wait.
+ */
+export interface SubscriberCloseOptions {
+  behavior?: SubscriberCloseBehavior;
+  timeout?: Duration;
+}
+
+/**
+ * Specifies how long before the final close timeout, in WaitForProcessing mode,
+ * that we should give up and start shutting down cleanly.
+ */
+const FINAL_NACK_TIMEOUT = Duration.from({seconds: 1});
 
 /**
  * Thrown when an error is detected in an ack/nack/modack call, when
@@ -241,10 +269,12 @@ export class Message implements tracing.MessageWithAttributes {
   orderingKey?: string;
   publishTime: PreciseDate;
   received: number;
+  private _handledPromise: defer.DeferredPromise<void>;
   private _handled: boolean;
   private _length: number;
   private _subscriber: Subscriber;
   private _ackFailed?: AckError;
+  private _dispatched: boolean;
 
   /**
    * @private
@@ -378,7 +408,9 @@ export class Message implements tracing.MessageWithAttributes {
      */
     this.isExactlyOnceDelivery = sub.isExactlyOnceDelivery;
 
+    this._dispatched = false;
     this._handled = false;
+    this._handledPromise = defer<void>();
     this._length = this.data.length;
     this._subscriber = sub;
   }
@@ -390,6 +422,38 @@ export class Message implements tracing.MessageWithAttributes {
    */
   get length() {
     return this._length;
+  }
+
+  /**
+   * Resolves when the message has been handled fully; a handled message may
+   * not have any further operations performed on it.
+   *
+   * @private
+   */
+  get handledPromise(): Promise<void> {
+    return this._handledPromise.promise;
+  }
+
+  /**
+   * When this message is dispensed to user callback code, this should be called.
+   * The time between the dispatch and the handledPromise resolving is when the
+   * message is with the user.
+   *
+   * @private
+   */
+  dispatched(): void {
+    if (!this._dispatched) {
+      this.subSpans.processingStart(this._subscriber.name);
+      this._dispatched = true;
+    }
+  }
+
+  /**
+   * @private
+   * @returns True if this message has been dispatched to user callback code.
+   */
+  isDispatched(): boolean {
+    return this._dispatched;
   }
 
   /**
@@ -418,6 +482,7 @@ export class Message implements tracing.MessageWithAttributes {
       this.subSpans.ackCall();
       this.subSpans.processingEnd();
       void this._subscriber.ack(this);
+      this._handledPromise.resolve();
     }
   }
 
@@ -451,6 +516,8 @@ export class Message implements tracing.MessageWithAttributes {
       } catch (e) {
         this.ackFailed(e as AckError);
         throw e;
+      } finally {
+        this._handledPromise.resolve();
       }
     } else {
       return AckResponses.Invalid;
@@ -518,6 +585,7 @@ export class Message implements tracing.MessageWithAttributes {
       this.subSpans.nackCall();
       this.subSpans.processingEnd();
       void this._subscriber.nack(this);
+      this._handledPromise.resolve();
     }
   }
 
@@ -552,6 +620,8 @@ export class Message implements tracing.MessageWithAttributes {
       } catch (e) {
         this.ackFailed(e as AckError);
         throw e;
+      } finally {
+        this._handledPromise.resolve();
       }
     } else {
       return AckResponses.Invalid;
@@ -580,6 +650,18 @@ export class Message implements tracing.MessageWithAttributes {
  *     settings at the Cloud PubSub server and uses the less accurate method
  *     of only enforcing flow control at the client side.
  * @property {MessageStreamOptions} [streamingOptions] Streaming options.
+ *     If no options are passed, it behaves like `SubscriberCloseBehaviors.Wait`.
+ * @property {SubscriberCloseOptions} [options] Determines the basic behavior of the
+ *     close() function.
+ * @property {SubscriberCloseBehavior} [options.behavior] The behavior of the close operation.
+ *     - NackImmediately: Sends nacks for all messages held by the client library, and
+ *       wait for them to send.
+ *     - WaitForProcessing: Continues normal ack/nack and leasing processes until close
+ *       to the timeout, then switches to NackImmediately behavior to close down.
+ *     Use {@link SubscriberCloseBehaviors} for enum values.
+ * @property {Duration} [options.timeout] In the case of Timeout, the maximum duration
+ *     to wait for pending ack/nack requests to complete before resolving (or rejecting)
+ *     the promise.
  */
 export interface SubscriberOptions {
   minAckDeadline?: Duration;
@@ -589,6 +671,7 @@ export interface SubscriberOptions {
   flowControl?: FlowControlOptions;
   useLegacyFlowControl?: boolean;
   streamingOptions?: MessageStreamOptions;
+  closeOptions?: SubscriberCloseOptions;
 }
 
 const minAckDeadlineForExactlyOnceDelivery = Duration.from({seconds: 60});
@@ -849,11 +932,31 @@ export class Subscriber extends EventEmitter {
     return AckResponses.Success;
   }
 
+  async #awaitTimeoutAndCheck(
+    promise: Promise<void>,
+    timeout: Duration,
+  ): Promise<void> {
+    const result = await awaitWithTimeout(promise, timeout);
+    if (result.exception || result.timedOut) {
+      // Don't try to deal with errors at this point, just warn-log.
+      if (result.timedOut === false) {
+        // This wasn't a timeout.
+        logs.debug.warn(
+          'Error during Subscriber.close(): %j',
+          result.exception,
+        );
+      }
+    }
+  }
+
   /**
-   * Closes the subscriber. The returned promise will resolve once any pending
-   * acks/modAcks are finished.
+   * Closes the subscriber, stopping the reception of new messages and shutting
+   * down the underlying stream. The behavior of the returned Promise will depend
+   * on the closeOptions in the subscriber options.
    *
-   * @returns {Promise}
+   * @returns {Promise<void>} A promise that resolves when the subscriber is closed
+   *   and pending operations are flushed or the timeout is reached.
+   *
    * @private
    */
   async close(): Promise<void> {
@@ -861,12 +964,72 @@ export class Subscriber extends EventEmitter {
       return;
     }
 
+    // Always close the stream right away so we don't receive more messages.
     this.isOpen = false;
     this._stream.destroy();
+
+    const options = this._options.closeOptions;
+
+    // If no behavior is specified, default to Wait.
+    const behavior =
+      options?.behavior ?? SubscriberCloseBehaviors.WaitForProcessing;
+
+    // The timeout can't realistically be longer than the longest time we're willing
+    // to lease messages.
+    let timeout = durationAtMost(
+      options?.timeout ?? this.maxExtensionTime,
+      this.maxExtensionTime,
+    );
+
+    // If the user specified a zero timeout, just bail immediately.
+    if (!timeout.milliseconds) {
+      this._inventory.clear();
+      return;
+    }
+
+    // Warn the user if the timeout is too short for NackImmediately.
+    if (Duration.compare(timeout, FINAL_NACK_TIMEOUT) < 0) {
+      logs.debug.warn(
+        'Subscriber.close() timeout is less than the final shutdown time (%i ms). This may result in lost nacks.',
+        timeout.milliseconds,
+      );
+    }
+
+    // If we're in WaitForProcessing mode, then we first need to derive a NackImmediately
+    // timeout point. If everything finishes before then, we also want to go ahead and bail cleanly.
+    const shutdownStart = Date.now();
+    if (
+      behavior === SubscriberCloseBehaviors.WaitForProcessing &&
+      !this._inventory.isEmpty
+    ) {
+      const waitTimeout = timeout.subtract(FINAL_NACK_TIMEOUT);
+
+      const emptyPromise = new Promise<void>(r => {
+        this._inventory.on('empty', r);
+      });
+
+      await this.#awaitTimeoutAndCheck(emptyPromise, waitTimeout);
+    }
+
+    // Now we head into immediate shutdown mode with what time is left.
+    timeout = timeout.subtract({
+      milliseconds: Date.now() - shutdownStart,
+    });
+    if (timeout.milliseconds <= 0) {
+      // This probably won't work out, but go through the motions.
+      timeout = Duration.from({milliseconds: 0});
+    }
+
+    // Grab everything left in inventory. This includes messages that have already
+    // been dispatched to user callbacks.
     const remaining = this._inventory.clear();
+    remaining.forEach(m => m.nack());
 
-    await this._waitForFlush();
+    // Wait for user callbacks to complete.
+    const flushCompleted = this._waitForFlush();
+    await this.#awaitTimeoutAndCheck(flushCompleted, timeout);
 
+    // Clean up OTel spans for any remaining messages.
     remaining.forEach(m => {
       m.subSpans.shutdown();
       m.endParentSpan();
@@ -1173,21 +1336,23 @@ export class Subscriber extends EventEmitter {
    *
    * @private
    *
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   private async _waitForFlush(): Promise<void> {
     const promises: Array<Promise<void>> = [];
 
+    // Flush any batched requests immediately.
     if (this._acks.numPendingRequests) {
       promises.push(this._acks.onFlush());
-      await this._acks.flush('message count');
+      this._acks.flush('message count').catch(() => {});
     }
 
     if (this._modAcks.numPendingRequests) {
       promises.push(this._modAcks.onFlush());
-      await this._modAcks.flush('message count');
+      this._modAcks.flush('message count').catch(() => {});
     }
 
+    // Now, prepare the drain promises.
     if (this._acks.numInFlightRequests) {
       promises.push(this._acks.onDrain());
     }
@@ -1196,6 +1361,7 @@ export class Subscriber extends EventEmitter {
       promises.push(this._modAcks.onDrain());
     }
 
+    // Wait for the flush promises.
     await Promise.all(promises);
   }
 }

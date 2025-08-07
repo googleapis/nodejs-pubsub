@@ -415,6 +415,8 @@ describe('MessageQueues', () => {
       messages.forEach(message => ackQueue.add(message as Message));
       await ackQueue.flush('logtest');
 
+      fakeLog.remove();
+
       assert.strictEqual(fakeLog.called, true);
       assert.strictEqual(
         fakeLog.fields!.severity,
@@ -673,6 +675,8 @@ describe('MessageQueues', () => {
 
       messages.forEach(message => modAckQueue.add(message as Message));
       await modAckQueue.flush('logtest');
+
+      fakeLog.remove();
 
       assert.strictEqual(fakeLog.called, true);
       assert.strictEqual(

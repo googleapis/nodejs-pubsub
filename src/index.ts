@@ -143,6 +143,8 @@ export {
   SubscriptionMetadata,
   SubscriptionOptions,
   SubscriptionCloseCallback,
+  SubscriptionCloseOptions,
+  SubscriptionCloseBehaviors,
   CreateSubscriptionOptions,
   CreateSubscriptionCallback,
   CreateSubscriptionResponse,
