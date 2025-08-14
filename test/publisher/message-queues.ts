@@ -184,6 +184,8 @@ describe('Message Queues', () => {
         sandbox.stub(topic, 'request');
         const fakeLog = new FakeLog(q.logs.publishBatch);
         void queue._publish(messages, callbacks, 0, 'test');
+        fakeLog.remove();
+
         assert.strictEqual(fakeLog.called, true);
         assert.strictEqual(
           fakeLog.fields!.severity,

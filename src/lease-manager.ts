@@ -145,6 +145,7 @@ export class LeaseManager extends EventEmitter {
    */
   clear(): Message[] {
     const wasFull = this.isFull();
+    const wasEmpty = this.isEmpty();
 
     if (this.pending > 0) {
       logs.subscriberFlowControl.info(
@@ -161,11 +162,15 @@ export class LeaseManager extends EventEmitter {
     if (wasFull) {
       process.nextTick(() => this.emit('free'));
     }
+    if (!wasEmpty && this.isEmpty()) {
+      process.nextTick(() => this.emit('empty'));
+    }
 
     this._cancelExtension();
 
     return remaining;
   }
+
   /**
    * Indicates if we're at or over capacity.
    *
@@ -176,6 +181,17 @@ export class LeaseManager extends EventEmitter {
     const {maxBytes, maxMessages} = this._options;
     return this.size >= maxMessages! || this.bytes >= maxBytes!;
   }
+
+  /**
+   * True if we have no messages in leasing.
+   *
+   * @returns {boolean}
+   * @private
+   */
+  isEmpty(): boolean {
+    return this._messages.size === 0;
+  }
+
   /**
    * Removes a message from the inventory. Stopping the deadline extender if no
    * messages are left over.
@@ -214,6 +230,10 @@ export class LeaseManager extends EventEmitter {
       }
 
       this._dispense(this._pending.shift()!);
+    }
+
+    if (this.isEmpty()) {
+      this.emit('empty');
     }
 
     if (this.size === 0 && this._isLeasing) {
@@ -265,6 +285,7 @@ export class LeaseManager extends EventEmitter {
     if (this._subscriber.isOpen) {
       message.subSpans.flowEnd();
       process.nextTick(() => {
+        message.dispatched();
         logs.callbackDelivery.info(
           'message (ID %s, ackID %s) delivery to user callbacks',
           message.id,
