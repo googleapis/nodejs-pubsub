@@ -4,6 +4,30 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v5.1.0...v5.2.0) (2025-08-07)
+
+
+### Features
+
+* Ad-hoc, targeted debug logging ([#2062](https://github.com/googleapis/nodejs-pubsub/issues/2062)) ([dce83c7](https://github.com/googleapis/nodejs-pubsub/commit/dce83c71bba54388334f4f73115e7b8da6fbdb67))
+* Add timeout option and graceful shutdown to Subscription.close() ([#2068](https://github.com/googleapis/nodejs-pubsub/issues/2068)) ([8dee024](https://github.com/googleapis/nodejs-pubsub/commit/8dee0248081f7156e42d79c6067902583586faf2))
+
+## [5.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v5.0.0...v5.1.0) (2025-06-04)
+
+
+### Features
+
+* Add SchemaViolationReason to IngestionFailureEvent ([#2045](https://github.com/googleapis/nodejs-pubsub/issues/2045)) ([3348e3e](https://github.com/googleapis/nodejs-pubsub/commit/3348e3e6195405608e380e5291e6107bcba855cb))
+* Use specific W3CTraceContextPropagator for OTel ([#2036](https://github.com/googleapis/nodejs-pubsub/issues/2036)) ([c9a9656](https://github.com/googleapis/nodejs-pubsub/commit/c9a9656b8ae4b6e26c0a90c6ea53f5387e1bb846))
+
+
+### Bug Fixes
+
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.33.0 ([#2038](https://github.com/googleapis/nodejs-pubsub/issues/2038)) ([4eb46c5](https://github.com/googleapis/nodejs-pubsub/commit/4eb46c56a941cfb4616785269cc97d9eeca7f174))
+* **deps:** Update dependency @opentelemetry/semantic-conventions to ~1.34.0 ([#2048](https://github.com/googleapis/nodejs-pubsub/issues/2048)) ([1072c2d](https://github.com/googleapis/nodejs-pubsub/commit/1072c2ddbe2445bac92328e58fbf76e45b464e50))
+* **deps:** Update dependency protobufjs to ~7.5.0 ([#2041](https://github.com/googleapis/nodejs-pubsub/issues/2041)) ([b65eaeb](https://github.com/googleapis/nodejs-pubsub/commit/b65eaebdc54974a81f60f1901e2bd68c2bfd9b92))
+* Set messaging.operation in createAttributes ([#2030](https://github.com/googleapis/nodejs-pubsub/issues/2030)) ([b8d513a](https://github.com/googleapis/nodejs-pubsub/commit/b8d513a3901ae6c160c3f797ed0a41fc0d697fac))
+
 ## [5.0.0](https://github.com/googleapis/nodejs-pubsub/compare/v4.11.0...v5.0.0) (2025-04-28)
 
 

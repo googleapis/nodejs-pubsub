@@ -36,6 +36,8 @@ import {Subscription} from '../src/subscription';
 import {SpanKind} from '@opentelemetry/api';
 import {Duration} from '../src';
 import * as tracing from '../src/telemetry-tracing';
+import {FakeLog, TestUtils} from './test-utils';
+import {loggingUtils} from 'google-gax';
 
 type PullResponse = google.pubsub.v1.IStreamingPullResponse;
 
@@ -102,6 +104,11 @@ class FakeLeaseManager extends EventEmitter {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove(message: s.Message): void {}
+
+  _isEmpty = true;
+  get isEmpty() {
+    return this._isEmpty;
+  }
 }
 
 class FakeQueue {
@@ -178,6 +185,7 @@ interface SubInternals {
   _inventory: FakeLeaseManager;
   _onData(response: PullResponse): void;
   _discardMessage(message: s.Message): void;
+  _waitForFlush(timeout?: Duration): Promise<void>;
 }
 
 function getSubInternals(sub: s.Subscriber) {
@@ -197,6 +205,8 @@ describe('Subscriber', () => {
   // tslint:disable-next-line variable-name
   let Subscriber: typeof s.Subscriber;
   let subscriber: s.Subscriber;
+
+  let fakeLog: FakeLog | undefined;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -235,6 +245,8 @@ describe('Subscriber', () => {
   });
 
   afterEach(async () => {
+    fakeLog?.remove();
+    fakeLog = undefined;
     sandbox.restore();
     await subscriber.close();
     tracing.setGloballyEnabled(false);
@@ -432,6 +444,37 @@ describe('Subscriber', () => {
       assert.strictEqual(subscriber.ackDeadline, fakeDeadline);
     });
 
+    it('should log on ack completion', async () => {
+      fakeLog = new FakeLog(s.logs.ackNack);
+
+      await subscriber.ack(message);
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1], message.id);
+    });
+
+    it('should log if the ack time is longer than the 99th percentile', async () => {
+      const histogram: FakeHistogram = stubs.get('histogram');
+      TestUtils.useFakeTimers(sandbox, Date.now());
+
+      message.received = 0;
+      sandbox.stub(histogram, 'percentile').withArgs(99).returns(10);
+      fakeLog = new FakeLog(s.logs.slowAck);
+
+      await subscriber.ack(message);
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1], message.id);
+    });
+
     it('should bound ack deadlines if min/max are specified', async () => {
       const histogram: FakeHistogram = stubs.get('histogram');
       const now = Date.now();
@@ -572,6 +615,10 @@ describe('Subscriber', () => {
       const inventory: FakeLeaseManager = stubs.get('inventory');
       const stub = sandbox.stub(inventory, 'clear').returns([message]);
 
+      // The leaser would've immediately called dispatched(). Pretend that
+      // we're user code.
+      message.ack();
+
       await subscriber.close();
       assert.strictEqual(stub.callCount, 1);
       assert.strictEqual(shutdownStub.callCount, 1);
@@ -621,7 +668,7 @@ describe('Subscriber', () => {
         assert.strictEqual(modAckFlush.callCount, 1);
       });
 
-      it('should resolve if no messages are pending', () => {
+      it('should resolve if no messages are pending', async () => {
         const ackQueue: FakeAckQueue = stubs.get('ackQueue');
 
         sandbox.stub(ackQueue, 'flush').rejects();
@@ -633,7 +680,7 @@ describe('Subscriber', () => {
         sandbox.stub(modAckQueue, 'flush').rejects();
         sandbox.stub(modAckQueue, 'onFlush').rejects();
 
-        return subscriber.close();
+        await subscriber.close();
       });
 
       it('should wait for in-flight messages to drain', async () => {
@@ -648,6 +695,179 @@ describe('Subscriber', () => {
 
         assert.strictEqual(ackOnDrain.callCount, 1);
         assert.strictEqual(modAckOnDrain.callCount, 1);
+      });
+    });
+
+    describe('close with timeout', () => {
+      let clock: sinon.SinonFakeTimers;
+      let inventory: FakeLeaseManager;
+      let ackQueue: FakeAckQueue;
+      let modAckQueue: FakeModAckQueue;
+      let subInternals: SubInternals;
+
+      beforeEach(() => {
+        clock = sandbox.useFakeTimers();
+        inventory = stubs.get('inventory');
+        ackQueue = stubs.get('ackQueue');
+        modAckQueue = stubs.get('modAckQueue');
+
+        // Ensure subscriber is open before each test
+        if (!subscriber.isOpen) {
+          subscriber.open();
+        }
+
+        subInternals = subscriber as unknown as SubInternals;
+      });
+
+      afterEach(() => {
+        clock.restore();
+      });
+
+      it('should do nothing if isOpen = false', async () => {
+        const destroySpy = sandbox.spy(subInternals._stream, 'destroy');
+        subscriber.isOpen = false;
+        await subscriber.close();
+        assert.strictEqual(destroySpy.callCount, 0);
+      });
+
+      it('should clear inventory and bail for timeout = 0', async () => {
+        const clearSpy = sandbox.spy(inventory, 'clear');
+        const onSpy = sandbox.spy(inventory, 'on');
+        subscriber.setOptions({
+          closeOptions: {
+            timeout: Duration.from({milliseconds: 0}),
+          },
+        });
+        await subscriber.close();
+        assert.strictEqual(clearSpy.callCount, 1);
+        assert.strictEqual(onSpy.callCount, 0);
+      });
+
+      it('should not wait for an empty inventory in NackImmediately', async () => {
+        const onSpy = sandbox.spy(inventory, 'on');
+        subscriber.setOptions({
+          closeOptions: {
+            behavior: s.SubscriberCloseBehaviors.NackImmediately,
+            timeout: Duration.from({milliseconds: 100}),
+          },
+        });
+        await subscriber.close();
+        assert.strictEqual(onSpy.callCount, 0);
+      });
+
+      it('should not wait for an empty inventory in WaitForProcessing if empty', async () => {
+        const onSpy = sandbox.spy(inventory, 'on');
+        subscriber.setOptions({
+          closeOptions: {
+            behavior: s.SubscriberCloseBehaviors.WaitForProcessing,
+            timeout: Duration.from({milliseconds: 100}),
+          },
+        });
+        await subscriber.close();
+        assert.strictEqual(onSpy.callCount, 0);
+      });
+
+      it('should wait for an empty inventory in WaitForProcessing if not empty', async () => {
+        inventory._isEmpty = false;
+        const onSpy = sandbox.spy(inventory, 'on');
+        subscriber.setOptions({
+          closeOptions: {
+            behavior: s.SubscriberCloseBehaviors.WaitForProcessing,
+            timeout: Duration.from({seconds: 2}),
+          },
+        });
+        const prom = subscriber.close();
+        assert.strictEqual(onSpy.callCount, 1);
+        clock.tick(3000);
+        await prom;
+      });
+
+      it('should nack remaining messages if timeout is non-zero', async () => {
+        const mockMessages = [
+          new Message(subscriber, RECEIVED_MESSAGE),
+          new Message(subscriber, RECEIVED_MESSAGE),
+        ];
+        sandbox.stub(inventory, 'clear').returns(mockMessages);
+        const nackSpy = sandbox.spy(subscriber, 'nack');
+
+        subscriber.setOptions({
+          closeOptions: {
+            timeout: Duration.from({seconds: 5}),
+          },
+        });
+        const prom = subscriber.close();
+        clock.tick(6000);
+        await prom;
+
+        assert.strictEqual(nackSpy.callCount, mockMessages.length);
+        mockMessages.forEach((msg, i) => {
+          assert.strictEqual(nackSpy.getCall(i).args[0], msg);
+        });
+      });
+
+      it('should wait for drain promises and respect timeout', async () => {
+        const ackDrainDeferred = defer<void>();
+        const modAckDrainDeferred = defer<void>();
+        sandbox.stub(ackQueue, 'onDrain').returns(ackDrainDeferred.promise);
+        sandbox
+          .stub(modAckQueue, 'onDrain')
+          .returns(modAckDrainDeferred.promise);
+        ackQueue.numInFlightRequests = 1; // Ensure drain is waited for
+        modAckQueue.numInFlightRequests = 1;
+
+        let closed = false;
+        subscriber.setOptions({
+          closeOptions: {
+            behavior: s.SubscriberCloseBehaviors.NackImmediately,
+            timeout: Duration.from({milliseconds: 100}),
+          },
+        });
+        const prom = subscriber.close().then(() => {
+          closed = true;
+        });
+
+        // Advance time past the timeout
+        clock.tick(200);
+        await prom;
+
+        // Promise should resolve even though drains haven't
+        assert.strictEqual(closed, true);
+
+        // Resolve drains afterwards to prevent hanging tests if logic fails
+        ackDrainDeferred.resolve();
+        modAckDrainDeferred.resolve();
+      });
+
+      it('should resolve early if drain completes before timeout', async () => {
+        const ackDrainDeferred = defer<void>();
+        const modAckDrainDeferred = defer<void>();
+        sandbox.stub(ackQueue, 'onDrain').returns(ackDrainDeferred.promise);
+        sandbox
+          .stub(modAckQueue, 'onDrain')
+          .returns(modAckDrainDeferred.promise);
+        ackQueue.numInFlightRequests = 1; // Ensure drain is waited for
+        modAckQueue.numInFlightRequests = 1;
+
+        let closed = false;
+        subscriber.setOptions({
+          closeOptions: {
+            timeout: Duration.from({milliseconds: 100}),
+          },
+        });
+        const prom = subscriber.close().then(() => {
+          closed = true;
+        });
+
+        // Resolve drains quickly
+        ackDrainDeferred.resolve();
+        modAckDrainDeferred.resolve();
+
+        // Advance time slightly, but less than the timeout
+        clock.tick(50);
+        await prom;
+
+        // Promise should resolve.
+        assert.strictEqual(closed, true);
       });
     });
   });
@@ -707,6 +927,19 @@ describe('Subscriber', () => {
 
       assert.strictEqual(msg, message);
       assert.strictEqual(deadline, 0);
+    });
+
+    it('should log on ack completion', async () => {
+      fakeLog = new FakeLog(s.logs.ackNack);
+
+      await subscriber.nack(message);
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1], message.id);
     });
 
     it('should remove the message from the inventory', async () => {
@@ -804,6 +1037,10 @@ describe('Subscriber', () => {
         delete addMsgAny.subSpans;
         delete msgAny.parentSpan;
         delete msgAny.subSpans;
+
+        // Delete baggage for discovering unprocessed messages.
+        delete addMsgAny._handledPromise;
+        delete msgAny._handledPromise;
 
         assert.deepStrictEqual(addMsg, message);
 

@@ -17,7 +17,7 @@
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
-import {CallOptions, GoogleError, Status} from 'google-gax';
+import {CallOptions, GoogleError, loggingUtils, Status} from 'google-gax';
 import * as sinon from 'sinon';
 import * as uuid from 'uuid';
 import defer = require('p-defer');
@@ -26,7 +26,7 @@ import * as messageTypes from '../src/message-queues';
 import {BatchError} from '../src/message-queues';
 import {Message, Subscriber} from '../src/subscriber';
 import {DebugMessage} from '../src/debug';
-import {TestUtils} from './test-utils';
+import {FakeLog, TestUtils} from './test-utils';
 
 class FakeClient {
   async acknowledge(
@@ -80,6 +80,9 @@ function fakeMessage() {
 
 class MessageQueue extends messageTypes.MessageQueue {
   batches: messageTypes.QueuedMessages[] = [];
+  protected getType(): string {
+    return 'test';
+  }
   async _sendBatch(
     batch: messageTypes.QueuedMessages,
   ): Promise<messageTypes.QueuedMessages> {
@@ -211,7 +214,7 @@ describe('MessageQueues', () => {
 
         messageQueue.setOptions({maxMilliseconds: delay});
         void messageQueue.add(new FakeMessage() as Message);
-        void messageQueue.flush();
+        void messageQueue.flush('test');
         clock.tick(delay);
 
         assert.strictEqual(spy.callCount, 1);
@@ -219,14 +222,14 @@ describe('MessageQueues', () => {
 
       it('should remove the messages from the queue', () => {
         void messageQueue.add(new FakeMessage() as Message);
-        void messageQueue.flush();
+        void messageQueue.flush('test');
 
         assert.strictEqual(messageQueue.numPendingRequests, 0);
       });
 
       it('should remove the bytes of messages from the queue', () => {
         void messageQueue.add(new FakeMessage() as Message);
-        void messageQueue.flush();
+        void messageQueue.flush('test');
 
         assert.strictEqual(messageQueue.bytes, 0);
       });
@@ -236,7 +239,7 @@ describe('MessageQueues', () => {
         const deadline = 10;
 
         void messageQueue.add(message as Message, deadline);
-        void messageQueue.flush();
+        void messageQueue.flush('test');
 
         const [batch] = messageQueue.batches;
         assert.strictEqual(batch[0].message.ackId, message.ackId);
@@ -254,12 +257,12 @@ describe('MessageQueues', () => {
           done();
         });
 
-        void messageQueue.flush();
+        void messageQueue.flush('test');
       });
 
       it('should resolve any pending promises', async () => {
         const promise = messageQueue.onFlush();
-        setImmediate(async () => await messageQueue.flush());
+        setImmediate(async () => await messageQueue.flush('test'));
         return promise;
       });
 
@@ -279,7 +282,7 @@ describe('MessageQueues', () => {
           .onDrain()
           .then(() => log.push('drain1'));
         void messageQueue.add(message as Message, deadline);
-        void messageQueue.flush();
+        void messageQueue.flush('test');
         assert.deepStrictEqual(log, ['send:start']);
         sendDone.resolve();
         await messageQueue.onDrain().then(() => log.push('drain2'));
@@ -397,10 +400,29 @@ describe('MessageQueues', () => {
       };
 
       messages.forEach(message => ackQueue.add(message as Message));
-      await ackQueue.flush();
+      await ackQueue.flush('test');
 
       const [reqOpts] = stub.lastCall.args;
       assert.deepStrictEqual(reqOpts, expectedReqOpts);
+    });
+
+    it('should make a log message about batch sends', async () => {
+      const messages = [new FakeMessage()];
+
+      sandbox.stub(fakeSubscriber.client, 'acknowledge').resolves();
+      const fakeLog = new FakeLog(messageTypes.logs.ackBatch);
+
+      messages.forEach(message => ackQueue.add(message as Message));
+      await ackQueue.flush('logtest');
+
+      fakeLog.remove();
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1] as string, 'logtest');
     });
 
     it('should send call options', async () => {
@@ -410,7 +432,7 @@ describe('MessageQueues', () => {
         .resolves();
 
       ackQueue.setOptions({callOptions: fakeCallOptions});
-      await ackQueue.flush();
+      await ackQueue.flush('test');
 
       const [, callOptions] = stub.lastCall.args;
       assert.strictEqual(callOptions, fakeCallOptions);
@@ -449,7 +471,7 @@ describe('MessageQueues', () => {
       });
 
       messages.forEach(message => ackQueue.add(message as Message));
-      void ackQueue.flush();
+      void ackQueue.flush('test');
     });
 
     // The analogous modAck version is very similar, so please sync changes.
@@ -464,7 +486,7 @@ describe('MessageQueues', () => {
 
         const message = new FakeMessage() as Message;
         const completion = ackQueue.add(message);
-        await ackQueue.flush();
+        await ackQueue.flush('test');
         assert.strictEqual(stub.callCount, 1);
         await assert.doesNotReject(completion);
       });
@@ -484,7 +506,7 @@ describe('MessageQueues', () => {
         const proms = ackQueue.requests.map(
           (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
-        await ackQueue.flush();
+        await ackQueue.flush('test');
         const results = await Promise.allSettled(proms);
         const oneSuccess = {status: 'fulfilled', value: undefined};
         assert.deepStrictEqual(results, [oneSuccess, oneSuccess, oneSuccess]);
@@ -507,7 +529,7 @@ describe('MessageQueues', () => {
           (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
         void proms.shift();
-        await ackQueue.flush();
+        await ackQueue.flush('test');
 
         const results = await Promise.allSettled<void>(proms);
         assert.strictEqual(results[0].status, 'rejected');
@@ -537,7 +559,7 @@ describe('MessageQueues', () => {
           ackQueue.requests[0].responsePromise!.promise,
           ackQueue.requests[2].responsePromise!.promise,
         ];
-        await ackQueue.flush();
+        await ackQueue.flush('test');
 
         const results = await Promise.allSettled<void>(proms);
         assert.strictEqual(results[0].status, 'rejected');
@@ -571,7 +593,7 @@ describe('MessageQueues', () => {
 
         sandbox.stub(fakeSubscriber.client, 'acknowledge').rejects(fakeError);
         void ackQueue.add(message);
-        await ackQueue.flush();
+        await ackQueue.flush('test');
 
         // Make sure the one handled by errorInfo was retried.
         assert.strictEqual(ackQueue.numInRetryRequests, 1);
@@ -593,7 +615,7 @@ describe('MessageQueues', () => {
 
       const message = new FakeMessage() as Message;
       const completion = ackQueue.add(message);
-      await ackQueue.flush();
+      await ackQueue.flush('test');
       assert.strictEqual(stub.callCount, 1);
       await completion;
     });
@@ -605,7 +627,7 @@ describe('MessageQueues', () => {
 
       const message = new FakeMessage() as Message;
       const completion = ackQueue.add(message);
-      await ackQueue.flush();
+      await ackQueue.flush('test');
       assert.strictEqual(stub.callCount, 1);
       await completion;
     });
@@ -639,10 +661,29 @@ describe('MessageQueues', () => {
       messages.forEach(message =>
         modAckQueue.add(message as Message, deadline),
       );
-      await modAckQueue.flush();
+      await modAckQueue.flush('test');
 
       const [reqOpts] = stub.lastCall.args;
       assert.deepStrictEqual(reqOpts, expectedReqOpts);
+    });
+
+    it('should make a log message about batch sends', async () => {
+      const messages = [new FakeMessage()];
+
+      sandbox.stub(fakeSubscriber.client, 'modifyAckDeadline').resolves();
+      const fakeLog = new FakeLog(messageTypes.logs.ackBatch);
+
+      messages.forEach(message => modAckQueue.add(message as Message));
+      await modAckQueue.flush('logtest');
+
+      fakeLog.remove();
+
+      assert.strictEqual(fakeLog.called, true);
+      assert.strictEqual(
+        fakeLog.fields!.severity,
+        loggingUtils.LogSeverity.INFO,
+      );
+      assert.strictEqual(fakeLog.args![1] as string, 'logtest');
     });
 
     it('should group ackIds by deadline', async () => {
@@ -682,7 +723,7 @@ describe('MessageQueues', () => {
       messages2.forEach(message =>
         modAckQueue.add(message as Message, deadline2),
       );
-      await modAckQueue.flush();
+      await modAckQueue.flush('test');
 
       const [reqOpts1] = stub.getCall(0).args;
       assert.deepStrictEqual(reqOpts1, expectedReqOpts1);
@@ -699,7 +740,7 @@ describe('MessageQueues', () => {
 
       modAckQueue.setOptions({callOptions: fakeCallOptions});
       await modAckQueue.add(new FakeMessage() as Message, 10);
-      await modAckQueue.flush();
+      await modAckQueue.flush('test');
 
       const [, callOptions] = stub.lastCall.args;
       assert.strictEqual(callOptions, fakeCallOptions);
@@ -741,7 +782,7 @@ describe('MessageQueues', () => {
       });
 
       messages.forEach(message => modAckQueue.add(message as Message));
-      void modAckQueue.flush();
+      void modAckQueue.flush('test');
     });
 
     describe('handle modAck responses when !isExactlyOnceDelivery', () => {
@@ -755,7 +796,7 @@ describe('MessageQueues', () => {
 
         const message = new FakeMessage() as Message;
         const completion = modAckQueue.add(message);
-        await modAckQueue.flush();
+        await modAckQueue.flush('test');
         assert.strictEqual(stub.callCount, 1);
         await assert.doesNotReject(completion);
       });
@@ -775,7 +816,7 @@ describe('MessageQueues', () => {
         const proms = modAckQueue.requests.map(
           (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
-        await modAckQueue.flush();
+        await modAckQueue.flush('test');
         const results = await Promise.allSettled(proms);
         const oneSuccess = {status: 'fulfilled', value: undefined};
         assert.deepStrictEqual(results, [oneSuccess, oneSuccess, oneSuccess]);
@@ -800,7 +841,7 @@ describe('MessageQueues', () => {
           (r: messageTypes.QueuedMessage) => r.responsePromise!.promise,
         );
         void proms.shift();
-        await modAckQueue.flush();
+        await modAckQueue.flush('test');
 
         const results = await Promise.allSettled<void>(proms);
         assert.strictEqual(results[0].status, 'rejected');
@@ -832,7 +873,7 @@ describe('MessageQueues', () => {
           modAckQueue.requests[0].responsePromise!.promise,
           modAckQueue.requests[2].responsePromise!.promise,
         ];
-        await modAckQueue.flush();
+        await modAckQueue.flush('test');
 
         const results = await Promise.allSettled<void>(proms);
         assert.strictEqual(results[0].status, 'rejected');
@@ -854,7 +895,7 @@ describe('MessageQueues', () => {
 
       const message = new FakeMessage() as Message;
       const completion = modAckQueue.add(message);
-      await modAckQueue.flush();
+      await modAckQueue.flush('test');
       assert.strictEqual(stub.callCount, 1);
       await completion;
     });
@@ -866,7 +907,7 @@ describe('MessageQueues', () => {
 
       const message = new FakeMessage() as Message;
       const completion = modAckQueue.add(message);
-      await modAckQueue.flush();
+      await modAckQueue.flush('test');
       assert.strictEqual(stub.callCount, 1);
       await completion;
     });
