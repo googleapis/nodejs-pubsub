@@ -63,12 +63,23 @@ export class FakeLog {
   fields?: loggingUtils.LogFields;
   args?: unknown[];
   called = false;
+  log: loggingUtils.AdhocDebugLogFunction;
+  listener: (lf: loggingUtils.LogFields, a: unknown[]) => void;
 
   constructor(log: loggingUtils.AdhocDebugLogFunction) {
-    log.on('log', (lf, a) => {
+    this.log = log;
+    this.listener = (lf: loggingUtils.LogFields, a: unknown[]) => {
       this.fields = lf;
       this.args = a;
       this.called = true;
-    });
+    };
+    this.log.on('log', this.listener);
+  }
+
+  remove() {
+    // This really ought to be properly exposed, but since it's not, we'll
+    // do this for now to keep the tests from being leaky.
+    const instance = (this.log as loggingUtils.AdhocDebugLogFunction).instance;
+    instance.off('log', this.listener);
   }
 }

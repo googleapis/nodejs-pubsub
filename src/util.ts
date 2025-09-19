@@ -15,6 +15,7 @@
  */
 
 import {promisify, PromisifyOptions} from '@google-cloud/promisify';
+import {Duration} from './temporal';
 
 /**
  * This replaces usage of promisifyAll(), going forward. Instead of opting
@@ -82,4 +83,53 @@ export function addToBucket<T, U>(map: Map<T, U[]>, bucket: T, item: U) {
   const items = map.get(bucket) ?? [];
   items.push(item);
   map.set(bucket, items);
+}
+
+const timeoutToken: unique symbol = Symbol('pubsub promise timeout');
+
+/**
+ * Return value from `awaitWithTimeout`. There are several variations on what
+ * might happen here, so this bundles it all up into a "report".
+ */
+export interface TimeoutReturn<T> {
+  returnedValue?: T;
+  exception?: Error;
+  timedOut: boolean;
+}
+
+/**
+ * Awaits on Promise with a timeout. Resolves on the passed promise resolving or
+ * rejecting, or on timeout.
+ *
+ * @param promise An existing Promise returning type T.
+ * @param timeout A timeout value as a Duration; if the timeout is exceeded while
+ *   waiting for the promise, the Promise this function returns will resolve, but
+ *   with `timedOut` set.
+ * @returns A TimeoutReturn with the returned value, if applicable, an exception if
+ *   the promise rejected, or the timedOut set to true if it timed out.
+ */
+export async function awaitWithTimeout<T>(
+  promise: Promise<T>,
+  timeout: Duration,
+): Promise<TimeoutReturn<T>> {
+  let timeoutId: NodeJS.Timeout | undefined;
+  const timeoutPromise = new Promise<T>((_, rej) => {
+    timeoutId = setTimeout(() => rej(timeoutToken), timeout.milliseconds);
+  });
+  try {
+    const value = await Promise.race([timeoutPromise, promise]);
+    clearTimeout(timeoutId);
+    return {
+      returnedValue: value,
+      timedOut: false,
+    };
+  } catch (e) {
+    const err: Error | symbol = e as unknown as Error | symbol;
+    // The timeout passed or the promise rejected.
+    clearTimeout(timeoutId);
+    return {
+      exception: (err !== timeoutToken ? err : undefined) as Error | undefined,
+      timedOut: err === timeoutToken,
+    };
+  }
 }

@@ -4,6 +4,14 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v5.1.0...v5.2.0) (2025-08-07)
+
+
+### Features
+
+* Ad-hoc, targeted debug logging ([#2062](https://github.com/googleapis/nodejs-pubsub/issues/2062)) ([dce83c7](https://github.com/googleapis/nodejs-pubsub/commit/dce83c71bba54388334f4f73115e7b8da6fbdb67))
+* Add timeout option and graceful shutdown to Subscription.close() ([#2068](https://github.com/googleapis/nodejs-pubsub/issues/2068)) ([8dee024](https://github.com/googleapis/nodejs-pubsub/commit/8dee0248081f7156e42d79c6067902583586faf2))
+
 ## [5.1.0](https://github.com/googleapis/nodejs-pubsub/compare/v5.0.0...v5.1.0) (2025-06-04)
 
 
