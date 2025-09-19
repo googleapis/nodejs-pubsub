@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ServiceError} from 'google-gax';
+import {loggingUtils, ServiceError} from 'google-gax';
 import * as assert from 'assert';
 import {describe, it, before, beforeEach, afterEach} from 'mocha';
 import {EventEmitter} from 'events';
@@ -26,7 +26,7 @@ import * as p from '../../src/publisher';
 import * as b from '../../src/publisher/message-batch';
 import * as q from '../../src/publisher/message-queues';
 import {PublishError} from '../../src/publisher/publish-error';
-import {TestUtils} from '../test-utils';
+import {FakeLog, TestUtils} from '../test-utils';
 
 class FakeTopic {
   name = 'projects/foo/topics/fake-topic';
@@ -70,10 +70,22 @@ class FakeMessageBatch {
   canFit(message: p.PubsubMessage): boolean {
     return true;
   }
+  canFitCount(): boolean {
+    return true;
+  }
+  canFitSize(): boolean {
+    return true;
+  }
   isAtMax(): boolean {
     return false;
   }
   isFull(): boolean {
+    return false;
+  }
+  isFullMessages(): boolean {
+    return false;
+  }
+  isFullSize(): boolean {
     return false;
   }
   setOptions(options: b.BatchPublishOptions) {
@@ -83,6 +95,7 @@ class FakeMessageBatch {
     return {
       messages: this.messages,
       callbacks: this.callbacks,
+      bytes: 0,
     };
   }
 }
@@ -159,7 +172,7 @@ describe('Message Queues', () => {
       it('should make the correct request', () => {
         const stub = sandbox.stub(topic, 'request');
 
-        void queue._publish(messages, callbacks);
+        void queue._publish(messages, callbacks, 0, 'test');
 
         const [{client, method, reqOpts}] = stub.lastCall.args;
         assert.strictEqual(client, 'PublisherClient');
@@ -167,12 +180,26 @@ describe('Message Queues', () => {
         assert.deepStrictEqual(reqOpts, {topic: topic.name, messages});
       });
 
+      it('should make a log message about the publish', () => {
+        sandbox.stub(topic, 'request');
+        const fakeLog = new FakeLog(q.logs.publishBatch);
+        void queue._publish(messages, callbacks, 0, 'test');
+        fakeLog.remove();
+
+        assert.strictEqual(fakeLog.called, true);
+        assert.strictEqual(
+          fakeLog.fields!.severity,
+          loggingUtils.LogSeverity.INFO,
+        );
+        assert.strictEqual(fakeLog.args![1] as string, 'test');
+      });
+
       it('should pass along any gax options', () => {
         const stub = sandbox.stub(topic, 'request');
         const callOptions = {};
 
         publisher.settings.gaxOpts = callOptions;
-        void queue._publish(messages, callbacks);
+        void queue._publish(messages, callbacks, 0, 'test');
 
         const [{gaxOpts}] = stub.lastCall.args;
         assert.strictEqual(gaxOpts, callOptions);
@@ -186,7 +213,7 @@ describe('Message Queues', () => {
         });
 
         try {
-          await queue._publish(messages, callbacks);
+          await queue._publish(messages, callbacks, 0, 'test');
           assert.strictEqual(null, error, '_publish did not throw');
         } catch (e) {
           const err = e as ServiceError;
@@ -207,7 +234,7 @@ describe('Message Queues', () => {
           callback(null, {messageIds});
         });
 
-        await queue._publish(messages, callbacks);
+        await queue._publish(messages, callbacks, 0, 'test');
 
         callbacks.forEach((callback, i) => {
           const [, messageId] = callback.lastCall.args;
@@ -312,7 +339,7 @@ describe('Message Queues', () => {
       it('should create a new batch', async () => {
         const oldBatch = queue.batch;
 
-        await queue.publish();
+        await queue.publish('test');
 
         assert.notStrictEqual(oldBatch, queue.batch);
         assert.ok(queue.batch instanceof FakeMessageBatch);
@@ -325,7 +352,7 @@ describe('Message Queues', () => {
         const stub = sandbox.stub(global, 'clearTimeout').withArgs(fakeHandle);
 
         queue.pending = fakeHandle;
-        await queue.publish();
+        await queue.publish('test');
 
         assert.strictEqual(stub.callCount, 1);
         assert.strictEqual(queue.pending, undefined);
@@ -335,7 +362,7 @@ describe('Message Queues', () => {
         const batch = queue.batch;
         const stub = sandbox.stub(queue, '_publish');
 
-        await queue.publish();
+        await queue.publish('test');
 
         const [messages, callbacks] = stub.lastCall.args;
         assert.strictEqual(messages, batch.messages);
@@ -392,7 +419,7 @@ describe('Message Queues', () => {
           queue.batch = new FakeMessageBatch();
           queue.batch.messages = fakeMessages;
           queue.batch.callbacks = spies;
-          await queue.publish();
+          await queue.publish('test');
 
           assert.strictEqual(stub.callCount, 1);
         });
@@ -402,7 +429,7 @@ describe('Message Queues', () => {
           sandbox.stub(queue, '_publish').callsFake(async () => {});
 
           queue.on('drain', spy);
-          void queue.publish().then(() => {
+          void queue.publish('test').then(() => {
             process.nextTick(() => {
               assert.strictEqual(spy.callCount, 1);
               done();
@@ -661,7 +688,7 @@ describe('Message Queues', () => {
       });
 
       it('should set inFlight to true', () => {
-        void queue.publish();
+        void queue.publish('test');
         assert.strictEqual(queue.inFlight, true);
       });
 
@@ -670,7 +697,7 @@ describe('Message Queues', () => {
         const stub = sandbox.stub(global, 'clearTimeout');
 
         queue.pending = fakeHandle;
-        void queue.publish();
+        void queue.publish('test');
 
         const [handle] = stub.lastCall.args;
         assert.strictEqual(handle, fakeHandle);
@@ -680,7 +707,7 @@ describe('Message Queues', () => {
       it('should remove the oldest batch from the batch list', () => {
         const oldestBatch = queue.currentBatch;
 
-        void queue.publish();
+        void queue.publish('test');
 
         assert.notStrictEqual(queue.currentBatch, oldestBatch);
       });
@@ -688,7 +715,7 @@ describe('Message Queues', () => {
       it('should publish the batch', async () => {
         const stub = sandbox.stub(queue, '_publish');
 
-        await queue.publish();
+        await queue.publish('test');
 
         const [messages, callbacks] = stub.lastCall.args;
         assert.strictEqual(messages, fakeMessages);
@@ -698,7 +725,7 @@ describe('Message Queues', () => {
       it('should set inFlight to false after publishing', async () => {
         sandbox.stub(queue, '_publish').resolves();
 
-        await queue.publish();
+        await queue.publish('test');
 
         assert.strictEqual(queue.inFlight, false);
       });
@@ -709,7 +736,7 @@ describe('Message Queues', () => {
 
         sandbox.stub(queue, '_publish').rejects(error);
 
-        await queue.publish();
+        await queue.publish('test');
 
         const [err] = stub.lastCall.args;
         assert.strictEqual(err, error);
@@ -724,7 +751,7 @@ describe('Message Queues', () => {
         secondBatch.callbacks = spies;
 
         queue.batches.push(secondBatch as b.MessageBatch);
-        await queue.publish();
+        await queue.publish('test');
 
         assert.strictEqual(stub.callCount, 1);
       });
@@ -734,7 +761,7 @@ describe('Message Queues', () => {
         sandbox.stub(queue, '_publish').resolves();
 
         queue.on('drain', spy);
-        await queue.publish();
+        await queue.publish('test');
 
         assert.strictEqual(spy.callCount, 1);
       });
@@ -744,8 +771,8 @@ describe('Message Queues', () => {
         sandbox.stub(queue, '_publish').resolves();
 
         queue.on('drain', spy);
-        await queue.publish();
-        await queue.publish();
+        await queue.publish('test');
+        await queue.publish('test');
 
         assert.strictEqual(spy.callCount, 2);
       });
