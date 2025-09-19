@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.2.1](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.0...v5.2.1) (2025-09-19)
+
+
+### Bug Fixes
+
+* Check batch size before re-queueing retried messages ([#2027](https://github.com/googleapis/nodejs-pubsub/issues/2027)) ([6c1613f](https://github.com/googleapis/nodejs-pubsub/commit/6c1613fdc6258ccb85427fc371e7bac8082f4a96))
+
 ## [5.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v5.1.0...v5.2.0) (2025-08-07)
 
 
