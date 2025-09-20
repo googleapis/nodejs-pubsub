@@ -366,6 +366,7 @@ describe('OpenTelemetryTracer', () => {
         topicName,
         'test',
       ) as trace.Span;
+      const parentSpanLink = sinon.spy(span, 'addLink');
       message.parentSpan = span;
       span.end();
 
@@ -374,7 +375,6 @@ describe('OpenTelemetryTracer', () => {
         topicName,
         'test',
       );
-
       publishSpan?.end();
       const spans = exporter.getFinishedSpans();
       const publishReadSpan = spans.pop();
@@ -387,6 +387,7 @@ describe('OpenTelemetryTracer', () => {
       );
       assert.strictEqual(publishReadSpan.links.length, 1);
       assert.strictEqual(childReadSpan.links.length, 1);
+      assert.strictEqual(parentSpanLink.callCount, 1);
     });
   });
 });
