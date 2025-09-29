@@ -18986,6 +18986,7 @@
                      * @property {string|null} [clientId] StreamingPullRequest clientId
                      * @property {number|Long|null} [maxOutstandingMessages] StreamingPullRequest maxOutstandingMessages
                      * @property {number|Long|null} [maxOutstandingBytes] StreamingPullRequest maxOutstandingBytes
+                     * @property {number|Long|null} [protocolVersion] StreamingPullRequest protocolVersion
                      */
     
                     /**
@@ -19071,6 +19072,14 @@
                     StreamingPullRequest.prototype.maxOutstandingBytes = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
     
                     /**
+                     * StreamingPullRequest protocolVersion.
+                     * @member {number|Long} protocolVersion
+                     * @memberof google.pubsub.v1.StreamingPullRequest
+                     * @instance
+                     */
+                    StreamingPullRequest.prototype.protocolVersion = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+    
+                    /**
                      * Creates a new StreamingPullRequest instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.StreamingPullRequest
@@ -19116,6 +19125,8 @@
                             writer.uint32(/* id 7, wireType 0 =*/56).int64(message.maxOutstandingMessages);
                         if (message.maxOutstandingBytes != null && Object.hasOwnProperty.call(message, "maxOutstandingBytes"))
                             writer.uint32(/* id 8, wireType 0 =*/64).int64(message.maxOutstandingBytes);
+                        if (message.protocolVersion != null && Object.hasOwnProperty.call(message, "protocolVersion"))
+                            writer.uint32(/* id 10, wireType 0 =*/80).int64(message.protocolVersion);
                         return writer;
                     };
     
@@ -19195,6 +19206,10 @@
                                     message.maxOutstandingBytes = reader.int64();
                                     break;
                                 }
+                            case 10: {
+                                    message.protocolVersion = reader.int64();
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -19266,6 +19281,9 @@
                         if (message.maxOutstandingBytes != null && message.hasOwnProperty("maxOutstandingBytes"))
                             if (!$util.isInteger(message.maxOutstandingBytes) && !(message.maxOutstandingBytes && $util.isInteger(message.maxOutstandingBytes.low) && $util.isInteger(message.maxOutstandingBytes.high)))
                                 return "maxOutstandingBytes: integer|Long expected";
+                        if (message.protocolVersion != null && message.hasOwnProperty("protocolVersion"))
+                            if (!$util.isInteger(message.protocolVersion) && !(message.protocolVersion && $util.isInteger(message.protocolVersion.low) && $util.isInteger(message.protocolVersion.high)))
+                                return "protocolVersion: integer|Long expected";
                         return null;
                     };
     
@@ -19326,6 +19344,15 @@
                                 message.maxOutstandingBytes = object.maxOutstandingBytes;
                             else if (typeof object.maxOutstandingBytes === "object")
                                 message.maxOutstandingBytes = new $util.LongBits(object.maxOutstandingBytes.low >>> 0, object.maxOutstandingBytes.high >>> 0).toNumber();
+                        if (object.protocolVersion != null)
+                            if ($util.Long)
+                                (message.protocolVersion = $util.Long.fromValue(object.protocolVersion)).unsigned = false;
+                            else if (typeof object.protocolVersion === "string")
+                                message.protocolVersion = parseInt(object.protocolVersion, 10);
+                            else if (typeof object.protocolVersion === "number")
+                                message.protocolVersion = object.protocolVersion;
+                            else if (typeof object.protocolVersion === "object")
+                                message.protocolVersion = new $util.LongBits(object.protocolVersion.low >>> 0, object.protocolVersion.high >>> 0).toNumber();
                         return message;
                     };
     
@@ -19361,6 +19388,11 @@
                                 object.maxOutstandingBytes = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                             } else
                                 object.maxOutstandingBytes = options.longs === String ? "0" : 0;
+                            if ($util.Long) {
+                                var long = new $util.Long(0, 0, false);
+                                object.protocolVersion = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                            } else
+                                object.protocolVersion = options.longs === String ? "0" : 0;
                         }
                         if (message.subscription != null && message.hasOwnProperty("subscription"))
                             object.subscription = message.subscription;
@@ -19393,6 +19425,11 @@
                                 object.maxOutstandingBytes = options.longs === String ? String(message.maxOutstandingBytes) : message.maxOutstandingBytes;
                             else
                                 object.maxOutstandingBytes = options.longs === String ? $util.Long.prototype.toString.call(message.maxOutstandingBytes) : options.longs === Number ? new $util.LongBits(message.maxOutstandingBytes.low >>> 0, message.maxOutstandingBytes.high >>> 0).toNumber() : message.maxOutstandingBytes;
+                        if (message.protocolVersion != null && message.hasOwnProperty("protocolVersion"))
+                            if (typeof message.protocolVersion === "number")
+                                object.protocolVersion = options.longs === String ? String(message.protocolVersion) : message.protocolVersion;
+                            else
+                                object.protocolVersion = options.longs === String ? $util.Long.prototype.toString.call(message.protocolVersion) : options.longs === Number ? new $util.LongBits(message.protocolVersion.low >>> 0, message.protocolVersion.high >>> 0).toNumber() : message.protocolVersion;
                         return object;
                     };
     

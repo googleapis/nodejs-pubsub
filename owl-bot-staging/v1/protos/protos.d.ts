@@ -7763,6 +7763,9 @@ export namespace google {
 
                 /** StreamingPullRequest maxOutstandingBytes */
                 maxOutstandingBytes?: (number|Long|string|null);
+
+                /** StreamingPullRequest protocolVersion */
+                protocolVersion?: (number|Long|string|null);
             }
 
             /** Represents a StreamingPullRequest. */
@@ -7797,6 +7800,9 @@ export namespace google {
 
                 /** StreamingPullRequest maxOutstandingBytes. */
                 public maxOutstandingBytes: (number|Long|string);
+
+                /** StreamingPullRequest protocolVersion. */
+                public protocolVersion: (number|Long|string);
 
                 /**
                  * Creates a new StreamingPullRequest instance using the specified properties.
