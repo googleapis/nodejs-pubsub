@@ -39,7 +39,7 @@
   "devDependencies": {
     "@google-cloud/bigquery": "^8.0.0",
     "@google-cloud/typeless-sample-bot": "^3.0.0",
-    "@types/chai": "^4.2.16",
+    "@types/chai": "^5.0.0",
     "chai": "^4.2.0",
     "gts": "^6.0.0",
     "lru-cache": "9.1.2",
