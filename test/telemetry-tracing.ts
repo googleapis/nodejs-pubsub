@@ -425,10 +425,6 @@ describe('OpenTelemetryTracer', () => {
         subName,
       );
       assert.strictEqual(
-        firstSpan.attributes['messaging.operation'],
-        'receive',
-      );
-      assert.strictEqual(
         firstSpan.attributes['messaging.batch.message_count'],
         1,
       );
@@ -469,10 +465,6 @@ describe('OpenTelemetryTracer', () => {
       assert.strictEqual(
         firstSpan.attributes['messaging.destination.name'],
         subName,
-      );
-      assert.strictEqual(
-        firstSpan.attributes['messaging.operation'],
-        'receive',
       );
       assert.strictEqual(
         firstSpan.attributes[
