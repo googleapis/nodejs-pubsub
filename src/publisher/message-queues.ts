@@ -24,6 +24,16 @@ import {google} from '../../protos/protos';
 import * as tracing from '../telemetry-tracing';
 import {filterMessage} from './pubsub-message';
 import {promisify} from 'util';
+import {logs as baseLogs} from '../logs';
+
+/**
+ * Loggers. Exported for unit tests.
+ *
+ * @private
+ */
+export const logs = {
+  publishBatch: baseLogs.pubsub.sublog('publish-batch'),
+};
 
 /**
  * Queues are used to manage publishing batches of messages.
@@ -71,8 +81,22 @@ export abstract class MessageQueue extends EventEmitter {
    * queues are ordered or not.
    *
    * @abstract
+   * @param {string} [reason] Optional log explanation of why the publish is happening.
    */
-  abstract publish(): Promise<void>;
+  abstract publish(reason: string): Promise<void>;
+
+  /*!
+   * Logs about a batch being sent, and why.
+   * @private
+   */
+  private logBatch(reason: string, length: number, bytes: number) {
+    logs.publishBatch.info(
+      '%s triggered a publish batch of %i messages, a total of %i bytes',
+      reason,
+      length,
+      bytes,
+    );
+  }
 
   /**
    * Method to finalize publishing. Does as many publishes as are needed
@@ -87,10 +111,13 @@ export abstract class MessageQueue extends EventEmitter {
    *
    * @param {object[]} messages The messages to publish.
    * @param {PublishCallback[]} callbacks The corresponding callback functions.
+   * @private
    */
   async _publish(
     messages: PubsubMessage[],
     callbacks: PublishCallback[],
+    bytes: number,
+    reason?: string,
   ): Promise<void> {
     const {topic, settings} = this.publisher;
     const reqOpts = {
@@ -120,6 +147,10 @@ export abstract class MessageQueue extends EventEmitter {
       topic.name,
       'MessageQueue._publish',
     );
+
+    if (reason) {
+      this.logBatch(reason, messages.length, bytes);
+    }
 
     const requestCallback = topic.request<google.pubsub.v1.IPublishResponse>;
     const request = promisify(requestCallback.bind(topic));
@@ -184,21 +215,25 @@ export class Queue extends MessageQueue {
       // Make a background best-effort attempt to clear out the
       // queue. If this fails, we'll basically just be overloaded
       // for a bit.
-      this.publish().catch(() => {});
+      const reason = !this.batch.canFitCount() ? 'message count' : 'byte count';
+      this.publish(reason).catch(() => {});
     }
 
     this.batch.add(message, callback);
 
     if (this.batch.isFull()) {
       // See comment above - best effort.
-      this.publish().catch(() => {});
+      const reason = this.batch.isFullMessages()
+        ? 'message count'
+        : 'byte count';
+      this.publish(reason).catch(() => {});
     } else if (!this.pending) {
       const {maxMilliseconds} = this.batchOptions;
       this.pending = setTimeout(() => {
         // See comment above - we are basically making a best effort
         // to start clearing out the queue if nothing else happens
         // before the batch timeout.
-        this.publish().catch(() => {});
+        this.publish('timeout').catch(() => {});
       }, maxMilliseconds!);
     }
   }
@@ -211,25 +246,28 @@ export class Queue extends MessageQueue {
    * @emits Queue#drain when all messages are sent.
    */
   async publishDrain(): Promise<void> {
-    await this._publishInternal(true);
+    await this._publishInternal(true, 'manual drain');
   }
 
   /**
    * Cancels any pending publishes and calls _publish immediately.
    *
    * Does _not_ attempt to further drain after one batch is sent.
+   * @private
    */
-  async publish(): Promise<void> {
-    await this._publishInternal(false);
+  async publish(reason?: string): Promise<void> {
+    await this._publishInternal(false, reason);
   }
 
   /**
    * Cancels any pending publishes and calls _publish immediately.
    *
    * @emits Queue#drain when all messages are sent.
+   * @private
    */
-  async _publishInternal(fullyDrain: boolean): Promise<void> {
+  async _publishInternal(fullyDrain: boolean, reason?: string): Promise<void> {
     const {messages, callbacks} = this.batch.end();
+    const bytes = this.batch.bytes;
 
     this.batch = new MessageBatch(this.batchOptions, this.publisher.topic.name);
 
@@ -238,13 +276,13 @@ export class Queue extends MessageQueue {
       delete this.pending;
     }
 
-    await this._publish(messages, callbacks);
+    await this._publish(messages, callbacks, bytes, reason);
     if (this.batch.messages.length) {
       // We only do the indefinite go-arounds when we're trying to do a
       // final drain for flush(). In all other cases, we want to leave
       // subsequent batches alone so that they can time out as needed.
       if (fullyDrain) {
-        await this._publishInternal(true);
+        await this._publishInternal(true, 'message count');
       }
     } else {
       this.emit('drain');
@@ -318,7 +356,10 @@ export class OrderedQueue extends MessageQueue {
       // Make a best-effort attempt to clear out the publish queue,
       // to make more space for the new batch. If this fails, we'll
       // just be overfilled for a bit.
-      this.publish().catch(() => {});
+      const reason = !this.currentBatch.canFitCount()
+        ? 'message count'
+        : 'byte count';
+      this.publish(reason).catch(() => {});
     }
 
     this.currentBatch.add(message, callback);
@@ -328,7 +369,10 @@ export class OrderedQueue extends MessageQueue {
     if (!this.inFlight) {
       if (this.currentBatch.isFull()) {
         // See comment above - best-effort.
-        this.publish().catch(() => {});
+        const reason = this.currentBatch.isFullMessages()
+          ? 'message count'
+          : 'byte count';
+        this.publish(reason).catch(() => {});
       } else if (!this.pending) {
         this.beginNextPublish();
       }
@@ -346,7 +390,7 @@ export class OrderedQueue extends MessageQueue {
       // Make a best-effort attempt to start a publish request. If
       // this fails, we'll catch it again later, eventually, when more
       // messages try to enter the queue.
-      this.publish().catch(() => {});
+      this.publish('timeout').catch(() => {});
     }, delay);
   }
   /**
@@ -382,7 +426,7 @@ export class OrderedQueue extends MessageQueue {
    *
    * @fires OrderedQueue#drain
    */
-  async publish(): Promise<void> {
+  async publish(reason: string): Promise<void> {
     // If there's nothing to flush, don't try, just short-circuit to the drain event.
     // This can happen if we get a publish() call after already being drained, in
     // the case that topic.flush() pulls a reference to us before we get deleted.
@@ -398,10 +442,10 @@ export class OrderedQueue extends MessageQueue {
       delete this.pending;
     }
 
-    const {messages, callbacks} = this.batches.pop()!.end();
+    const {messages, callbacks, bytes} = this.batches.pop()!.end();
 
     try {
-      await this._publish(messages, callbacks);
+      await this._publish(messages, callbacks, bytes, reason);
     } catch (e) {
       const err = e as ServiceError;
       this.inFlight = false;
@@ -423,7 +467,7 @@ export class OrderedQueue extends MessageQueue {
    * @fires OrderedQueue#drain
    */
   async publishDrain(): Promise<void> {
-    await this.publish();
+    await this.publish('manual drain');
   }
 
   /**

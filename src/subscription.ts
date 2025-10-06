@@ -41,7 +41,13 @@ import {
   SeekResponse,
   Snapshot,
 } from './snapshot';
-import {Message, Subscriber, SubscriberOptions} from './subscriber';
+import {
+  Message,
+  Subscriber,
+  SubscriberOptions,
+  SubscriberCloseOptions,
+  SubscriberCloseBehaviors,
+} from './subscriber';
 import {Topic} from './topic';
 import {promisifySome} from './util';
 import {StatusError} from './message-stream';
@@ -61,6 +67,8 @@ export type SubscriptionMetadata = {
 
 export type SubscriptionOptions = SubscriberOptions & {topic?: Topic};
 export type SubscriptionCloseCallback = (err?: Error) => void;
+export type SubscriptionCloseOptions = SubscriberCloseOptions;
+export const SubscriptionCloseBehaviors = SubscriberCloseBehaviors;
 
 type SubscriptionCallback = ResourceCallback<
   Subscription,
@@ -357,24 +365,17 @@ export class Subscription extends EventEmitter {
   }
 
   /**
-   * Closes the Subscription, once this is called you will no longer receive
+   * Closes the Subscription. Once this is called you will no longer receive
    * message events unless you call {Subscription#open} or add new message
    * listeners.
    *
-   * @param {function} [callback] The callback function.
-   * @param {?error} callback.err An error returned while closing the
-   *     Subscription.
+   * @param {function} [callback] The callback function, if not using the Promise-based
+   *   call signature.
+   * @param {?error} [callback.err] An error returned while closing the Subscription.
    *
    * @example
    * ```
-   * subscription.close(err => {
-   *   if (err) {
-   *     // Error handling omitted.
-   *   }
-   * });
-   *
-   * // If the callback is omitted a Promise will be returned.
-   * subscription.close().then(() => {});
+   * await subscription.close();
    * ```
    */
   close(): Promise<void>;

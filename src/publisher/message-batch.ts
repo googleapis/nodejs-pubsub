@@ -33,6 +33,7 @@ export interface BatchPublishOptions {
 export interface BatchResults {
   messages: PubsubMessage[];
   callbacks: PublishCallback[];
+  bytes: number;
 }
 
 /**
@@ -101,21 +102,39 @@ export class MessageBatch {
     return {
       messages: this.messages,
       callbacks: this.callbacks,
+      bytes: this.bytes,
     };
   }
 
   /**
    * Indicates if a given message can fit in the batch.
    *
-   * @param {object} message The message in question.
+   * @param {PubsubMessage} message The message in question.
    * @returns {boolean}
    */
   canFit(message: PubsubMessage): boolean {
-    const {maxMessages, maxBytes} = this.options;
-    return (
-      this.messages.length < maxMessages! &&
-      this.bytes + calculateMessageSize(message) <= maxBytes!
-    );
+    return this.canFitCount() && this.canFitSize(message);
+  }
+
+  /**
+   * Indicates if a given message can fit in the batch, re: message count.
+   *
+   * @returns {boolean}
+   */
+  canFitCount(): boolean {
+    const {maxMessages} = this.options;
+    return this.messages.length < maxMessages!;
+  }
+
+  /**
+   * Indicates if a given message can fit in the batch, re: byte count.
+   *
+   * @param {PubsubMessage} message The message in question.
+   * @returns {boolean}
+   */
+  canFitSize(message: PubsubMessage): boolean {
+    const {maxBytes} = this.options;
+    return this.bytes + calculateMessageSize(message) <= maxBytes!;
   }
 
   /**
@@ -136,7 +155,26 @@ export class MessageBatch {
    * @returns {boolean}
    */
   isFull(): boolean {
-    const {maxMessages, maxBytes} = this.options;
-    return this.messages.length >= maxMessages! || this.bytes >= maxBytes!;
+    return this.isFullMessages() || this.isFullSize();
+  }
+
+  /**
+   * True if we are full because of too many messages.
+   *
+   * @private
+   */
+  isFullMessages(): boolean {
+    const {maxMessages} = this.options;
+    return this.messages.length >= maxMessages!;
+  }
+
+  /**
+   * True if we are full because of too many bytes.
+   *
+   * @private
+   */
+  isFullSize(): boolean {
+    const {maxBytes} = this.options;
+    return this.bytes >= maxBytes!;
   }
 }
