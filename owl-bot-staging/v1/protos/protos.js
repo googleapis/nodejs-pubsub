@@ -6992,6 +6992,7 @@
                          * @property {string|null} [sequenceNumber] AwsKinesisFailureReason sequenceNumber
                          * @property {google.pubsub.v1.IngestionFailureEvent.ISchemaViolationReason|null} [schemaViolationReason] AwsKinesisFailureReason schemaViolationReason
                          * @property {google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null} [messageTransformationFailureReason] AwsKinesisFailureReason messageTransformationFailureReason
+                         * @property {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null} [apiViolationReason] AwsKinesisFailureReason apiViolationReason
                          */
     
                         /**
@@ -7049,17 +7050,25 @@
                          */
                         AwsKinesisFailureReason.prototype.messageTransformationFailureReason = null;
     
+                        /**
+                         * AwsKinesisFailureReason apiViolationReason.
+                         * @member {google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null|undefined} apiViolationReason
+                         * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
+                         * @instance
+                         */
+                        AwsKinesisFailureReason.prototype.apiViolationReason = null;
+    
                         // OneOf field names bound to virtual getters and setters
                         var $oneOfFields;
     
                         /**
                          * AwsKinesisFailureReason reason.
-                         * @member {"schemaViolationReason"|"messageTransformationFailureReason"|undefined} reason
+                         * @member {"schemaViolationReason"|"messageTransformationFailureReason"|"apiViolationReason"|undefined} reason
                          * @memberof google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason
                          * @instance
                          */
                         Object.defineProperty(AwsKinesisFailureReason.prototype, "reason", {
-                            get: $util.oneOfGetter($oneOfFields = ["schemaViolationReason", "messageTransformationFailureReason"]),
+                            get: $util.oneOfGetter($oneOfFields = ["schemaViolationReason", "messageTransformationFailureReason", "apiViolationReason"]),
                             set: $util.oneOfSetter($oneOfFields)
                         });
     
@@ -7097,6 +7106,8 @@
                                 $root.google.pubsub.v1.IngestionFailureEvent.SchemaViolationReason.encode(message.schemaViolationReason, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
                             if (message.messageTransformationFailureReason != null && Object.hasOwnProperty.call(message, "messageTransformationFailureReason"))
                                 $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.encode(message.messageTransformationFailureReason, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                            if (message.apiViolationReason != null && Object.hasOwnProperty.call(message, "apiViolationReason"))
+                                $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.encode(message.apiViolationReason, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
                             return writer;
                         };
     
@@ -7151,6 +7162,10 @@
                                     }
                                 case 5: {
                                         message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.decode(reader, reader.uint32());
+                                        break;
+                                    }
+                                case 6: {
+                                        message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.decode(reader, reader.uint32());
                                         break;
                                     }
                                 default:
@@ -7216,6 +7231,16 @@
                                         return "messageTransformationFailureReason." + error;
                                 }
                             }
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                if (properties.reason === 1)
+                                    return "reason: multiple values";
+                                properties.reason = 1;
+                                {
+                                    var error = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.verify(message.apiViolationReason);
+                                    if (error)
+                                        return "apiViolationReason." + error;
+                                }
+                            }
                             return null;
                         };
     
@@ -7246,6 +7271,11 @@
                                 if (typeof object.messageTransformationFailureReason !== "object")
                                     throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.messageTransformationFailureReason: object expected");
                                 message.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.fromObject(object.messageTransformationFailureReason);
+                            }
+                            if (object.apiViolationReason != null) {
+                                if (typeof object.apiViolationReason !== "object")
+                                    throw TypeError(".google.pubsub.v1.IngestionFailureEvent.AwsKinesisFailureReason.apiViolationReason: object expected");
+                                message.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.fromObject(object.apiViolationReason);
                             }
                             return message;
                         };
@@ -7283,6 +7313,11 @@
                                 object.messageTransformationFailureReason = $root.google.pubsub.v1.IngestionFailureEvent.MessageTransformationFailureReason.toObject(message.messageTransformationFailureReason, options);
                                 if (options.oneofs)
                                     object.reason = "messageTransformationFailureReason";
+                            }
+                            if (message.apiViolationReason != null && message.hasOwnProperty("apiViolationReason")) {
+                                object.apiViolationReason = $root.google.pubsub.v1.IngestionFailureEvent.ApiViolationReason.toObject(message.apiViolationReason, options);
+                                if (options.oneofs)
+                                    object.reason = "apiViolationReason";
                             }
                             return object;
                         };
@@ -7841,6 +7876,7 @@
                      * @property {google.pubsub.v1.Topic.State|null} [state] Topic state
                      * @property {google.pubsub.v1.IIngestionDataSourceSettings|null} [ingestionDataSourceSettings] Topic ingestionDataSourceSettings
                      * @property {Array.<google.pubsub.v1.IMessageTransform>|null} [messageTransforms] Topic messageTransforms
+                     * @property {Object.<string,string>|null} [tags] Topic tags
                      */
     
                     /**
@@ -7854,6 +7890,7 @@
                     function Topic(properties) {
                         this.labels = {};
                         this.messageTransforms = [];
+                        this.tags = {};
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -7941,6 +7978,14 @@
                     Topic.prototype.messageTransforms = $util.emptyArray;
     
                     /**
+                     * Topic tags.
+                     * @member {Object.<string,string>} tags
+                     * @memberof google.pubsub.v1.Topic
+                     * @instance
+                     */
+                    Topic.prototype.tags = $util.emptyObject;
+    
+                    /**
                      * Creates a new Topic instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Topic
@@ -7986,6 +8031,9 @@
                         if (message.messageTransforms != null && message.messageTransforms.length)
                             for (var i = 0; i < message.messageTransforms.length; ++i)
                                 $root.google.pubsub.v1.MessageTransform.encode(message.messageTransforms[i], writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
+                        if (message.tags != null && Object.hasOwnProperty.call(message, "tags"))
+                            for (var keys = Object.keys(message.tags), i = 0; i < keys.length; ++i)
+                                writer.uint32(/* id 14, wireType 2 =*/114).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.tags[keys[i]]).ldelim();
                         return writer;
                     };
     
@@ -8083,6 +8131,29 @@
                                     message.messageTransforms.push($root.google.pubsub.v1.MessageTransform.decode(reader, reader.uint32()));
                                     break;
                                 }
+                            case 14: {
+                                    if (message.tags === $util.emptyObject)
+                                        message.tags = {};
+                                    var end2 = reader.uint32() + reader.pos;
+                                    key = "";
+                                    value = "";
+                                    while (reader.pos < end2) {
+                                        var tag2 = reader.uint32();
+                                        switch (tag2 >>> 3) {
+                                        case 1:
+                                            key = reader.string();
+                                            break;
+                                        case 2:
+                                            value = reader.string();
+                                            break;
+                                        default:
+                                            reader.skipType(tag2 & 7);
+                                            break;
+                                        }
+                                    }
+                                    message.tags[key] = value;
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -8173,6 +8244,14 @@
                                     return "messageTransforms." + error;
                             }
                         }
+                        if (message.tags != null && message.hasOwnProperty("tags")) {
+                            if (!$util.isObject(message.tags))
+                                return "tags: object expected";
+                            var key = Object.keys(message.tags);
+                            for (var i = 0; i < key.length; ++i)
+                                if (!$util.isString(message.tags[key[i]]))
+                                    return "tags: string{k:string} expected";
+                        }
                         return null;
                     };
     
@@ -8251,6 +8330,13 @@
                                 message.messageTransforms[i] = $root.google.pubsub.v1.MessageTransform.fromObject(object.messageTransforms[i]);
                             }
                         }
+                        if (object.tags) {
+                            if (typeof object.tags !== "object")
+                                throw TypeError(".google.pubsub.v1.Topic.tags: object expected");
+                            message.tags = {};
+                            for (var keys = Object.keys(object.tags), i = 0; i < keys.length; ++i)
+                                message.tags[keys[i]] = String(object.tags[keys[i]]);
+                        }
                         return message;
                     };
     
@@ -8269,8 +8355,10 @@
                         var object = {};
                         if (options.arrays || options.defaults)
                             object.messageTransforms = [];
-                        if (options.objects || options.defaults)
+                        if (options.objects || options.defaults) {
                             object.labels = {};
+                            object.tags = {};
+                        }
                         if (options.defaults) {
                             object.name = "";
                             object.messageStoragePolicy = null;
@@ -8307,6 +8395,11 @@
                             object.messageTransforms = [];
                             for (var j = 0; j < message.messageTransforms.length; ++j)
                                 object.messageTransforms[j] = $root.google.pubsub.v1.MessageTransform.toObject(message.messageTransforms[j], options);
+                        }
+                        if (message.tags && (keys2 = Object.keys(message.tags)).length) {
+                            object.tags = {};
+                            for (var j = 0; j < keys2.length; ++j)
+                                object.tags[keys2[j]] = message.tags[keys2[j]];
                         }
                         return object;
                     };
@@ -12291,6 +12384,7 @@
                      * @property {google.pubsub.v1.Subscription.State|null} [state] Subscription state
                      * @property {google.pubsub.v1.Subscription.IAnalyticsHubSubscriptionInfo|null} [analyticsHubSubscriptionInfo] Subscription analyticsHubSubscriptionInfo
                      * @property {Array.<google.pubsub.v1.IMessageTransform>|null} [messageTransforms] Subscription messageTransforms
+                     * @property {Object.<string,string>|null} [tags] Subscription tags
                      */
     
                     /**
@@ -12304,6 +12398,7 @@
                     function Subscription(properties) {
                         this.labels = {};
                         this.messageTransforms = [];
+                        this.tags = {};
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -12471,6 +12566,14 @@
                     Subscription.prototype.messageTransforms = $util.emptyArray;
     
                     /**
+                     * Subscription tags.
+                     * @member {Object.<string,string>} tags
+                     * @memberof google.pubsub.v1.Subscription
+                     * @instance
+                     */
+                    Subscription.prototype.tags = $util.emptyObject;
+    
+                    /**
                      * Creates a new Subscription instance using the specified properties.
                      * @function create
                      * @memberof google.pubsub.v1.Subscription
@@ -12536,6 +12639,9 @@
                         if (message.messageTransforms != null && message.messageTransforms.length)
                             for (var i = 0; i < message.messageTransforms.length; ++i)
                                 $root.google.pubsub.v1.MessageTransform.encode(message.messageTransforms[i], writer.uint32(/* id 25, wireType 2 =*/202).fork()).ldelim();
+                        if (message.tags != null && Object.hasOwnProperty.call(message, "tags"))
+                            for (var keys = Object.keys(message.tags), i = 0; i < keys.length; ++i)
+                                writer.uint32(/* id 26, wireType 2 =*/210).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.tags[keys[i]]).ldelim();
                         return writer;
                     };
     
@@ -12673,6 +12779,29 @@
                                     message.messageTransforms.push($root.google.pubsub.v1.MessageTransform.decode(reader, reader.uint32()));
                                     break;
                                 }
+                            case 26: {
+                                    if (message.tags === $util.emptyObject)
+                                        message.tags = {};
+                                    var end2 = reader.uint32() + reader.pos;
+                                    key = "";
+                                    value = "";
+                                    while (reader.pos < end2) {
+                                        var tag2 = reader.uint32();
+                                        switch (tag2 >>> 3) {
+                                        case 1:
+                                            key = reader.string();
+                                            break;
+                                        case 2:
+                                            value = reader.string();
+                                            break;
+                                        default:
+                                            reader.skipType(tag2 & 7);
+                                            break;
+                                        }
+                                    }
+                                    message.tags[key] = value;
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -12803,6 +12932,14 @@
                                     return "messageTransforms." + error;
                             }
                         }
+                        if (message.tags != null && message.hasOwnProperty("tags")) {
+                            if (!$util.isObject(message.tags))
+                                return "tags: object expected";
+                            var key = Object.keys(message.tags);
+                            for (var i = 0; i < key.length; ++i)
+                                if (!$util.isString(message.tags[key[i]]))
+                                    return "tags: string{k:string} expected";
+                        }
                         return null;
                     };
     
@@ -12916,6 +13053,13 @@
                                 message.messageTransforms[i] = $root.google.pubsub.v1.MessageTransform.fromObject(object.messageTransforms[i]);
                             }
                         }
+                        if (object.tags) {
+                            if (typeof object.tags !== "object")
+                                throw TypeError(".google.pubsub.v1.Subscription.tags: object expected");
+                            message.tags = {};
+                            for (var keys = Object.keys(object.tags), i = 0; i < keys.length; ++i)
+                                message.tags[keys[i]] = String(object.tags[keys[i]]);
+                        }
                         return message;
                     };
     
@@ -12934,8 +13078,10 @@
                         var object = {};
                         if (options.arrays || options.defaults)
                             object.messageTransforms = [];
-                        if (options.objects || options.defaults)
+                        if (options.objects || options.defaults) {
                             object.labels = {};
+                            object.tags = {};
+                        }
                         if (options.defaults) {
                             object.name = "";
                             object.topic = "";
@@ -13002,6 +13148,11 @@
                             object.messageTransforms = [];
                             for (var j = 0; j < message.messageTransforms.length; ++j)
                                 object.messageTransforms[j] = $root.google.pubsub.v1.MessageTransform.toObject(message.messageTransforms[j], options);
+                        }
+                        if (message.tags && (keys2 = Object.keys(message.tags)).length) {
+                            object.tags = {};
+                            for (var j = 0; j < keys2.length; ++j)
+                                object.tags[keys2[j]] = message.tags[keys2[j]];
                         }
                         return object;
                     };
@@ -20651,6 +20802,7 @@
                      * @property {string|null} [name] CreateSnapshotRequest name
                      * @property {string|null} [subscription] CreateSnapshotRequest subscription
                      * @property {Object.<string,string>|null} [labels] CreateSnapshotRequest labels
+                     * @property {Object.<string,string>|null} [tags] CreateSnapshotRequest tags
                      */
     
                     /**
@@ -20663,6 +20815,7 @@
                      */
                     function CreateSnapshotRequest(properties) {
                         this.labels = {};
+                        this.tags = {};
                         if (properties)
                             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                                 if (properties[keys[i]] != null)
@@ -20692,6 +20845,14 @@
                      * @instance
                      */
                     CreateSnapshotRequest.prototype.labels = $util.emptyObject;
+    
+                    /**
+                     * CreateSnapshotRequest tags.
+                     * @member {Object.<string,string>} tags
+                     * @memberof google.pubsub.v1.CreateSnapshotRequest
+                     * @instance
+                     */
+                    CreateSnapshotRequest.prototype.tags = $util.emptyObject;
     
                     /**
                      * Creates a new CreateSnapshotRequest instance using the specified properties.
@@ -20724,6 +20885,9 @@
                         if (message.labels != null && Object.hasOwnProperty.call(message, "labels"))
                             for (var keys = Object.keys(message.labels), i = 0; i < keys.length; ++i)
                                 writer.uint32(/* id 3, wireType 2 =*/26).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.labels[keys[i]]).ldelim();
+                        if (message.tags != null && Object.hasOwnProperty.call(message, "tags"))
+                            for (var keys = Object.keys(message.tags), i = 0; i < keys.length; ++i)
+                                writer.uint32(/* id 4, wireType 2 =*/34).fork().uint32(/* id 1, wireType 2 =*/10).string(keys[i]).uint32(/* id 2, wireType 2 =*/18).string(message.tags[keys[i]]).ldelim();
                         return writer;
                     };
     
@@ -20791,6 +20955,29 @@
                                     message.labels[key] = value;
                                     break;
                                 }
+                            case 4: {
+                                    if (message.tags === $util.emptyObject)
+                                        message.tags = {};
+                                    var end2 = reader.uint32() + reader.pos;
+                                    key = "";
+                                    value = "";
+                                    while (reader.pos < end2) {
+                                        var tag2 = reader.uint32();
+                                        switch (tag2 >>> 3) {
+                                        case 1:
+                                            key = reader.string();
+                                            break;
+                                        case 2:
+                                            value = reader.string();
+                                            break;
+                                        default:
+                                            reader.skipType(tag2 & 7);
+                                            break;
+                                        }
+                                    }
+                                    message.tags[key] = value;
+                                    break;
+                                }
                             default:
                                 reader.skipType(tag & 7);
                                 break;
@@ -20840,6 +21027,14 @@
                                 if (!$util.isString(message.labels[key[i]]))
                                     return "labels: string{k:string} expected";
                         }
+                        if (message.tags != null && message.hasOwnProperty("tags")) {
+                            if (!$util.isObject(message.tags))
+                                return "tags: object expected";
+                            var key = Object.keys(message.tags);
+                            for (var i = 0; i < key.length; ++i)
+                                if (!$util.isString(message.tags[key[i]]))
+                                    return "tags: string{k:string} expected";
+                        }
                         return null;
                     };
     
@@ -20866,6 +21061,13 @@
                             for (var keys = Object.keys(object.labels), i = 0; i < keys.length; ++i)
                                 message.labels[keys[i]] = String(object.labels[keys[i]]);
                         }
+                        if (object.tags) {
+                            if (typeof object.tags !== "object")
+                                throw TypeError(".google.pubsub.v1.CreateSnapshotRequest.tags: object expected");
+                            message.tags = {};
+                            for (var keys = Object.keys(object.tags), i = 0; i < keys.length; ++i)
+                                message.tags[keys[i]] = String(object.tags[keys[i]]);
+                        }
                         return message;
                     };
     
@@ -20882,8 +21084,10 @@
                         if (!options)
                             options = {};
                         var object = {};
-                        if (options.objects || options.defaults)
+                        if (options.objects || options.defaults) {
                             object.labels = {};
+                            object.tags = {};
+                        }
                         if (options.defaults) {
                             object.name = "";
                             object.subscription = "";
@@ -20897,6 +21101,11 @@
                             object.labels = {};
                             for (var j = 0; j < keys2.length; ++j)
                                 object.labels[keys2[j]] = message.labels[keys2[j]];
+                        }
+                        if (message.tags && (keys2 = Object.keys(message.tags)).length) {
+                            object.tags = {};
+                            for (var j = 0; j < keys2.length; ++j)
+                                object.tags[keys2[j]] = message.tags[keys2[j]];
                         }
                         return object;
                     };

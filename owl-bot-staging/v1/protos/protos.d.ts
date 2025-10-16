@@ -2751,6 +2751,9 @@ export namespace google {
 
                     /** AwsKinesisFailureReason messageTransformationFailureReason */
                     messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
+
+                    /** AwsKinesisFailureReason apiViolationReason */
+                    apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
                 }
 
                 /** Represents an AwsKinesisFailureReason. */
@@ -2777,8 +2780,11 @@ export namespace google {
                     /** AwsKinesisFailureReason messageTransformationFailureReason. */
                     public messageTransformationFailureReason?: (google.pubsub.v1.IngestionFailureEvent.IMessageTransformationFailureReason|null);
 
+                    /** AwsKinesisFailureReason apiViolationReason. */
+                    public apiViolationReason?: (google.pubsub.v1.IngestionFailureEvent.IApiViolationReason|null);
+
                     /** AwsKinesisFailureReason reason. */
-                    public reason?: ("schemaViolationReason"|"messageTransformationFailureReason");
+                    public reason?: ("schemaViolationReason"|"messageTransformationFailureReason"|"apiViolationReason");
 
                     /**
                      * Creates a new AwsKinesisFailureReason instance using the specified properties.
@@ -3106,6 +3112,9 @@ export namespace google {
 
                 /** Topic messageTransforms */
                 messageTransforms?: (google.pubsub.v1.IMessageTransform[]|null);
+
+                /** Topic tags */
+                tags?: ({ [k: string]: string }|null);
             }
 
             /** Represents a Topic. */
@@ -3146,6 +3155,9 @@ export namespace google {
 
                 /** Topic messageTransforms. */
                 public messageTransforms: google.pubsub.v1.IMessageTransform[];
+
+                /** Topic tags. */
+                public tags: { [k: string]: string };
 
                 /**
                  * Creates a new Topic instance using the specified properties.
@@ -5099,6 +5111,9 @@ export namespace google {
 
                 /** Subscription messageTransforms */
                 messageTransforms?: (google.pubsub.v1.IMessageTransform[]|null);
+
+                /** Subscription tags */
+                tags?: ({ [k: string]: string }|null);
             }
 
             /** Represents a Subscription. */
@@ -5169,6 +5184,9 @@ export namespace google {
 
                 /** Subscription messageTransforms. */
                 public messageTransforms: google.pubsub.v1.IMessageTransform[];
+
+                /** Subscription tags. */
+                public tags: { [k: string]: string };
 
                 /**
                  * Creates a new Subscription instance using the specified properties.
@@ -8338,6 +8356,9 @@ export namespace google {
 
                 /** CreateSnapshotRequest labels */
                 labels?: ({ [k: string]: string }|null);
+
+                /** CreateSnapshotRequest tags */
+                tags?: ({ [k: string]: string }|null);
             }
 
             /** Represents a CreateSnapshotRequest. */
@@ -8357,6 +8378,9 @@ export namespace google {
 
                 /** CreateSnapshotRequest labels. */
                 public labels: { [k: string]: string };
+
+                /** CreateSnapshotRequest tags. */
+                public tags: { [k: string]: string };
 
                 /**
                  * Creates a new CreateSnapshotRequest instance using the specified properties.
