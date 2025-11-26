@@ -918,10 +918,32 @@ describe('Subscriber', () => {
   });
 
   describe('nack', () => {
+    it('should remove the message from the inventory', async () => {
+      const inventory: FakeLeaseManager = stubs.get('inventory');
+      const stub = sandbox.stub(inventory, 'remove').withArgs(message);
+
+      await subscriber.nack(message);
+
+      assert.strictEqual(stub.callCount, 1);
+    });
+  });
+
+  describe('nackWithResponse', () => {
+    it('should remove the message from the inventory', async () => {
+      const inventory: FakeLeaseManager = stubs.get('inventory');
+      const stub = sandbox.stub(inventory, 'remove').withArgs(message);
+
+      await subscriber.nackWithResponse(message);
+
+      assert.strictEqual(stub.callCount, 1);
+    });
+  });
+
+  describe('ackWithResponse', () => {
     it('should modAck the message with a 0 deadline', async () => {
       const stub = sandbox.stub(subscriber, 'modAck');
 
-      await subscriber.nack(message);
+      await subscriber.ackWithResponse(message);
 
       const [msg, deadline] = stub.lastCall.args;
 
@@ -946,7 +968,7 @@ describe('Subscriber', () => {
       const inventory: FakeLeaseManager = stubs.get('inventory');
       const stub = sandbox.stub(inventory, 'remove').withArgs(message);
 
-      await subscriber.nack(message);
+      await subscriber.ackWithResponse(message);
 
       assert.strictEqual(stub.callCount, 1);
     });
