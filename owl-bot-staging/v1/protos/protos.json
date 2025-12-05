@@ -1104,7 +1104,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
+                        "(google.api.field_behavior)": "IDENTIFIER"
                       }
                     },
                     "labels": {
@@ -1232,7 +1232,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     }
@@ -1262,7 +1262,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     },
@@ -1294,7 +1294,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
                       }
                     },
@@ -1431,7 +1431,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     }
@@ -1765,7 +1765,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
+                        "(google.api.field_behavior)": "IDENTIFIER"
                       }
                     },
                     "topic": {
@@ -2295,7 +2295,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
                       }
                     }
@@ -2325,7 +2325,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
                       }
                     },
@@ -2370,7 +2370,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
                       }
                     }
@@ -2675,7 +2675,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
                       }
                     },
@@ -2769,7 +2769,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
                       }
                     }
@@ -2781,7 +2781,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
                       }
                     },
@@ -2826,7 +2826,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.field_behavior)": "IDENTIFIER",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
                       }
                     }

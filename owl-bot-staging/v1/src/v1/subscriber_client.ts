@@ -389,7 +389,7 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.name
- *   Required. The name of the subscription. It must have the format
+ *   Required. Identifier. The name of the subscription. It must have the format
  *   `"projects/{project}/subscriptions/{subscription}"`. `{subscription}` must
  *   start with a letter, and contain only letters (`[A-Za-z]`), numbers
  *   (`[0-9]`), dashes (`-`), underscores (`_`), periods (`.`), tildes (`~`),
@@ -612,7 +612,7 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.subscription
- *   Required. The name of the subscription to get.
+ *   Required. Identifier. The name of the subscription to get.
  *   Format is `projects/{project}/subscriptions/{sub}`.
  * @param {object} [options]
  *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
@@ -806,7 +806,7 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.subscription
- *   Required. The subscription to delete.
+ *   Required. Identifier. The subscription to delete.
  *   Format is `projects/{project}/subscriptions/{sub}`.
  * @param {object} [options]
  *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
@@ -1325,7 +1325,7 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.snapshot
- *   Required. The name of the snapshot to get.
+ *   Required. Identifier. The name of the snapshot to get.
  *   Format is `projects/{project}/snapshots/{snap}`.
  * @param {object} [options]
  *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
@@ -1433,10 +1433,10 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.name
- *   Required. User-provided name for this snapshot. If the name is not provided
- *   in the request, the server will assign a random name for this snapshot on
- *   the same project as the subscription. Note that for REST API requests, you
- *   must specify a name.  See the [resource name
+ *   Required. Identifier. User-provided name for this snapshot. If the name is
+ *   not provided in the request, the server will assign a random name for this
+ *   snapshot on the same project as the subscription. Note that for REST API
+ *   requests, you must specify a name.  See the [resource name
  *   rules](https://cloud.google.com/pubsub/docs/pubsub-basics#resource_names).
  *   Format is `projects/{project}/snapshots/{snap}`.
  * @param {string} request.subscription
@@ -1656,7 +1656,7 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.snapshot
- *   Required. The name of the snapshot to delete.
+ *   Required. Identifier. The name of the snapshot to delete.
  *   Format is `projects/{project}/snapshots/{snap}`.
  * @param {object} [options]
  *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
@@ -1890,8 +1890,8 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list subscriptions.
- *   Format is `projects/{project-id}`.
+ *   Required. Identifier. The name of the project in which to list
+ *   subscriptions. Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of subscriptions to return.
  * @param {string} [request.pageToken]
@@ -1991,8 +1991,8 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list subscriptions.
- *   Format is `projects/{project-id}`.
+ *   Required. Identifier. The name of the project in which to list
+ *   subscriptions. Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of subscriptions to return.
  * @param {string} [request.pageToken]
@@ -2041,8 +2041,8 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list subscriptions.
- *   Format is `projects/{project-id}`.
+ *   Required. Identifier. The name of the project in which to list
+ *   subscriptions. Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of subscriptions to return.
  * @param {string} [request.pageToken]
@@ -2092,7 +2092,7 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list snapshots.
+ *   Required. Identifier. The name of the project in which to list snapshots.
  *   Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of snapshots to return.
@@ -2193,7 +2193,7 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list snapshots.
+ *   Required. Identifier. The name of the project in which to list snapshots.
  *   Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of snapshots to return.
@@ -2243,7 +2243,7 @@ export class SubscriberClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list snapshots.
+ *   Required. Identifier. The name of the project in which to list snapshots.
  *   Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of snapshots to return.

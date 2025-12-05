@@ -384,7 +384,7 @@ export class PublisherClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.name
- *   Required. The name of the topic. It must have the format
+ *   Required. Identifier. The name of the topic. It must have the format
  *   `"projects/{project}/topics/{topic}"`. `{topic}` must start with a letter,
  *   and contain only letters (`[A-Za-z]`), numbers (`[0-9]`), dashes (`-`),
  *   underscores (`_`), periods (`.`), tildes (`~`), plus (`+`) or percent
@@ -620,8 +620,8 @@ export class PublisherClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.topic
- *   Required. The messages in the request will be published on this topic.
- *   Format is `projects/{project}/topics/{topic}`.
+ *   Required. Identifier. The messages in the request will be published on this
+ *   topic. Format is `projects/{project}/topics/{topic}`.
  * @param {number[]} request.messages
  *   Required. The messages to publish.
  * @param {object} [options]
@@ -715,7 +715,7 @@ export class PublisherClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.topic
- *   Required. The name of the topic to get.
+ *   Required. Identifier. The name of the topic to get.
  *   Format is `projects/{project}/topics/{topic}`.
  * @param {object} [options]
  *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
@@ -812,7 +812,7 @@ export class PublisherClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.topic
- *   Required. Name of the topic to delete.
+ *   Required. Identifier. Name of the topic to delete.
  *   Format is `projects/{project}/topics/{topic}`.
  * @param {object} [options]
  *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
@@ -1002,7 +1002,7 @@ export class PublisherClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list topics.
+ *   Required. Identifier. The name of the project in which to list topics.
  *   Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of topics to return.
@@ -1103,7 +1103,7 @@ export class PublisherClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list topics.
+ *   Required. Identifier. The name of the project in which to list topics.
  *   Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of topics to return.
@@ -1153,7 +1153,7 @@ export class PublisherClient {
  * @param {Object} request
  *   The request object that will be sent.
  * @param {string} request.project
- *   Required. The name of the project in which to list topics.
+ *   Required. Identifier. The name of the project in which to list topics.
  *   Format is `projects/{project-id}`.
  * @param {number} [request.pageSize]
  *   Optional. Maximum number of topics to return.
