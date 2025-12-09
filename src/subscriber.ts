@@ -1000,7 +1000,7 @@ export class Subscriber extends EventEmitter {
     const shutdownStart = Date.now();
     if (
       behavior === SubscriberCloseBehaviors.WaitForProcessing &&
-      !this._inventory.isEmpty
+      !this._inventory.isEmpty()
     ) {
       const waitTimeout = timeout.subtract(FINAL_NACK_TIMEOUT);
 
