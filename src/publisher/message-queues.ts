@@ -172,10 +172,11 @@ export abstract class MessageQueue extends EventEmitter {
 
       throw e;
     } finally {
-      messages.forEach(m => {
-        // We're finished with both the RPC and the whole publish operation,
-        // so close out all of the related spans.
-        rpcSpan?.end();
+      // We're finished with both the RPC and the whole publish operation,
+      // so close out all of the related spans.
+      // rpcSpan must be closed only once
+      rpcSpan?.end();
+      messages.forEach(m => {  
         tracing.PubsubEvents.publishEnd(m);
         m.parentSpan?.end();
       });
