@@ -429,6 +429,8 @@ export class PublisherClient {
  *   resource. For example:
  *     "123/environment": "production",
  *     "123/costCenter": "marketing"
+ *   See https://docs.cloud.google.com/pubsub/docs/tags for more information on
+ *   using tags with Pub/Sub resources.
  * @param {object} [options]
  *   Call options. See {@link https://googleapis.dev/nodejs/google-gax/latest/interfaces/CallOptions.html|CallOptions} for more details.
  * @returns {Promise} - The promise which resolves to an array.
