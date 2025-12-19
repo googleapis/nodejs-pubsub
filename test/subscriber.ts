@@ -106,7 +106,7 @@ class FakeLeaseManager extends EventEmitter {
   remove(message: s.Message): void {}
 
   _isEmpty = true;
-  get isEmpty() {
+  isEmpty(): boolean {
     return this._isEmpty;
   }
 }

@@ -429,8 +429,8 @@ describe('pubsub', () => {
     const SUB_NAMES = [generateSubName(), generateSubName()];
     const SUB_DETACH_NAME = generateSubForDetach();
 
-    const thirty = Duration.from({minutes: 30});
-    const sixty = Duration.from({minutes: 60});
+    const thirty = Duration.from({seconds: 30});
+    const sixty = Duration.from({seconds: 60});
     const SUBSCRIPTIONS = [
       topic.subscription(SUB_NAMES[0], {minAckDeadline: thirty, maxAckDeadline: thirty}),
       topic.subscription(SUB_NAMES[1], {minAckDeadline: sixty, maxAckDeadline: sixty}),
@@ -660,8 +660,9 @@ describe('pubsub', () => {
       subscription.on('error', done);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      subscription.on('message', (message: {data: any}) => {
+      subscription.on('message', message => {
         assert.deepStrictEqual(message.data, Buffer.from('hello'));
+        message.ack();
 
         if (++messageCount === 10) {
           subscription.close(done);
