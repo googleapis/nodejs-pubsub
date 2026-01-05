@@ -659,7 +659,6 @@ describe('pubsub', () => {
 
       subscription.on('error', done);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       subscription.on('message', message => {
         assert.deepStrictEqual(message.data, Buffer.from('hello'));
         message.ack();
