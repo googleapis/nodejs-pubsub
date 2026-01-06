@@ -106,6 +106,8 @@ export class LeaseManager extends EventEmitter {
    * Adds a message to the inventory, kicking off the deadline extender if it
    * isn't already running.
    *
+   * @fires LeaseManager#full
+   *
    * @param {Message} message The message.
    * @private
    */
@@ -141,6 +143,10 @@ export class LeaseManager extends EventEmitter {
   }
   /**
    * Removes ALL messages from inventory, and returns the ones removed.
+   *
+   * @fires LeaseManager#free
+   * @fires LeaseManager#empty
+   *
    * @private
    */
   clear(): Message[] {
@@ -197,6 +203,7 @@ export class LeaseManager extends EventEmitter {
    * messages are left over.
    *
    * @fires LeaseManager#free
+   * @fires LeaseManager#empty
    *
    * @param {Message} message The message to remove.
    * @private
