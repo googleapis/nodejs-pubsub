@@ -655,7 +655,7 @@ export class Message implements tracing.MessageWithAttributes {
  *     close() function.
  * @property {SubscriberCloseBehavior} [options.behavior] The behavior of the close operation.
  *     - NackImmediately: Sends nacks for all messages held by the client library, and
- *       wait for them to send.
+ *       wait for them to send. (default to match old behavior)
  *     - WaitForProcessing: Continues normal ack/nack and leasing processes until close
  *       to the timeout, then switches to NackImmediately behavior to close down.
  *     Use {@link SubscriberCloseBehaviors} for enum values.
@@ -970,9 +970,10 @@ export class Subscriber extends EventEmitter {
 
     const options = this._options.closeOptions;
 
-    // If no behavior is specified, default to Wait.
+    // If no behavior is specified, default to Nack. This most closely matches
+    // the old behavior.
     const behavior =
-      options?.behavior ?? SubscriberCloseBehaviors.WaitForProcessing;
+      options?.behavior ?? SubscriberCloseBehaviors.NackImmediately;
 
     // The timeout can't realistically be longer than the longest time we're willing
     // to lease messages.
