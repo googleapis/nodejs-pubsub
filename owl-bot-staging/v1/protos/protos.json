@@ -1059,11 +1059,57 @@
                     }
                   }
                 },
+                "AIInference": {
+                  "oneofs": {
+                    "inferenceMode": {
+                      "oneof": [
+                        "unstructuredInference"
+                      ]
+                    }
+                  },
+                  "fields": {
+                    "endpoint": {
+                      "type": "string",
+                      "id": 1,
+                      "options": {
+                        "(google.api.field_behavior)": "REQUIRED"
+                      }
+                    },
+                    "unstructuredInference": {
+                      "type": "UnstructuredInference",
+                      "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "serviceAccountEmail": {
+                      "type": "string",
+                      "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    }
+                  },
+                  "nested": {
+                    "UnstructuredInference": {
+                      "fields": {
+                        "parameters": {
+                          "type": "google.protobuf.Struct",
+                          "id": 1,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
                 "MessageTransform": {
                   "oneofs": {
                     "transform": {
                       "oneof": [
-                        "javascriptUdf"
+                        "javascriptUdf",
+                        "aiInference"
                       ]
                     }
                   },
@@ -1071,6 +1117,13 @@
                     "javascriptUdf": {
                       "type": "JavaScriptUDF",
                       "id": 2,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "aiInference": {
+                      "type": "AIInference",
+                      "id": 6,
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
@@ -1232,7 +1285,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     }
@@ -1262,7 +1315,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     },
@@ -1294,7 +1347,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
                       }
                     },
@@ -1431,7 +1484,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     }
@@ -2137,7 +2190,8 @@
                         "PERMISSION_DENIED": 2,
                         "NOT_FOUND": 3,
                         "SCHEMA_MISMATCH": 4,
-                        "IN_TRANSIT_LOCATION_RESTRICTION": 5
+                        "IN_TRANSIT_LOCATION_RESTRICTION": 5,
+                        "VERTEX_AI_LOCATION_RESTRICTION": 6
                       }
                     }
                   }
@@ -2259,7 +2313,8 @@
                         "PERMISSION_DENIED": 2,
                         "NOT_FOUND": 3,
                         "IN_TRANSIT_LOCATION_RESTRICTION": 4,
-                        "SCHEMA_MISMATCH": 5
+                        "SCHEMA_MISMATCH": 5,
+                        "VERTEX_AI_LOCATION_RESTRICTION": 6
                       }
                     }
                   }
@@ -2295,7 +2350,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
                       }
                     }
@@ -2325,7 +2380,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
                       }
                     },
@@ -2370,7 +2425,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Subscription"
                       }
                     }
@@ -2675,7 +2730,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
                       }
                     },
@@ -2769,7 +2824,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
                       }
                     }
@@ -2781,7 +2836,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "cloudresourcemanager.googleapis.com/Project"
                       }
                     },
@@ -2826,7 +2881,7 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "IDENTIFIER",
+                        "(google.api.field_behavior)": "REQUIRED",
                         "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
                       }
                     }
@@ -5208,6 +5263,69 @@
                 "paths": {
                   "rule": "repeated",
                   "type": "string",
+                  "id": 1
+                }
+              }
+            },
+            "Struct": {
+              "fields": {
+                "fields": {
+                  "keyType": "string",
+                  "type": "Value",
+                  "id": 1
+                }
+              }
+            },
+            "Value": {
+              "oneofs": {
+                "kind": {
+                  "oneof": [
+                    "nullValue",
+                    "numberValue",
+                    "stringValue",
+                    "boolValue",
+                    "structValue",
+                    "listValue"
+                  ]
+                }
+              },
+              "fields": {
+                "nullValue": {
+                  "type": "NullValue",
+                  "id": 1
+                },
+                "numberValue": {
+                  "type": "double",
+                  "id": 2
+                },
+                "stringValue": {
+                  "type": "string",
+                  "id": 3
+                },
+                "boolValue": {
+                  "type": "bool",
+                  "id": 4
+                },
+                "structValue": {
+                  "type": "Struct",
+                  "id": 5
+                },
+                "listValue": {
+                  "type": "ListValue",
+                  "id": 6
+                }
+              }
+            },
+            "NullValue": {
+              "values": {
+                "NULL_VALUE": 0
+              }
+            },
+            "ListValue": {
+              "fields": {
+                "values": {
+                  "rule": "repeated",
+                  "type": "Value",
                   "id": 1
                 }
               }
