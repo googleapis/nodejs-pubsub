@@ -361,18 +361,18 @@ describe('pubsub', () => {
   });
 
   describe('Subscription', () => {
-    const thirtySecs = Duration.from({seconds: 30});
-    const sixtySecs = Duration.from({seconds: 60});
-    const thirty = {minAckDeadline: thirtySecs, maxAckDeadline: thirtySecs};
-    const sixty = {minAckDeadline: sixtySecs, maxAckDeadline: sixtySecs};
-
-    async function subPop(testName: string, cfgs: SubscriptionOptions[]) {
+    async function subPop(testName: string, count: number) {
       const testTopic = await generateTopic(testName);
       const topic = testTopic.topic;
 
-      const testSubs = await Promise.all(
-        cfgs.map(sc => generateSub(testName, testTopic.name, sc))
-      );
+      const testSubProms: Promise<UsedSub>[] = [];
+      for (let i = 0; i < count; i++) {
+        testSubProms.push(generateSub(testName, testTopic.name, {
+          minAckDeadline: Duration.from({seconds: 60}),
+          maxAckDeadline: Duration.from({seconds: 60}),
+        }));
+      }
+      const testSubs = await Promise.all(testSubProms);
       const subs = testSubs.map(t => t.sub);
       for (let i = 0; i < 10; i++) {
         const data = Buffer.from('hello');
@@ -410,14 +410,14 @@ describe('pubsub', () => {
     });
 
     it('should list all subscriptions registered to the topic', async () => {
-      const pop = await subPop('list-subs', [thirty, sixty]);
+      const pop = await subPop('list-subs', 2);
       const [subs] = await pop.topic.getSubscriptions();
       assert.strictEqual(subs!.length, 2);
       assert(subs![0] instanceof Subscription);
     });
 
     it('should list all topic subscriptions as a stream', async () => {
-      const pop = await subPop('list-subs', [thirty, sixty]);
+      const pop = await subPop('list-subs', 2);
 
       await new Promise<void>((res, rej) => {
         const subscriptionsEmitted: Array<{}> = [];
@@ -436,7 +436,7 @@ describe('pubsub', () => {
 
     it('should list all subscriptions regardless of topic', async () => {
       // Make sure there are some subs.
-      await subPop('all-subs', [thirty]);
+      await subPop('all-subs', 1);
 
       const [results] = await pubsub.getSubscriptions();
       assert(results instanceof Array);
@@ -444,7 +444,7 @@ describe('pubsub', () => {
 
     it('should list all subscriptions as a stream', async () => {
       // Make sure there are some subs.
-      await subPop('all-subs', [thirty]);
+      await subPop('all-subs', 1);
 
       await new Promise<void>((res, rej) => {
         let subscriptionEmitted = false;
@@ -549,7 +549,7 @@ describe('pubsub', () => {
     });
 
     it('should receive the published messages', async () => {
-      const pop = await subPop('recv', [sixty]);
+      const pop = await subPop('recv', 1);
       let messageCount = 0;
       const subscription = pop.subs[0];
 
@@ -569,7 +569,7 @@ describe('pubsub', () => {
     });
 
     it('should ack the message', async () => {
-      const pop = await subPop('ack', [sixty]);
+      const pop = await subPop('ack', 1);
       const subscription = pop.subs[0];
 
       await new Promise((res, rej) => {
@@ -593,7 +593,7 @@ describe('pubsub', () => {
     });
 
     it('should nack the message', async () => {
-      const pop = await subPop('nack', [sixty]);
+      const pop = await subPop('nack', 1);
       const subscription = pop.subs[0];
 
       await new Promise((res, rej) => {
@@ -620,7 +620,7 @@ describe('pubsub', () => {
       const maxMessages = 3;
       let messageCount = 0;
 
-      const pop = await subPop('fcl', [thirty]);
+      const pop = await subPop('fcl', 1);
       const subscription = pop.topic.subscription(pop.testSubs[0].name, {
         flowControl: {maxMessages, allowExcessMessages: false},
       });
@@ -640,7 +640,7 @@ describe('pubsub', () => {
     });
 
     it('should send and receive large messages', async () => {
-      const pop = await subPop('large', [thirty]);
+      const pop = await subPop('large', 1);
       const subscription = pop.subs[0];
       const data = crypto.randomBytes(9000000); // 9mb
 
@@ -658,7 +658,7 @@ describe('pubsub', () => {
     });
 
     it('should detach subscriptions', async () => {
-      const pop = await subPop('detach', [thirty]);
+      const pop = await subPop('detach', 1);
       const subscription = pop.subs[0];
       const [before] = await subscription.detached();
       assert.strictEqual(before, false);
@@ -678,7 +678,7 @@ describe('pubsub', () => {
 
       this.timeout(0);
 
-      const pop = await subPop('many', [thirty]);
+      const pop = await subPop('many', 1);
       const topic = pop.topic;
       const subscription = pop.subs[0];
 
