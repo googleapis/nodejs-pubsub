@@ -115,41 +115,35 @@ export class TestResources {
     );
   }
 
-  /*!
+  /**
    * Given a list of resource names (and a test ID), this will return
    * a list of all resources that should be deleted to clean up for
    * the current run of that particular test.
-   *
-   * Leaving this commented out for now since it's not actively needed.
    */
-  /*filterForTest(testId: string, allResources: Resource[]): Resource[] {
+  filterForTest(testId: string, allResources: Resource[]): Resource[] {
     const prefix = this.getPrefix(testId);
     return allResources.filter(n => n.name?.includes(prefix));
-  }*/
+  }
 
-  /*!
+  /**
    * Given a list of resource names, this will return a list of all
    * resources that should be deleted to clean up after the current
    * run of a test suite.
-   *
-   * Leaving this commented out for now since it's not actively needed.
    */
-  /*filterForCurrentRun(allResources: Resource[]): Resource[] {
+  filterForCurrentRun(allResources: Resource[]): Resource[] {
     const prefix = this.getPrefix();
     return allResources.filter(n => n.name?.includes(prefix));
-  }*/
+  }
 
   /**
    * Given a list of resource names, this will return a list of all
    * resources that should be deleted to clean up after any run
    * of the current test suite. Note that some of the names may
    * still be in use.
-   *
-   * Leaving this commented out for now since it's not actively needed.
    */
-  /*filterForSuite(allResources: Resource[]): Resource[] {
+  filterForSuite(allResources: Resource[]): Resource[] {
     return allResources.filter(n => n.name?.includes(this.testSuiteId));
-  }*/
+  }
 
   /**
    * Given a list of resource names, this will return a list of all
