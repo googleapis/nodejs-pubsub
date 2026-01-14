@@ -1097,6 +1097,8 @@ export class Subscriber extends EventEmitter {
     const latency = (Date.now() - startTime) / 1000;
     this._latencies.add(latency);
 
+    this._inventory.remove(message);
+
     // No exception means Success.
     return AckResponses.Success;
   }
