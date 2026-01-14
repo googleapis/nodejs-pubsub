@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.2.2](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.1...v5.2.2) (2026-01-14)
+
+
+### Bug Fixes
+
+* **WaitForProcessing:** Shutdown option `WaitForProcessing` never entered on subscription close ([#2118](https://github.com/googleapis/nodejs-pubsub/issues/2118)) ([e99b37e](https://github.com/googleapis/nodejs-pubsub/commit/e99b37e28ce551ad24325ac951ac33a60f8faa99))
+
 ## [5.2.1](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.0...v5.2.1) (2025-12-19)
 
 
