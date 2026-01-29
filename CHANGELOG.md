@@ -4,6 +4,23 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.2.2](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.1...v5.2.2) (2026-01-14)
+
+
+### Bug Fixes
+
+* **WaitForProcessing:** Shutdown option `WaitForProcessing` never entered on subscription close ([#2118](https://github.com/googleapis/nodejs-pubsub/issues/2118)) ([e99b37e](https://github.com/googleapis/nodejs-pubsub/commit/e99b37e28ce551ad24325ac951ac33a60f8faa99))
+
+## [5.2.1](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.0...v5.2.1) (2025-12-19)
+
+
+### Bug Fixes
+
+* Check batch size before re-queueing retried messages ([#2027](https://github.com/googleapis/nodejs-pubsub/issues/2027)) ([6c1613f](https://github.com/googleapis/nodejs-pubsub/commit/6c1613fdc6258ccb85427fc371e7bac8082f4a96))
+* Move off the remaining rc versions ([#2112](https://github.com/googleapis/nodejs-pubsub/issues/2112)) ([a9eb883](https://github.com/googleapis/nodejs-pubsub/commit/a9eb88335df62606ab3e6cbe11c1d760d1ddbc96))
+* Only close the rpcSpan once ([#2121](https://github.com/googleapis/nodejs-pubsub/issues/2121)) ([118a960](https://github.com/googleapis/nodejs-pubsub/commit/118a960b8cfca6203ad1843453c3692b07a94952))
+* Updated span kind to CLIENT for ack and modack rpc spans ([#2029](https://github.com/googleapis/nodejs-pubsub/issues/2029)) ([801c1c8](https://github.com/googleapis/nodejs-pubsub/commit/801c1c862a986eefe1eddd2e014be4612cd394d8))
+
 ## [5.2.0](https://github.com/googleapis/nodejs-pubsub/compare/v5.1.0...v5.2.0) (2025-08-07)
 
 
