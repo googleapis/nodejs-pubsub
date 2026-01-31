@@ -343,17 +343,16 @@ export class MessageStream extends PassThrough {
       streamAckDeadlineSeconds: this._subscriber.ackDeadline,
       maxOutstandingMessages: this._subscriber.useLegacyFlowControl
         ? 0
-        : this._subscriber.maxMessages,
+        : this._subscriber.maxMessages / this._streams.length,
       maxOutstandingBytes: this._subscriber.useLegacyFlowControl
         ? 0
-        : this._subscriber.maxBytes,
+        : this._subscriber.maxBytes / this._streams.length,
     };
     const otherArgs = {
       headers: {
         'x-goog-request-params': 'subscription=' + this._subscriber.name,
       },
     };
-
     const stream: PullStream = client.streamingPull({deadline, otherArgs});
     this._replaceStream(index, stream, reason);
     stream.write(request);
