@@ -1231,6 +1231,10 @@ export class Subscriber extends EventEmitter {
       );
     }
 
+    if (this._options.maxExtensionTime) {
+      this.maxExtensionTime = this._options.maxExtensionTime;
+    }
+
     if (this._inventory) {
       this._inventory.setOptions(this._options.flowControl!);
     }
