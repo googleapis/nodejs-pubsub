@@ -82,7 +82,7 @@
     "codecov": "^3.8.3",
     "execa": "~5.1.0",
     "gapic-tools": "^1.0.1",
-    "gts": "^7.0.0",
+    "gts": "^6.0.0",
     "jsdoc": "^4.0.4",
     "jsdoc-fresh": "^5.0.0",
     "jsdoc-region-tag": "^4.0.0",
