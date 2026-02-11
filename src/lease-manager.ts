@@ -51,8 +51,6 @@ export interface FlowControlOptions {
  * @property {number} [maxBytes=104857600] The desired amount of memory to
  *     allow message data to consume. (Default: 100MB) It's possible that this
  *     value will be exceeded, since messages are received in batches.
- * @property {number} [maxExtensionMinutes=60] The maximum duration (in minutes)
- *     to extend the message deadline before redelivering.
  * @property {number} [maxMessages=1000] The desired number of messages to allow
  *     in memory before pausing the message stream. Unless allowExcessMessages
  *     is set to false, it is very likely that this value will be exceeded since

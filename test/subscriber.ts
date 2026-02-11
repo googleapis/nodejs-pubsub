@@ -1108,6 +1108,17 @@ describe('Subscriber', () => {
 
       assert.strictEqual(stream.options.maxStreams, maxMessages);
     });
+
+    it('should pass through the max extension time', () => {
+      const maxExtensionTime = Duration.from({seconds: 1232});
+      subscriber.setOptions({
+        maxExtensionTime,
+      });
+      assert.strictEqual(
+        subscriber.maxExtensionTime.seconds,
+        maxExtensionTime.seconds,
+      );
+    });
   });
 
   describe('OpenTelemetry tracing', () => {
