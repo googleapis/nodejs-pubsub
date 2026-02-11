@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.2.3](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.2...v5.2.3) (2026-02-11)
+
+
+### Bug Fixes
+
+* Clean up earlier refactor issues with maxExtensionTime ([#2127](https://github.com/googleapis/nodejs-pubsub/issues/2127)) ([c22471d](https://github.com/googleapis/nodejs-pubsub/commit/c22471de60c63d9420c037ca3269af8b7dbf9d92))
+
 ## [5.2.2](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.1...v5.2.2) (2026-01-14)
 
 
