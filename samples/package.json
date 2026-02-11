@@ -42,7 +42,7 @@
     "@google-cloud/typeless-sample-bot": "^3.0.0",
     "@types/chai": "^5.0.0",
     "chai": "^6.0.0",
-    "gts": "^7.0.0",
+    "gts": "^6.0.0",
     "lru-cache": "10.4.3",
     "mocha": "^10.0.0",
     "rimraf": "5.0.10",
