@@ -1,6 +1,7 @@
 {
   "extends": [
     "config:base",
+    "group:all",
     "docker:disable",
     ":disableDependencyDashboard"
   ],
@@ -15,6 +16,10 @@
     {
       "extends": "packages:linters",
       "groupName": "linters"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "enabled": false
     }
   ],
   "ignoreDeps": ["typescript"]

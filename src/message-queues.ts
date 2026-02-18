@@ -34,6 +34,16 @@ import {Duration} from './temporal';
 import {addToBucket} from './util';
 import {DebugMessage} from './debug';
 import * as tracing from './telemetry-tracing';
+import {logs as baseLogs} from './logs';
+
+/**
+ * Loggers. Exported for unit tests.
+ *
+ * @private
+ */
+export const logs = {
+  ackBatch: baseLogs.pubsub.sublog('ack-batch'),
+};
 
 export interface ReducedMessage {
   ackId: string;
@@ -147,6 +157,8 @@ export abstract class MessageQueue {
     this.setOptions(options);
   }
 
+  protected abstract getType(): string;
+
   /**
    * Shuts down this message queue gracefully. Any acks/modAcks pending in
    * the queue or waiting for retry will be removed. If exactly-once delivery
@@ -188,6 +200,20 @@ export abstract class MessageQueue {
     return this._options!.maxMilliseconds!;
   }
 
+  /*!
+   * Logs about a batch being sent, and why.
+   * @private
+   */
+  private logBatch(reason: string) {
+    logs.ackBatch.info(
+      '%s triggered %s batch of %i messages, a total of %i bytes',
+      reason,
+      this.getType(),
+      this._requests.length,
+      this.bytes,
+    );
+  }
+
   /**
    * Adds a message to the queue.
    *
@@ -213,7 +239,11 @@ export abstract class MessageQueue {
       this._requests.length + 1 >= maxMessages! ||
       this.bytes + size >= MAX_BATCH_BYTES
     ) {
-      await this.flush();
+      const reason =
+        this._requests.length + 1 >= maxMessages!
+          ? 'going over count'
+          : 'going over size';
+      await this.flush(reason);
     }
 
     // Add the message to the current batch.
@@ -233,7 +263,10 @@ export abstract class MessageQueue {
 
     // Ensure that we are counting toward maxMilliseconds by timer.
     if (!this._timer) {
-      this._timer = setTimeout(() => this.flush(), maxMilliseconds!);
+      this._timer = setTimeout(
+        () => this.flush('batch timer'),
+        maxMilliseconds!,
+      );
     }
 
     return responsePromise.promise;
@@ -254,16 +287,35 @@ export abstract class MessageQueue {
       return;
     }
 
+    // If we'd go over maxMessages or MAX_BATCH_BYTES by re-queueing this
+    // message, flush first
+    const {maxMessages} = this._options;
+    const size = Buffer.byteLength(message.message.ackId, 'utf8');
+    if (
+      this._requests.length + 1 >= maxMessages! ||
+      this.bytes + size >= MAX_BATCH_BYTES
+    ) {
+      const reason =
+        this._requests.length + 1 >= maxMessages!
+          ? 'going over count'
+          : 'going over size';
+
+      // No need to wait on this one; it clears the old batch out, and acks
+      // are best effort.
+      this.flush(reason).catch(() => {});
+    }
+
     // Just throw it in for another round of processing on the next batch.
     this._requests.push(message);
     this.numPendingRequests++;
     this.numInFlightRequests++;
     this.numInRetryRequests--;
+    this.bytes += size;
 
     // Make sure we actually do have another batch scheduled.
     if (!this._timer) {
       this._timer = setTimeout(
-        () => this.flush(),
+        () => this.flush('retry timer'),
         this._options.maxMilliseconds!,
       );
     }
@@ -283,7 +335,11 @@ export abstract class MessageQueue {
    * Sends a batch of messages.
    * @private
    */
-  async flush(): Promise<void> {
+  async flush(reason?: string): Promise<void> {
+    if (reason) {
+      this.logBatch(reason);
+    }
+
     if (this._timer) {
       clearTimeout(this._timer);
       delete this._timer;
@@ -494,6 +550,14 @@ export abstract class MessageQueue {
  */
 export class AckQueue extends MessageQueue {
   /**
+   * @private
+   * @returns The name of the items in this queue.
+   */
+  protected getType(): string {
+    return 'ack';
+  }
+
+  /**
    * Sends a batch of ack requests.
    *
    * @private
@@ -555,6 +619,14 @@ export class AckQueue extends MessageQueue {
  * @class
  */
 export class ModAckQueue extends MessageQueue {
+  /**
+   * @private
+   * @returns The name of the items in this queue.
+   */
+  protected getType(): string {
+    return 'modack/nack';
+  }
+
   /**
    * Sends a batch of modAck requests. Each deadline requires its own request,
    * so we have to group all the ackIds by deadline and send multiple requests.

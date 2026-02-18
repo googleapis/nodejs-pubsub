@@ -148,6 +148,9 @@ export class PublisherClient {
       (typeof window !== 'undefined' && typeof window?.fetch === 'function');
     opts = Object.assign({servicePath, port, clientConfig, fallback}, opts);
 
+    // Request numeric enum values if REST transport is used.
+    opts.numericEnums = true;
+
     // If scopes are unset in options and we're connecting to a non-default endpoint, set scopes just in case.
     if (servicePath !== this._servicePath && !('scopes' in opts)) {
       opts['scopes'] = staticMembers.scopes;
@@ -242,6 +245,22 @@ export class PublisherClient {
       ),
     };
 
+    const protoFilesRoot = this._gaxModule.protobuf.Root.fromJSON(jsonProtos);
+    // Some methods on this API support automatically batching
+    // requests; denote this.
+
+    this.descriptors.batching = {
+      publish: new this._gaxModule.BundleDescriptor(
+        'messages',
+        ['topic'],
+        'message_ids',
+        this._gaxModule.GrpcClient.createByteLengthFunction(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          protoFilesRoot.lookupType('google.pubsub.v1.PubsubMessage') as any,
+        ),
+      ),
+    };
+
     // Put together the default options sent with requests.
     this._defaults = this._gaxGrpc.constructSettings(
       'google.pubsub.v1.Publisher',
@@ -317,7 +336,10 @@ export class PublisherClient {
         },
       );
 
-      const descriptor = this.descriptors.page[methodName] || undefined;
+      const descriptor =
+        this.descriptors.page[methodName] ||
+        this.descriptors.batching?.[methodName] ||
+        undefined;
       const apiCall = this._gaxModule.createApiCall(
         callPromise,
         this._defaults[methodName],
@@ -471,8 +493,6 @@ export class PublisherClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Topic|Topic}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.create_topic.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_CreateTopic_async
    */
   createTopic(
     request?: protos.google.pubsub.v1.ITopic,
@@ -586,8 +606,6 @@ export class PublisherClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Topic|Topic}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.update_topic.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_UpdateTopic_async
    */
   updateTopic(
     request?: protos.google.pubsub.v1.IUpdateTopicRequest,
@@ -698,8 +716,6 @@ export class PublisherClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.PublishResponse|PublishResponse}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.publish.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_Publish_async
    */
   publish(
     request?: protos.google.pubsub.v1.IPublishRequest,
@@ -807,8 +823,6 @@ export class PublisherClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.Topic|Topic}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.get_topic.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_GetTopic_async
    */
   getTopic(
     request?: protos.google.pubsub.v1.IGetTopicRequest,
@@ -920,8 +934,6 @@ export class PublisherClient {
    *   The first element of the array is an object representing {@link protos.google.protobuf.Empty|Empty}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.delete_topic.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_DeleteTopic_async
    */
   deleteTopic(
     request?: protos.google.pubsub.v1.IDeleteTopicRequest,
@@ -1032,8 +1044,6 @@ export class PublisherClient {
    *   The first element of the array is an object representing {@link protos.google.pubsub.v1.DetachSubscriptionResponse|DetachSubscriptionResponse}.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#regular-methods | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.detach_subscription.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_DetachSubscription_async
    */
   detachSubscription(
     request?: protos.google.pubsub.v1.IDetachSubscriptionRequest,
@@ -1320,8 +1330,6 @@ export class PublisherClient {
    *   so you can stop the iteration when you don't need more results.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.list_topics.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_ListTopics_async
    */
   listTopicsAsync(
     request?: protos.google.pubsub.v1.IListTopicsRequest,
@@ -1549,8 +1557,6 @@ export class PublisherClient {
    *   so you can stop the iteration when you don't need more results.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.list_topic_subscriptions.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_ListTopicSubscriptions_async
    */
   listTopicSubscriptionsAsync(
     request?: protos.google.pubsub.v1.IListTopicSubscriptionsRequest,
@@ -1776,8 +1782,6 @@ export class PublisherClient {
    *   so you can stop the iteration when you don't need more results.
    *   Please see the {@link https://github.com/googleapis/gax-nodejs/blob/master/client-libraries.md#auto-pagination | documentation }
    *   for more details and examples.
-   * @example <caption>include:samples/generated/v1/publisher.list_topic_snapshots.js</caption>
-   * region_tag:pubsub_v1_generated_Publisher_ListTopicSnapshots_async
    */
   listTopicSnapshotsAsync(
     request?: protos.google.pubsub.v1.IListTopicSnapshotsRequest,
@@ -2128,7 +2132,9 @@ export class PublisherClient {
         this._log.info('ending gRPC channel');
         this._terminated = true;
         stub.close();
-        void this.iamClient.close();
+        this.iamClient.close().catch(err => {
+          throw err;
+        });
       });
     }
     return Promise.resolve();

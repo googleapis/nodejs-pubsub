@@ -5,7 +5,7 @@
 # [Google Cloud Pub/Sub: Node.js Client](https://github.com/googleapis/nodejs-pubsub)
 
 [![release level](https://img.shields.io/badge/release%20level-stable-brightgreen.svg?style=flat)](https://cloud.google.com/terms/launch-stages)
-[![npm version](https://img.shields.io/npm/v/@google-cloud/pubsub.svg)](https://www.npmjs.org/package/@google-cloud/pubsub)
+[![npm version](https://img.shields.io/npm/v/@google-cloud/pubsub.svg)](https://www.npmjs.com/package/@google-cloud/pubsub)
 
 
 
@@ -123,6 +123,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/nodejs-pubsub/tree
 
 | Sample                      | Source Code                       | Try it |
 | --------------------------- | --------------------------------- | ------ |
+| Close Subscription with Timeout | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/closeSubscriptionWithTimeout.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/closeSubscriptionWithTimeout.js,samples/README.md) |
 | Commit an Avro-Based Schema | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/commitAvroSchema.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/commitAvroSchema.js,samples/README.md) |
 | Commit an Proto-Based Schema | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/commitProtoSchema.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/commitProtoSchema.js,samples/README.md) |
 | Create an Avro based Schema | [source code](https://github.com/googleapis/nodejs-pubsub/blob/main/samples/createAvroSchema.js) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/nodejs-pubsub&page=editor&open_in_editor=samples/createAvroSchema.js,samples/README.md) |
