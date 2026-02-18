@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.2.4](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.3...v5.2.4) (2026-02-11)
+
+
+### Bug Fixes
+
+* **deps:** Update all dependencies ([#2105](https://github.com/googleapis/nodejs-pubsub/issues/2105)) ([c7d42e3](https://github.com/googleapis/nodejs-pubsub/commit/c7d42e391eac92137abd8aeb2ac25bc89856aa15))
+
 ## [5.2.3](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.2...v5.2.3) (2026-02-11)
 
 
