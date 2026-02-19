@@ -4,6 +4,13 @@
 
 [1]: https://www.npmjs.com/package/@google-cloud/pubsub?activeTab=versions
 
+## [5.3.0](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.4...v5.3.0) (2026-02-19)
+
+
+### Features
+
+* Manual proto pushing ([#2134](https://github.com/googleapis/nodejs-pubsub/issues/2134)) ([2f1e8d1](https://github.com/googleapis/nodejs-pubsub/commit/2f1e8d198ffbc14795f9f0d0a88095d69ac437a3))
+
 ## [5.2.4](https://github.com/googleapis/nodejs-pubsub/compare/v5.2.3...v5.2.4) (2026-02-11)
 
 
