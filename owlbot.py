@@ -22,5 +22,6 @@ node.owlbot_main(templates_excludes=[
     '.github/header-checker-lint.yaml',
     '.github/workflows/ci.yaml',
     '.eslintignore',
+    '.OwlBot.yaml',
     'renovate.json'
 ])
