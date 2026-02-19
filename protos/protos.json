@@ -12,7 +12,9 @@
                 "java_outer_classname": "SchemaProto",
                 "java_package": "com.google.pubsub.v1",
                 "php_namespace": "Google\\Cloud\\PubSub\\V1",
-                "ruby_package": "Google::Cloud::PubSub::V1"
+                "ruby_package": "Google::Cloud::PubSub::V1",
+                "(google.api.resource_definition).type": "analyticshub.googleapis.com/Listing",
+                "(google.api.resource_definition).pattern": "projects/{project}/locations/{location}/dataExchanges/{data_exchange}/listings/{listing}"
               },
               "nested": {
                 "Publisher": {
@@ -540,7 +542,8 @@
                           "type": "string",
                           "id": 3,
                           "options": {
-                            "(google.api.field_behavior)": "REQUIRED"
+                            "(google.api.field_behavior)": "REQUIRED",
+                            "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                           }
                         },
                         "awsRoleArn": {
@@ -672,7 +675,8 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "REQUIRED"
+                        "(google.api.field_behavior)": "REQUIRED",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     },
                     "errorMessage": {
@@ -728,13 +732,17 @@
                     "SchemaViolationReason": {
                       "fields": {}
                     },
+                    "MessageTransformationFailureReason": {
+                      "fields": {}
+                    },
                     "CloudStorageFailure": {
                       "oneofs": {
                         "reason": {
                           "oneof": [
                             "avroFailureReason",
                             "apiViolationReason",
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -780,6 +788,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 8,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -788,7 +803,8 @@
                         "reason": {
                           "oneof": [
                             "apiViolationReason",
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -834,6 +850,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 7,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -842,7 +865,8 @@
                         "reason": {
                           "oneof": [
                             "apiViolationReason",
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -888,6 +912,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 7,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -896,7 +927,8 @@
                         "reason": {
                           "oneof": [
                             "apiViolationReason",
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason"
                           ]
                         }
                       },
@@ -942,6 +974,13 @@
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 7,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
                         }
                       }
                     },
@@ -949,7 +988,9 @@
                       "oneofs": {
                         "reason": {
                           "oneof": [
-                            "schemaViolationReason"
+                            "schemaViolationReason",
+                            "messageTransformationFailureReason",
+                            "apiViolationReason"
                           ]
                         }
                       },
@@ -978,6 +1019,20 @@
                         "schemaViolationReason": {
                           "type": "SchemaViolationReason",
                           "id": 4,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "messageTransformationFailureReason": {
+                          "type": "MessageTransformationFailureReason",
+                          "id": 5,
+                          "options": {
+                            "(google.api.field_behavior)": "OPTIONAL"
+                          }
+                        },
+                        "apiViolationReason": {
+                          "type": "ApiViolationReason",
+                          "id": 6,
                           "options": {
                             "(google.api.field_behavior)": "OPTIONAL"
                           }
@@ -1071,7 +1126,8 @@
                       "type": "string",
                       "id": 5,
                       "options": {
-                        "(google.api.field_behavior)": "OPTIONAL"
+                        "(google.api.field_behavior)": "OPTIONAL",
+                        "(google.api.resource_reference).type": "cloudkms.googleapis.com/CryptoKey"
                       }
                     },
                     "schemaSettings": {
@@ -1113,6 +1169,14 @@
                       "rule": "repeated",
                       "type": "MessageTransform",
                       "id": 13,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "tags": {
+                      "keyType": "string",
+                      "type": "string",
+                      "id": 14,
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
@@ -1348,7 +1412,8 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "OPTIONAL"
+                        "(google.api.field_behavior)": "OPTIONAL",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Snapshot"
                       }
                     },
                     "nextPageToken": {
@@ -1838,6 +1903,14 @@
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
+                    },
+                    "tags": {
+                      "keyType": "string",
+                      "type": "string",
+                      "id": 26,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   },
                   "nested": {
@@ -1854,7 +1927,8 @@
                           "type": "string",
                           "id": 1,
                           "options": {
-                            "(google.api.field_behavior)": "OPTIONAL"
+                            "(google.api.field_behavior)": "OPTIONAL",
+                            "(google.api.resource_reference).type": "analyticshub.googleapis.com/Listing"
                           }
                         },
                         "subscription": {
@@ -1892,7 +1966,8 @@
                       "type": "string",
                       "id": 1,
                       "options": {
-                        "(google.api.field_behavior)": "OPTIONAL"
+                        "(google.api.field_behavior)": "OPTIONAL",
+                        "(google.api.resource_reference).type": "pubsub.googleapis.com/Topic"
                       }
                     },
                     "maxDeliveryAttempts": {
@@ -2467,6 +2542,13 @@
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
+                    },
+                    "protocolVersion": {
+                      "type": "int64",
+                      "id": 10,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
                     }
                   }
                 },
@@ -2609,6 +2691,14 @@
                       "keyType": "string",
                       "type": "string",
                       "id": 3,
+                      "options": {
+                        "(google.api.field_behavior)": "OPTIONAL"
+                      }
+                    },
+                    "tags": {
+                      "keyType": "string",
+                      "type": "string",
+                      "id": 4,
                       "options": {
                         "(google.api.field_behavior)": "OPTIONAL"
                       }
