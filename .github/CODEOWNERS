@@ -6,4 +6,4 @@
 
 
 # Unless specified, the jsteam is the default owner for nodejs repositories.
-*     @googleapis/pubsub-team @googleapis/cloud-sdk-nodejs-team
+*     @googleapis/pubsub-team @googleapis/cloud-sdk-nodejs-team @googleapis/cloud-sdk-nodejs-team
