@@ -11,7 +11,7 @@
   "name": "pubsub",
   "name_pretty": "Google Cloud Pub/Sub",
   "api_id": "pubsub.googleapis.com",
-  "codeowner_team": "@googleapis/api-pubsub",
+  "codeowner_team": "@googleapis/pubsub-team @googleapis/cloud-sdk-nodejs-team",
   "api_shortname": "pubsub",
   "library_type": "GAPIC_COMBO"
 }
