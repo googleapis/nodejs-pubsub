@@ -537,7 +537,7 @@ describe('MessageStream', () => {
         const request = args[0] as any;
 
         assert.strictEqual(String(request.protocolVersion), '1');
-        
+
         ms.destroy();
       });
 
@@ -564,7 +564,7 @@ describe('MessageStream', () => {
 
         const streamCount = client.streams.length;
         const cancelSpies = client.streams.map(s => sandbox.spy(s, 'cancel'));
-        
+
         sandbox.clock.tick(32000);
 
         cancelSpies.forEach(spy => {
@@ -589,12 +589,12 @@ describe('MessageStream', () => {
         await ms.start();
 
         const cancelSpies = client.streams.map(s => sandbox.spy(s, 'cancel'));
-        
+
         sandbox.clock.tick(20000);
-        
+
         // Simulating data prevents timeout
         client.streams.forEach(s => s.emit('data', {}));
-        
+
         sandbox.clock.tick(20000);
 
         cancelSpies.forEach(spy => {
