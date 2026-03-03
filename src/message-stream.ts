@@ -286,10 +286,10 @@ export class MessageStream extends PassThrough {
       this._removeStream(
         index,
         'stream inactive for longer than 30 seconds',
-        'will be retried'
+        'will be retried',
       );
       this._retrier.retryLater(tracker, () =>
-        this._fillOne(index, undefined, 'retry')
+        this._fillOne(index, undefined, 'retry'),
       );
     }, 31000);
   }
